@@ -27,7 +27,16 @@ const useKycStore = create(
       setStatus: (status) => set({ status }),
       reset: () => set(initialState),
     }),
-    { name: 'kyc-storage' },
+    {
+      name: 'kyc-storage',
+      partialize: (state) => ({
+        currentStep: state.currentStep,
+        personalInfo: state.personalInfo,
+        addressInfo: state.addressInfo,
+        identityInfo: state.identityInfo,
+        status: state.status,
+      }),
+    },
   ),
 );
 

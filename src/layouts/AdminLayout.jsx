@@ -14,8 +14,10 @@ import {
   Menu,
   X,
   ArrowLeft,
+  Mail,
 } from 'lucide-react';
 import useAuthStore from '../store/authStore';
+import EmailVerificationModal from '../components/EmailVerificationModal';
 
 const adminMenuItems = [
   { label: 'Dashboard', icon: LayoutDashboard, path: '/admin' },
@@ -31,12 +33,19 @@ const adminMenuItems = [
 function AdminLayout({ children }) {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [verifyModalOpen, setVerifyModalOpen] = useState(false);
   const { user, logout } = useAuthStore();
 
   const isActive = (path) => location.pathname === path;
   const initials = user
     ? `${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`.toUpperCase()
     : 'U';
+
+  const needsVerification = user && !user.isVerified && !(
+    location.pathname.startsWith('/verify-email') ||
+    location.pathname.startsWith('/login') ||
+    location.pathname.startsWith('/register')
+  );
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -128,6 +137,17 @@ function AdminLayout({ children }) {
         </header>
         <main className="flex-1 overflow-y-auto">{children}</main>
       </div>
+
+      {needsVerification && (
+        <div className="fixed bottom-4 right-4 z-40">
+          <button onClick={() => setVerifyModalOpen(true)} className="flex items-center gap-2 bg-brand-500 text-white px-4 py-3 rounded-xl shadow-lg hover:bg-brand-600 transition-colors text-sm font-medium">
+            <Mail size={18} />
+            Verify Email
+          </button>
+        </div>
+      )}
+
+      <EmailVerificationModal isOpen={verifyModalOpen} onClose={() => setVerifyModalOpen(false)} />
     </div>
   );
 }
