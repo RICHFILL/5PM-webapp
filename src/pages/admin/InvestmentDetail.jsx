@@ -167,7 +167,7 @@ export default function InvestmentDetail() {
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {payments.map((payment) => (
-                    <tr key={payment._id} className="hover:bg-gray-50 transition-colors">
+                    <tr key={payment.id || payment._id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4 whitespace-nowrap"><div className="text-sm font-bold text-gray-900">{formatCurrency(payment.amount)}</div></td>
                       <td className="px-6 py-4 whitespace-nowrap"><p className="text-sm text-gray-900">{formatDate(payment.paymentDate)}</p></td>
                       <td className="px-6 py-4 whitespace-nowrap"><p className="text-sm text-gray-900">{formatDate(payment.dueDate)}</p></td>

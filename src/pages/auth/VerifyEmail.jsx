@@ -9,7 +9,13 @@ function VerifyEmail() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [verified, setVerified] = useState(false);
-  const inputRefs = Array.from({ length: 6 }, () => null);
+
+  const getEmail = () => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      return user.email || '';
+    } catch { return ''; }
+  };
 
   const handleChange = (index, value) => {
     if (value.length > 1) return;
@@ -34,9 +40,11 @@ function VerifyEmail() {
     setError("");
     const token = code.join("");
     if (token.length !== 6) { setError("Please enter the complete 6-digit code"); return; }
+    const email = getEmail();
+    if (!email) { setError("Email not found. Please log in again."); return; }
     setLoading(true);
     try {
-      await authApi.verifyEmail(token);
+      await authApi.verifyEmail(email, token);
       setVerified(true);
       setTimeout(() => navigate("/dashboard"), 2000);
     } catch (err) {

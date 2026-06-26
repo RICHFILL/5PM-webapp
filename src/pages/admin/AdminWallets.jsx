@@ -61,7 +61,7 @@ export default function AdminWallets() {
           </thead>
           <tbody className="divide-y divide-gray-100">
             {filtered.map((w) => (
-              <tr key={w._id} className="hover:bg-gray-50 transition-colors">
+              <tr key={w.id || w._id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-6 py-4">
                   <span className="font-medium text-gray-900">{w.user?.firstName} {w.user?.lastName}</span>
                 </td>

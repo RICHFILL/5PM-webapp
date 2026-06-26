@@ -35,8 +35,8 @@ export default function AdminKyc() {
   const handleReview = async (status) => {
     if (!selected) return;
     try {
-      await adminApi.reviewKyc(selected._id, status, "");
-      setRequests((prev) => prev.map((r) => r._id === selected._id ? { ...r, status } : r));
+      await adminApi.reviewKyc(selected.id || selected._id, status, "");
+      setRequests((prev) => prev.map((r) => (r.id || r._id) === (selected.id || selected._id) ? { ...r, status } : r));
       setSelected(null);
     } catch (err) { /* silent */ }
   };
@@ -73,7 +73,7 @@ export default function AdminKyc() {
           </thead>
           <tbody className="divide-y divide-gray-100">
             {filtered.map((r) => (
-              <tr key={r._id} className="hover:bg-gray-50 transition-colors">
+              <tr key={r.id || r._id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-6 py-4">
                   <span className="font-medium text-gray-900">{r.user?.firstName} {r.user?.lastName}</span>
                 </td>

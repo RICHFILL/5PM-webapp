@@ -40,9 +40,9 @@ export const authApi = {
   forgotPassword: (email) => api.post('/auth/forgot-password', { email }).then(r => r.data),
   resetPassword: (token, password) => api.post('/auth/reset-password', { token, password }).then(r => r.data),
   logout: () => api.post('/auth/logout').then(r => r.data),
-  verifyEmail: (code) => api.post('/auth/verify-email', { code }).then(r => r.data),
-  verifyPhone: (code) => api.post('/auth/verify-phone', { code }).then(r => r.data),
-  verify2FA: (code) => api.post('/auth/verify-2fa', { code }).then(r => r.data),
+  verifyEmail: (email, code) => api.post('/auth/verify-email', { email, token: code }).then(r => r.data),
+  verifyPhone: (code) => api.post('/auth/confirm-phone', { token: code }).then(r => r.data),
+  verify2FA: (code) => api.post('/auth/verify-2fa', { token: code }).then(r => r.data),
 };
 
 // --- Users ---
@@ -55,22 +55,20 @@ export const userApi = {
   getUserById: (id) => api.get(`/users/profile/${id}`).then(r => r.data),
   getUserStats: (id) => api.get(`/users/${id}/stats`).then(r => r.data),
   getUserPayments: (id) => api.get(`/users/${id}/payments`).then(r => r.data),
-  updateUser: (id, data) => api.put(`/users/profile/${id}`, data).then(r => r.data),
-  deleteUser: (id) => api.delete(`/users/profile/${id}`).then(r => r.data),
+  updateUser: (id, data) => api.put(`/admin/users/${id}`, data).then(r => r.data),
+  deleteUser: (id) => api.delete(`/admin/users/${id}`).then(r => r.data),
 };
 
 // --- Investments ---
 export const investmentApi = {
-  getMyInvestments: () => api.get('/investments/my-investments').then(r => r.data),
+  getMyInvestments: () => api.get('/investments').then(r => r.data),
   getInvestmentDetails: (id) => api.get(`/investments/${id}`).then(r => r.data),
   getInvestmentPayments: (id) => api.get(`/investments/${id}/payments`).then(r => r.data),
   getOpportunities: (filters) => {
     const params = new URLSearchParams(filters).toString();
-    return api.get(`/investments/opportunities?${params}`).then(r => r.data);
+    return api.get(`/investment-products?${params}`).then(r => r.data);
   },
   createInvestment: (data) => api.post('/investments', data).then(r => r.data),
-  updateInvestment: (id, data) => api.put(`/investments/${id}`, data).then(r => r.data),
-  deleteInvestment: (id) => api.delete(`/investments/${id}`).then(r => r.data),
 };
 
 // --- Wallet ---
@@ -98,30 +96,43 @@ export const kycApi = {
 // --- Notifications ---
 export const notificationApi = {
   getNotifications: () => api.get('/notifications').then(r => r.data),
-  markAsRead: (id) => api.put(`/notifications/${id}/read`).then(r => r.data),
-  markAllAsRead: () => api.put('/notifications/read-all').then(r => r.data),
+  markAsRead: (id) => api.patch('/notifications/read', { ids: [id] }).then(r => r.data),
+  markAllAsRead: (ids) => api.patch('/notifications/read', { ids }).then(r => r.data),
 };
 
 // --- Properties (Real Estate) ---
 export const propertyApi = {
   getProperties: () => api.get('/properties').then(r => r.data),
   getPropertyDetail: (id) => api.get(`/properties/${id}`).then(r => r.data),
-  purchaseUnit: (id, data) => api.post(`/properties/${id}/purchase`, data).then(r => r.data),
+  purchaseUnit: (id, data) => api.post('/property-investments', { propertyId: id, units: data.units }).then(r => r.data),
 };
 
 // --- Admin ---
 export const adminApi = {
-  getDashboard: () => api.get('/admin/dashboard').then(r => r.data),
+  getDashboard: () => api.get('/admin/dashboard').then(r => {
+    const d = r.data;
+    const stats = d?.data?.stats || d;
+    return {
+      totalUsers: stats?.totalInvestors || stats?.totalUsers || 0,
+      activeInvestments: stats?.activeInvestments || 0,
+      totalInvested: stats?.totalInvestmentValue || stats?.totalInvested || 0,
+      pendingKyc: stats?.pendingKYCReviews || stats?.pendingKyc || 0,
+    };
+  }),
   getUsers: () => api.get('/admin/users').then(r => r.data),
   getUserDetail: (id) => api.get(`/admin/users/${id}`).then(r => r.data),
   updateUser: (id, data) => api.put(`/admin/users/${id}`, data).then(r => r.data),
   deleteUser: (id) => api.delete(`/admin/users/${id}`).then(r => r.data),
   getKycRequests: () => api.get('/admin/kyc').then(r => r.data),
-  reviewKyc: (id, status, note) => api.put(`/admin/kyc/${id}`, { status, note }).then(r => r.data),
+  reviewKyc: (id, status, note) => {
+    if (status === 'approved') return api.patch(`/admin/kyc/${id}/approve`).then(r => r.data);
+    if (status === 'rejected') return api.patch(`/admin/kyc/${id}/reject`, { comment: note }).then(r => r.data);
+    return api.patch(`/admin/kyc/${id}/approve`).then(r => r.data);
+  },
   getWallets: () => api.get('/admin/wallets').then(r => r.data),
-  getProperties: () => api.get('/admin/properties').then(r => r.data),
-  createProperty: (data) => api.post('/admin/properties', data).then(r => r.data),
-  updateProperty: (id, data) => api.put(`/admin/properties/${id}`, data).then(r => r.data),
+  getProperties: () => api.get('/properties').then(r => r.data),
+  createProperty: (data) => api.post('/properties', data).then(r => r.data),
+  updateProperty: (id, data) => api.patch(`/properties/${id}`, data).then(r => r.data),
   getDistributions: () => api.get('/admin/distributions').then(r => r.data),
   createDistribution: (data) => api.post('/admin/distributions', data).then(r => r.data),
   getReports: () => api.get('/admin/reports').then(r => r.data),

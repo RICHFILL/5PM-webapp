@@ -48,7 +48,8 @@ export default function Notifications() {
 
   const handleMarkAllRead = async () => {
     try {
-      await notificationApi.markAllAsRead();
+      const ids = notifications.filter(n => !n.read).map(n => n.id || n._id);
+      await notificationApi.markAllAsRead(ids);
       setNotifications(notifications.map((n) => ({ ...n, read: true })));
     } catch (err) { /* silent */ }
   };

@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 60" fill="none">
-  <rect x="4" y="10" width="40" height="40" rx="10" fill="#fff" opacity="0.9"/>
-  <path d="M16 18h16a2 2 0 012 2v20a2 2 0 01-2 2H16a2 2 0 01-2-2V20a2 2 0 012-2z" fill="#2a2551" opacity="0.9"/>
-  <path d="M20 25h8M20 30h8M20 35h8" stroke="#fff" strokeWidth="2" strokeLinecap="round"/>
-  <circle cx="16" cy="22" r="2" fill="#52c7e4"/>
-  <circle cx="32" cy="38" r="2" fill="#52c7e4"/>
-  <text x="56" y="33" fontFamily="Inter, system-ui, sans-serif" fontSize="18" fontWeight="700" fill="#fff" letterSpacing="1">5PM</text>
-  <text x="56" y="50" fontFamily="Inter, system-ui, sans-serif" fontSize="12" fontWeight="500" fill="#fff" opacity="0.8" letterSpacing="2.5">NEXUS INVEST</text>
-</svg>
