@@ -1,5 +1,5 @@
 export const API_BASE_URL =
-  import.meta.env.VITE_API_URL || 'https://vestitude-admin-backend.onrender.com/api';
+  import.meta.env.VITE_API_URL || 'https://fivepm-backend.onrender.com/api/v1';
 
 export const ROUTES = {
   // Public

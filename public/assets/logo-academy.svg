@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" fill="none">
+  <rect x="4" y="10" width="40" height="40" rx="10" fill="#6255a4"/>
+  <path d="M14 18a2 2 0 012-2h16a2 2 0 012 2v20a2 2 0 01-2 2H16a2 2 0 01-2-2V18z" fill="#fff" opacity="0.9"/>
+  <path d="M24 20v16M18 28l6-6 6 6" stroke="#6255a4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  <text x="56" y="33" fontFamily="Inter, system-ui, sans-serif" fontSize="16" fontWeight="700" fill="#2a2551" letterSpacing="1">ACADEMY</text>
+  <text x="56" y="50" fontFamily="Inter, system-ui, sans-serif" fontSize="10" fontWeight="500" fill="#6255a4" letterSpacing="2">5PM NEXUS INVEST</text>
+</svg>
