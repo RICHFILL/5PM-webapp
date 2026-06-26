@@ -54,7 +54,7 @@ function AdminLayout({ children }) {
       >
         <div className="h-16 flex items-center justify-between px-6 border-b border-navy-700">
           <Link to="/admin" className="flex items-center gap-2">
-            <img src="/assets/logo.svg" alt="Logo" className="w-16 lg:w-24 h-auto brightness-0 invert" />
+            <img src="/assets/logo.png" alt="Logo" className="w-16 lg:w-24 h-auto brightness-0 invert" />
           </Link>
           <button
             onClick={() => setSidebarOpen(false)}

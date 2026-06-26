@@ -7,7 +7,7 @@ function PublicLayout({ children }) {
       <header className="bg-white border-b border-gray-100 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link to={ROUTES.HOME} className="flex items-center gap-2">
-            <img src="/assets/logo.svg" alt="Logo" className="h-10" />
+            <img src="/assets/logo.png" alt="Logo" className="h-10" />
           </Link>
           <nav className="hidden md:flex items-center gap-6">
             <Link to={ROUTES.ABOUT} className="text-sm text-gray-600 hover:text-brand-500 transition-colors">About</Link>
@@ -27,7 +27,7 @@ function PublicLayout({ children }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
-              <img src="/assets/footer-logo.svg" alt="Logo" className="h-10 mb-4" />
+              <img src="/assets/footer-logo.png" alt="Logo" className="h-10 mb-4" />
               <p className="text-sm text-gray-400">Premium digital wealth and investment platform.</p>
             </div>
             <div>
