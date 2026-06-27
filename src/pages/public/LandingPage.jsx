@@ -125,13 +125,13 @@ function LandingPage() {
             <div>
               <div className="inline-flex items-center gap-2 bg-brand-100 border border-brand-200 rounded-full px-4 py-1.5 mb-6">
                 <div className="w-2 h-2 rounded-full bg-brand-500 animate-pulse" />
-                <span className="text-brand-700 text-xs font-semibold tracking-wide uppercase">Automated Assets Investment</span>
+                <span className="text-brand-700 text-xs font-semibold tracking-wide uppercase">ASSEST BACKED INVESTMENT PLATFORM</span>
               </div>
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black leading-[1.05] mb-6">
-                ASSEST BACKED<br />
-                <span className="text-brand-500">INVESTMENT</span><br />
-                PLATFORM.
+                Build Wealth.<br />
+                <span className="text-brand-500">Own Your</span><br />
+                Future.
               </h1>
 
               <div className="w-20 h-1 bg-brand-500 rounded-full mb-6" />
