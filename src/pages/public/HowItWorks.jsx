@@ -16,7 +16,7 @@ function HowItWorks() {
     <div>
       <section className="bg-gradient-to-br from-navy-900 via-navy-800 to-brand-700 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">How It Works</h1>
+          <h1 className="text-2xl md:text-5xl font-bold mb-6">How It Works</h1>
           <p className="text-xl text-gray-300 max-w-3xl">
             Getting started with 5PM Nexus Invest is simple. Follow these five steps to begin your investment journey.
           </p>
@@ -39,7 +39,7 @@ function HowItWorks() {
                     <step.icon className="text-brand-500" size={24} />
                   </div>
                   <step.icon className="hidden md:block text-brand-500" size={24} />
-                  <h2 className="text-2xl font-bold text-gray-900">{step.title}</h2>
+                  <h2 className="text-xl md:text-2xl font-bold text-gray-900">{step.title}</h2>
                 </div>
                 <p className="text-gray-600 ml-0 md:ml-16">{step.description}</p>
               </div>
@@ -50,7 +50,7 @@ function HowItWorks() {
 
       <section className="py-20 bg-gradient-to-r from-brand-500 to-navy-500">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-white mb-6">Ready to Start?</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">Ready to Start?</h2>
           <p className="text-lg text-white/80 mb-8">Join thousands of smart investors building wealth with 5PM Nexus Invest.</p>
           <Link to={ROUTES.REGISTER}>
             <Button size="lg" className="bg-white text-navy-900 hover:bg-gray-100">

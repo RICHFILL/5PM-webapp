@@ -44,8 +44,8 @@ export default function Properties() {
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
-      <div className="bg-gradient-to-br from-navy-500 to-navy-700 rounded-2xl p-8 text-white">
-        <h1 className="text-3xl font-bold mb-2">Fractional Real Estate</h1>
+      <div className="bg-gradient-to-br from-navy-500 to-navy-700 rounded-2xl p-4 md:p-8 text-white">
+        <h1 className="text-2xl md:text-3xl font-bold mb-2">Fractional Real Estate</h1>
         <p className="text-blue-200">Own prime properties with fractional ownership starting from low amounts</p>
       </div>
 
@@ -75,7 +75,7 @@ export default function Properties() {
                   <MapPin size={14} /><span>{property.location || property.city || "Nigeria"}</span>
                 </div>
                 <p className="text-sm text-gray-600 line-clamp-2 mb-4">{property.description || "Premium real estate investment opportunity."}</p>
-                <div className="grid grid-cols-3 gap-3 mb-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
                   <div>
                     <p className="text-xs text-gray-500">Price/Unit</p>
                     <p className="text-sm font-bold text-gray-900">{formatNaira(property.pricePerUnit || property.price)}</p>

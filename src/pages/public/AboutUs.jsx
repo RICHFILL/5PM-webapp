@@ -12,7 +12,7 @@ function AboutUs() {
     <div>
       <section className="bg-gradient-to-br from-navy-900 via-navy-800 to-brand-700 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">About 5PM Nexus Invest</h1>
+          <h1 className="text-2xl md:text-5xl font-bold mb-6">About 5PM Nexus Invest</h1>
           <p className="text-xl text-gray-300 max-w-3xl">
             We are a fintech-powered digital wealth and investment platform committed to transforming how Nigerians invest.
           </p>
@@ -23,7 +23,7 @@ function AboutUs() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Mission</h2>
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">Our Mission</h2>
               <p className="text-gray-600 mb-4">
                 At 5PM Nexus Invest, our mission is to democratize wealth creation by providing accessible, 
                 transparent, and secure investment opportunities to every Nigerian.
@@ -39,7 +39,7 @@ function AboutUs() {
               </p>
             </div>
             <div className="bg-gray-50 rounded-2xl p-8 border border-gray-100">
-              <h3 className="text-2xl font-bold text-gray-900 mb-6">Our Story</h3>
+              <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-6">Our Story</h3>
               <p className="text-gray-600 mb-4">
                 Founded with a vision to transform the Nigerian investment landscape, 5PM Nexus Invest 
                 brings together expertise in finance, technology, and real estate.
@@ -55,7 +55,7 @@ function AboutUs() {
 
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">Our Core Values</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-900 mb-12">Our Core Values</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {values.map((v) => (
               <div key={v.title} className="bg-white rounded-2xl p-8 text-center border border-gray-100">

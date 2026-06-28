@@ -114,7 +114,7 @@ function TermsConditions() {
   return (
     <div className="p-4 md:p-8 max-w-4xl mx-auto">
       <div className="bg-white rounded-xl shadow-sm p-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">Terms of Service</h1>
+        <h1 className="text-2xl md:text-4xl font-bold text-gray-900 mb-2">Terms of Service</h1>
         <p className="text-gray-500 mb-2">Effective Date: 01/04/2024</p>
 
         {/* Welcome */}
@@ -128,7 +128,7 @@ function TermsConditions() {
         <div className="space-y-8">
           {sections.map((section, i) => (
             <section key={section.title} className="border-t border-gray-100 pt-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-3">
+              <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-3">
                 {i + 1}. {section.title}
               </h2>
 

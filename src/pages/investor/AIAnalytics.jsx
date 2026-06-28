@@ -31,10 +31,10 @@ export default function AIAnalytics() {
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
-      <div className="bg-gradient-to-br from-indigo-600 to-indigo-800 rounded-2xl p-8 text-white">
+      <div className="bg-gradient-to-br from-indigo-600 to-indigo-800 rounded-2xl p-4 md:p-8 text-white">
         <div className="flex items-center gap-3 mb-3">
           <Brain size={32} />
-          <h1 className="text-3xl font-bold">AI Analytics Engine</h1>
+          <h1 className="text-2xl md:text-3xl font-bold">AI Analytics Engine</h1>
         </div>
         <p className="text-indigo-200">Intelligent portfolio insights, risk analysis, and personalized recommendations</p>
       </div>

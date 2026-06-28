@@ -392,7 +392,7 @@ function LandingPage() {
                   </div>
                   <div className="flex-1">
                     <span className="text-brand-500 text-xs font-bold uppercase tracking-widest">Step {item.step}</span>
-                    <h3 className="text-2xl font-bold text-gray-900 mt-1 mb-3">{item.title}</h3>
+                    <h3 className="text-xl md:text-2xl font-bold text-gray-900 mt-1 mb-3">{item.title}</h3>
                     <p className="text-gray-600 text-sm leading-relaxed mb-4">{item.desc}</p>
                     <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-sm text-gray-600">
                       {item.checks.map((c) => (

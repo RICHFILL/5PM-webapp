@@ -41,7 +41,7 @@ function Step1PersonalInfo({ data, onChange, onNext }) {
   };
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Input label="First Name" value={data.firstName} onChange={(e) => onChange({...data, firstName: e.target.value})} error={errors.firstName} required />
         <Input label="Last Name" value={data.lastName} onChange={(e) => onChange({...data, lastName: e.target.value})} error={errors.lastName} required />
       </div>
@@ -81,7 +81,7 @@ function Step2Address({ data, onChange, onNext, onPrev }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <Input label="Country" value={data.country} onChange={(e) => onChange({...data, country: e.target.value})} error={errors.country} placeholder="Nigeria" required />
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Input label="State" value={data.state} onChange={(e) => onChange({...data, state: e.target.value})} error={errors.state} required />
         <Input label="City" value={data.city} onChange={(e) => onChange({...data, city: e.target.value})} error={errors.city} required />
       </div>
@@ -278,7 +278,7 @@ function KycStatusPage({ status, onStartOver }) {
       }`}>
         <Icon size={40} className={status === KYC_STATUS.APPROVED ? "text-green-600" : status === KYC_STATUS.REJECTED ? "text-red-600" : "text-amber-600"} />
       </div>
-      <h2 className="text-2xl font-bold text-gray-900 mb-2">{config.title}</h2>
+      <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">{config.title}</h2>
       <p className="text-gray-600 mb-6">{config.message}</p>
       <Badge variant={config.variant} className="text-sm px-4 py-1">{status}</Badge>
       {status === KYC_STATUS.REJECTED && (
@@ -324,7 +324,7 @@ function KycPage() {
     return (
       <div className="p-4 md:p-8 max-w-3xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">KYC Verification</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">KYC Verification</h1>
           <p className="text-gray-600">Know Your Customer verification status</p>
         </div>
         <KycStatusPage status={store.status} onStartOver={store.reset} />
@@ -335,7 +335,7 @@ function KycPage() {
   return (
     <div className="p-4 md:p-8 max-w-3xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">KYC Verification</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">KYC Verification</h1>
         <p className="text-gray-600">Complete your identity verification to start investing</p>
       </div>
 

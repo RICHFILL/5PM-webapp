@@ -57,7 +57,7 @@ export default function Portfolio() {
     return (
       <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
         <Skeleton className="h-8 w-48" />
-        <div className="grid md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Skeleton.Card /><Skeleton.Card /><Skeleton.Card /><Skeleton.Card />
         </div>
         <Skeleton.Card />
@@ -68,26 +68,26 @@ export default function Portfolio() {
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
       <div className="mb-4">
-        <h1 className="text-3xl font-bold text-gray-900">My Portfolio</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">My Portfolio</h1>
         <p className="text-gray-600">Track your investment performance and allocations</p>
       </div>
 
       <div className="grid md:grid-cols-4 gap-4">
         <div className="bg-gradient-to-br from-brand-500 to-brand-700 rounded-xl p-5 text-white">
           <p className="text-sm text-cyan-100 mb-1">Total Portfolio Value</p>
-          <p className="text-2xl font-bold">{formatNaira(stats?.totalInvested)}</p>
+          <p className="text-xl md:text-2xl font-bold">{formatNaira(stats?.totalInvested)}</p>
         </div>
         <div className="bg-white rounded-xl border border-gray-100 p-5">
           <div className="flex items-center gap-2 text-xs text-gray-500 mb-1"><TrendingUp size={14} className="text-green-500" />Total Returns</div>
-          <p className="text-2xl font-bold text-gray-900">{formatNaira(stats?.totalInterestEarned)}</p>
+          <p className="text-xl md:text-2xl font-bold text-gray-900">{formatNaira(stats?.totalInterestEarned)}</p>
         </div>
         <div className="bg-white rounded-xl border border-gray-100 p-5">
           <div className="flex items-center gap-2 text-xs text-gray-500 mb-1"><Percent size={14} className="text-brand-500" />Avg. ROI</div>
-          <p className="text-2xl font-bold text-gray-900">16.5%</p>
+          <p className="text-xl md:text-2xl font-bold text-gray-900">16.5%</p>
         </div>
         <div className="bg-white rounded-xl border border-gray-100 p-5">
           <div className="flex items-center gap-2 text-xs text-gray-500 mb-1"><Shield size={14} className="text-navy-500" />Risk Score</div>
-          <p className="text-2xl font-bold text-gray-900">Moderate</p>
+          <p className="text-xl md:text-2xl font-bold text-gray-900">Moderate</p>
         </div>
       </div>
 
@@ -117,7 +117,7 @@ export default function Portfolio() {
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Holdings</h3>
         {investments.length > 0 ? (
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full min-w-[600px] text-sm">
               <thead>
                 <tr className="border-b border-gray-100 text-xs text-gray-400 uppercase tracking-[0.18em]">
                   <th className="text-left pb-3 font-semibold">Investment</th>

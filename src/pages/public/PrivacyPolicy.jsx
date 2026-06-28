@@ -166,7 +166,7 @@ function PrivacyPolicy() {
       {/* Hero */}
       <section className="bg-gradient-to-br from-navy-900 via-navy-800 to-brand-700 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">Privacy Policy</h1>
+          <h1 className="text-2xl md:text-5xl font-bold mb-6">Privacy Policy</h1>
           <p className="text-xl text-gray-300 max-w-3xl">Effective Date: 01/04/2024</p>
         </div>
       </section>
@@ -183,7 +183,7 @@ function PrivacyPolicy() {
 
           {sections.map((section, i) => (
             <div key={section.title} className="border-t border-gray-100 pt-8">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">
+              <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-4">
                 {i + 1}. {section.title}
               </h2>
 

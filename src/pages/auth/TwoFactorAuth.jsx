@@ -47,7 +47,7 @@ function TwoFactorAuth() {
         <div className="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
           <CheckCircle2 className="text-green-600" size={32} />
         </div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Verified!</h2>
+        <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">Verified!</h2>
         <p className="text-gray-600">Redirecting to your dashboard...</p>
       </div>
     );
@@ -62,7 +62,7 @@ function TwoFactorAuth() {
         <div className="w-14 h-14 mx-auto mb-4 bg-brand-50 rounded-2xl flex items-center justify-center">
           <Shield className="text-brand-500" size={28} />
         </div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Two-Factor Authentication</h2>
+        <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">Two-Factor Authentication</h2>
         <p className="text-gray-600">Enter the 6-digit code from your authenticator app</p>
       </div>
 

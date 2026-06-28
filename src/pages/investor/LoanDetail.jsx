@@ -42,7 +42,7 @@ export default function LoanDetail() {
           <Badge variant={loan.status === "active" ? "success" : loan.status === "pending" ? "warning" : "default"} size="lg">{loan.status}</Badge>
         </div>
 
-        <div className="grid grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
           <div className="bg-slate-50 rounded-xl p-4 text-center">
             <p className="text-xs text-gray-500">Amount</p>
             <p className="text-lg font-bold text-gray-900">{formatNaira(loan.amount)}</p>

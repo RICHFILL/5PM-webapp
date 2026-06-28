@@ -60,15 +60,16 @@ export default function AdminWealthPlans() {
       <h1 className="text-2xl font-bold text-gray-900">Wealth Plans ({plans.length})</h1>
       <div className="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl p-6 text-white">
         <p className="text-sm text-emerald-100 mb-1">Total Contributed Across All Plans</p>
-        <p className="text-3xl font-bold">{formatNaira(totalContributed)}</p>
+        <p className="text-2xl md:text-3xl font-bold">{formatNaira(totalContributed)}</p>
       </div>
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
         <input type="text" placeholder="Search by user..." value={search} onChange={(e) => setSearch(e.target.value)}
           className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none text-sm" />
       </div>
-      <Card className="p-0 overflow-hidden">
-        <table className="w-full text-sm">
+      <div className="overflow-x-auto -mx-6">
+        <Card className="p-0">
+          <table className="w-full text-sm min-w-[600px]">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">User</th>
@@ -96,6 +97,7 @@ export default function AdminWealthPlans() {
         </table>
         {filtered.length === 0 && <p className="text-gray-500 text-center py-12">No wealth plans found.</p>}
       </Card>
+      </div>
 
       <Modal isOpen={showContribute} onClose={() => { setShowContribute(false); setContributionForm({ amount: "", reference: "" }); }} title="Record Contribution" size="sm">
         {selectedPlan && (

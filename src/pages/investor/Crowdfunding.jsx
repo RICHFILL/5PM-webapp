@@ -40,8 +40,8 @@ export default function Crowdfunding() {
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
-      <div className="bg-gradient-to-br from-brand-500 to-brand-700 rounded-2xl p-8 text-white">
-        <h1 className="text-3xl font-bold mb-2">Crowdfunding Campaigns</h1>
+      <div className="bg-gradient-to-br from-brand-500 to-brand-700 rounded-2xl p-4 md:p-8 text-white">
+        <h1 className="text-2xl md:text-3xl font-bold mb-2">Crowdfunding Campaigns</h1>
         <p className="text-blue-200">Pool funds with other investors to back promising real estate and projects</p>
       </div>
 
@@ -75,7 +75,7 @@ export default function Crowdfunding() {
                     <div className="bg-brand-500 h-2 rounded-full" style={{ width: `${Math.min(progress, 100)}%` }}></div>
                   </div>
                   <p className="text-xs text-gray-500 mb-3">{progress.toFixed(1)}% funded</p>
-                  <div className="grid grid-cols-2 gap-3 mb-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
                     <div>
                       <p className="text-xs text-gray-500">Raised</p>
                       <p className="text-sm font-bold text-gray-900">{formatNaira(c.raisedAmount)}</p>

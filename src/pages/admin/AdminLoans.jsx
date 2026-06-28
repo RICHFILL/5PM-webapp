@@ -70,7 +70,7 @@ export default function AdminLoans() {
           <input type="text" placeholder="Search borrower..." value={search} onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:border-brand-500 outline-none text-sm" />
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 overflow-x-auto">
           {["", "pending", "active", "repaid", "defaulted"].map((s) => (
             <button key={s} onClick={() => setStatusFilter(s)}
               className={`px-3 py-2 text-xs font-medium rounded-lg transition-colors ${statusFilter === s ? "bg-brand-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
@@ -80,8 +80,9 @@ export default function AdminLoans() {
         </div>
       </div>
 
-      <Card className="p-0 overflow-hidden">
-        <table className="w-full text-sm">
+      <div className="overflow-x-auto -mx-6">
+        <Card className="p-0">
+          <table className="w-full text-sm min-w-[600px]">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Borrower</th>
@@ -121,6 +122,7 @@ export default function AdminLoans() {
         </table>
         {filtered.length === 0 && <p className="text-gray-500 text-center py-12">No loans found.</p>}
       </Card>
+      </div>
 
       {actionLoan && (
         <Modal isOpen={true} onClose={() => setActionLoan(null)}

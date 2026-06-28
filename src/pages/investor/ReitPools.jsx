@@ -42,8 +42,8 @@ export default function ReitPools() {
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
-      <div className="bg-gradient-to-br from-purple-600 to-purple-800 rounded-2xl p-8 text-white">
-        <h1 className="text-3xl font-bold mb-2">Digital REIT Pools</h1>
+      <div className="bg-gradient-to-br from-purple-600 to-purple-800 rounded-2xl p-4 md:p-8 text-white">
+        <h1 className="text-2xl md:text-3xl font-bold mb-2">Digital REIT Pools</h1>
         <p className="text-purple-200">Invest in professionally managed real estate investment trusts</p>
       </div>
 
@@ -62,7 +62,7 @@ export default function ReitPools() {
                   <Badge variant={pool.status === "open" ? "success" : "default"}>{pool.status}</Badge>
                 </div>
                 <p className="text-sm text-gray-600 mb-4 line-clamp-2">{pool.description || "No description."}</p>
-                <div className="grid grid-cols-3 gap-3 mb-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
                   <div className="bg-slate-50 rounded-lg p-3 text-center">
                     <p className="text-xs text-gray-500">Share Price</p>
                     <p className="text-sm font-bold text-gray-900">{formatNaira(pool.sharePrice)}</p>

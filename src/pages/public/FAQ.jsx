@@ -39,7 +39,7 @@ function FAQ() {
     <div>
       <section className="bg-gradient-to-br from-navy-900 via-navy-800 to-brand-700 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">Frequently Asked Questions</h1>
+          <h1 className="text-2xl md:text-5xl font-bold mb-6">Frequently Asked Questions</h1>
           <p className="text-xl text-gray-300 max-w-3xl">
             Find answers to common questions about our platform, investments, and services.
           </p>
@@ -50,7 +50,7 @@ function FAQ() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           {faqs.map((group) => (
             <div key={group.category}>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">{group.category}</h2>
+              <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-6">{group.category}</h2>
               <div className="space-y-4">
                 {group.items.map((faq) => (
                   <details key={faq.q} className="group bg-gray-50 rounded-xl p-5 open:ring-1 open:ring-brand-200 transition-all">

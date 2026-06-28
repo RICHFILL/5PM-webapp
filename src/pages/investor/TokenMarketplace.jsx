@@ -33,8 +33,8 @@ export default function TokenMarketplace() {
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
-      <div className="bg-gradient-to-br from-amber-600 to-amber-800 rounded-2xl p-8 text-white">
-        <h1 className="text-3xl font-bold mb-2">Token Marketplace</h1>
+      <div className="bg-gradient-to-br from-amber-600 to-amber-800 rounded-2xl p-4 md:p-8 text-white">
+        <h1 className="text-2xl md:text-3xl font-bold mb-2">Token Marketplace</h1>
         <p className="text-amber-200">Buy and sell tokenized real estate units on the secondary market</p>
       </div>
 
@@ -51,7 +51,7 @@ export default function TokenMarketplace() {
                   <p className="text-xs text-gray-500">{l.tokenData?.propertyData?.title || "Property Token"}</p>
                 </div>
               </div>
-              <div className="grid grid-cols-3 gap-2 mb-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-4">
                 <div className="bg-slate-50 rounded-lg p-3 text-center">
                   <p className="text-xs text-gray-500">Units</p>
                   <p className="text-sm font-bold text-gray-900">{l.units}</p>

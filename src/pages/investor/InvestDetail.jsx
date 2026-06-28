@@ -99,7 +99,7 @@ export default function InvestDetail() {
         </div>
       </Card>
 
-      <div className="grid md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <div className="bg-white rounded-xl border border-gray-100 p-4">
           <p className="text-xs uppercase tracking-wide text-gray-500 mb-1">Interest Earned</p>
           <p className="text-xl font-bold text-gray-900">{formatNaira(investment.interestEarned)}</p>
@@ -120,7 +120,7 @@ export default function InvestDetail() {
           <Skeleton.Table rows={4} />
         ) : payments.length > 0 ? (
           <div className="overflow-x-auto -mx-6">
-            <table className="w-full text-sm min-w-[400px]">
+            <table className="w-full text-sm min-w-[500px]">
               <thead>
                 <tr className="border-b border-gray-100 text-xs text-gray-400 uppercase tracking-[0.18em]">
                   <th className="text-left pb-3 font-semibold px-6">Amount</th>

@@ -50,7 +50,7 @@ export default function SupportTickets() {
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Support Tickets</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Support Tickets</h1>
           <p className="text-gray-600">Get help and track your requests</p>
         </div>
         <Button onClick={() => navigate("/support/new")}><Plus size={16} /> New Ticket</Button>

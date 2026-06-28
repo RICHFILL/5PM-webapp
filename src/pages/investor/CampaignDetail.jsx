@@ -135,7 +135,7 @@ export default function CampaignDetail() {
             <div className="space-y-3">
               <div>
                 <p className="text-xs text-gray-500 uppercase tracking-wide">Raised</p>
-                <p className="text-2xl font-bold text-gray-900">{formatNaira(campaign.raisedAmount)}</p>
+                <p className="text-xl md:text-2xl font-bold text-gray-900">{formatNaira(campaign.raisedAmount)}</p>
               </div>
               <div>
                 <p className="text-xs text-gray-500 uppercase tracking-wide">Target</p>

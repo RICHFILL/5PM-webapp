@@ -113,8 +113,8 @@ export default function Marketplace() {
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
-      <div className="bg-gradient-to-br from-brand-500 to-brand-700 rounded-2xl p-8 text-white">
-        <h1 className="text-3xl font-bold mb-2">Investment Marketplace</h1>
+      <div className="bg-gradient-to-br from-brand-500 to-brand-700 rounded-2xl p-4 md:p-8 text-white">
+        <h1 className="text-2xl md:text-3xl font-bold mb-2">Investment Marketplace</h1>
         <p className="text-cyan-100">Discover and invest in curated opportunities</p>
       </div>
 

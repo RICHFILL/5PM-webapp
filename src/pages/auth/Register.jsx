@@ -112,7 +112,7 @@ function Register() {
           <div className="w-14 h-14 mx-auto mb-4 bg-brand-50 rounded-2xl flex items-center justify-center">
             <Mail className="text-brand-500" size={28} />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Verify Your Email</h2>
+          <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">Verify Your Email</h2>
           <p className="text-gray-600">Enter the 6-digit code sent to <span className="font-semibold text-gray-900">{formData.email}</span></p>
         </div>
 
@@ -136,13 +136,13 @@ function Register() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-gray-900 mb-2">Create Account</h2>
+      <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">Create Account</h2>
       <p className="text-gray-600 mb-6">Join 5PM Nexus Invest to start investing</p>
 
       {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">{error}</div>}
 
       <form onSubmit={handleRegister} className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
             <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} placeholder="John" required className={inputClass} />

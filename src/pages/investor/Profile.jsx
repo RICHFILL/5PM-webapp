@@ -98,13 +98,13 @@ function Profile() {
 
   return (
     <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
-      <div className="bg-gradient-to-r from-brand-500 to-brand-600 rounded-2xl text-white p-8 relative">
-        <div className="flex items-end gap-6">
-          <div className="w-24 h-24 rounded-full bg-white bg-opacity-20 flex items-center justify-center shrink-0">
-            <span className="text-4xl font-bold">{initials}</span>
+      <div className="bg-gradient-to-r from-brand-500 to-brand-600 rounded-2xl text-white p-4 md:p-8 relative">
+        <div className="flex items-end gap-4 md:gap-6">
+          <div className="w-16 h-16 md:w-24 md:h-24 rounded-full bg-white bg-opacity-20 flex items-center justify-center shrink-0">
+            <span className="text-2xl md:text-4xl font-bold">{initials}</span>
           </div>
           <div className="flex-1">
-            <h2 className="text-3xl font-bold mb-1">{user?.firstName} {user?.lastName}</h2>
+            <h2 className="text-2xl md:text-3xl font-bold mb-1">{user?.firstName} {user?.lastName}</h2>
             <p className="text-teal-100">Individual Investor</p>
             {kycStatus && (
               <div className="mt-2">

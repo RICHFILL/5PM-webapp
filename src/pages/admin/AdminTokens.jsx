@@ -24,8 +24,9 @@ export default function AdminTokens() {
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
       <h1 className="text-2xl font-bold text-gray-900">Token Registry ({tokens.length})</h1>
-      <Card className="p-0 overflow-hidden">
-        <table className="w-full text-sm">
+      <div className="overflow-x-auto -mx-6">
+        <Card className="p-0">
+          <table className="w-full text-sm min-w-[600px]">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Token ID</th>
@@ -49,6 +50,7 @@ export default function AdminTokens() {
         </table>
         {tokens.length === 0 && <p className="text-gray-500 text-center py-12">No tokens issued.</p>}
       </Card>
+      </div>
     </div>
   );
 }

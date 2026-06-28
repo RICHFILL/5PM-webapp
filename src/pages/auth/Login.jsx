@@ -40,7 +40,7 @@ function Login() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-gray-900 mb-2 text-center">
+      <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2 text-center">
         Investor Portal
       </h2>
       <p className="text-gray-600 mb-6 text-center">

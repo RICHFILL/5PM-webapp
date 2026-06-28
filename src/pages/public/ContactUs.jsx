@@ -15,7 +15,7 @@ function ContactUs() {
     <div>
       <section className="bg-gradient-to-br from-navy-900 via-navy-800 to-brand-700 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">Contact Us</h1>
+          <h1 className="text-2xl md:text-5xl font-bold mb-6">Contact Us</h1>
           <p className="text-xl text-gray-300 max-w-3xl">
             Have a question or need assistance? We are here to help. Reach out to us through any of the channels below.
           </p>
@@ -26,7 +26,7 @@ function ContactUs() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-8">Get in Touch</h2>
+              <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-8">Get in Touch</h2>
               <div className="space-y-6">
                 {[
                   { icon: Mail, label: "Email", value: "support@5pmnexus.com", detail: "We respond within 24 hours" },
@@ -49,13 +49,13 @@ function ContactUs() {
             </div>
 
             <div className="bg-gray-50 rounded-2xl p-8 border border-gray-100">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Send Us a Message</h2>
+              <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-6">Send Us a Message</h2>
               {submitted ? (
                 <div className="text-center py-12">
                   <div className="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
                     <Send className="text-green-600" size={28} />
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">Message Sent!</h3>
+                  <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-2">Message Sent!</h3>
                   <p className="text-gray-600">Thank you for reaching out. We will get back to you within 24 hours.</p>
                 </div>
               ) : (

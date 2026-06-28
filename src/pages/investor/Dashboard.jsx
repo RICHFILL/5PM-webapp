@@ -133,7 +133,7 @@ function Dashboard() {
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Good morning, {user?.firstName}</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Good morning, {user?.firstName}</h1>
         <p className="text-gray-600">Welcome back to your investment dashboard</p>
       </div>
 
@@ -142,9 +142,9 @@ function Dashboard() {
           <div className="flex flex-col gap-1">
             <p className="text-white/70 text-md font-medium tracking-wide">Total Amount Invested</p>
             <div className="flex items-center gap-3 mt-1">
-              <h2 className="text-2xl font-bold tracking-tight">{formatCurrency(totalInvested)}</h2>
+              <h2 className="text-xl md:text-2xl font-bold tracking-tight">{formatCurrency(totalInvested)}</h2>
             </div>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-3">
               <div className="bg-white/10 rounded-lg px-4 py-2.5 backdrop-blur-sm">
                 <p className="text-white/60 text-[14px] font-medium mb-1">Total Interest Earned</p>
                 <p className="text-md font-bold">{formatCurrency(totalInterestEarned)}</p>
@@ -241,7 +241,7 @@ function Dashboard() {
       <div className="mb-8">
         <div className="flex items-center gap-2 mb-6">
           <BarChart3 className="text-brand-500" size={24} />
-          <h2 className="text-2xl font-bold text-gray-900">Portfolio Analytics</h2>
+          <h2 className="text-xl md:text-2xl font-bold text-gray-900">Portfolio Analytics</h2>
         </div>
         <div className="grid md:grid-cols-2 gap-6 mb-6">
           <Card>

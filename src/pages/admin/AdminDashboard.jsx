@@ -40,8 +40,8 @@ export default function AdminDashboard() {
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-      <div className="grid md:grid-cols-4 gap-4">
+      <h1 className="text-xl md:text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {stats.map((s) => (
           <div key={s.label} className="bg-white rounded-xl border border-gray-100 p-5">
             <div className="flex items-center gap-3 mb-3">
@@ -49,7 +49,7 @@ export default function AdminDashboard() {
                 <s.icon size={20} />
               </div>
             </div>
-            <p className="text-2xl font-bold text-gray-900">{s.value}</p>
+              <p className="text-xl md:text-2xl font-bold text-gray-900">{s.value}</p>
             <p className="text-xs text-gray-500 mt-1">{s.label}</p>
           </div>
         ))}

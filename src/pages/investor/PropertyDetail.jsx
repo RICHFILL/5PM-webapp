@@ -100,7 +100,7 @@ export default function PropertyDetail() {
           {property.features?.length > 0 && (
             <Card>
               <h3 className="text-lg font-semibold text-gray-900 mb-3">Features</h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                 {property.features.map((f, i) => (
                   <div key={i} className="flex items-center gap-2 text-sm text-gray-600">
                     <CheckCircle2 size={14} className="text-green-500 shrink-0" />
@@ -145,15 +145,15 @@ export default function PropertyDetail() {
             <div className="space-y-4">
               <div>
                 <p className="text-xs text-gray-500 uppercase tracking-wide">Price Per Unit</p>
-                <p className="text-2xl font-bold text-gray-900">{formatNaira(pricePerUnit)}</p>
+                <p className="text-xl md:text-2xl font-bold text-gray-900">{formatNaira(pricePerUnit)}</p>
               </div>
               <div>
                 <p className="text-xs text-gray-500 uppercase tracking-wide">Expected ROI</p>
-                <p className="text-xl font-semibold text-brand-500">{property.roi || property.expectedROI || "15-25%"} </p>
+                <p className="text-lg md:text-xl font-semibold text-brand-500">{property.roi || property.expectedROI || "15-25%"} </p>
               </div>
               <div>
                 <p className="text-xs text-gray-500 uppercase tracking-wide">Available Units</p>
-                <p className="text-xl font-semibold text-gray-900">{maxUnits}</p>
+                <p className="text-lg md:text-xl font-semibold text-gray-900">{maxUnits}</p>
               </div>
               <Button className="w-full" onClick={() => { setShowPurchase(true); setPurchaseStep("form"); setUnits(1); }}
                 disabled={maxUnits < 1}>
@@ -205,7 +205,7 @@ export default function PropertyDetail() {
             </div>
 
             <div className="bg-brand-50 rounded-xl p-4">
-              <div className="flex justify-between text-sm"><span className="text-gray-600">Total Cost</span><span className="text-xl font-bold text-brand-600">{formatNaira(totalCost)}</span></div>
+              <div className="flex justify-between text-sm"><span className="text-gray-600">Total Cost</span><span className="text-lg md:text-xl font-bold text-brand-600">{formatNaira(totalCost)}</span></div>
             </div>
 
             {purchaseError && <p className="text-sm text-red-600 flex items-center gap-1"><AlertCircle size={14} />{purchaseError}</p>}

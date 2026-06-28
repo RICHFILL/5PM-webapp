@@ -81,14 +81,14 @@ export default function AdminUserDetail() {
       </button>
 
       <section className="rounded-3xl bg-gradient-to-r from-slate-900 via-slate-800 to-cyan-700 text-white overflow-hidden">
-        <div className="px-8 py-8 md:px-10 md:py-10">
+          <div className="p-4 md:p-8">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
             <div className="flex items-center gap-5">
               <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center text-white font-bold text-2xl">
                 {(user.firstName?.[0] || "") + (user.lastName?.[0] || "")}
               </div>
               <div className="space-y-2">
-                <h2 className="text-2xl font-bold">{user.firstName} {user.lastName}</h2>
+                <h2 className="text-xl md:text-2xl font-bold">{user.firstName} {user.lastName}</h2>
                 <div className="flex items-center gap-3 text-sm text-cyan-100">
                   <span className="flex items-center gap-1"><Mail size={14} /> {user.email}</span>
                   {user.phone && <span className="flex items-center gap-1"><Phone size={14} /> {user.phone}</span>}
@@ -114,7 +114,7 @@ export default function AdminUserDetail() {
           ].map((s) => (
             <div key={s.label} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
               <div className="inline-flex rounded-xl border border-gray-200 bg-gray-50 p-3"><s.icon className="h-5 w-5 text-gray-600" /></div>
-              <p className="mt-4 text-2xl font-bold text-gray-900">{s.value}</p>
+              <p className="mt-4 text-xl md:text-2xl font-bold text-gray-900">{s.value}</p>
               <p className="text-xs text-gray-500 mt-1">{s.label}</p>
             </div>
           ))}

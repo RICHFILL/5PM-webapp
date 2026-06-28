@@ -97,7 +97,7 @@ export default function AdminPropertyDetail() {
           </div>
           <Badge variant={property.status === "active" ? "success" : "default"} size="lg">{property.status || "active"}</Badge>
         </div>
-        <div className="grid grid-cols-4 gap-4 mt-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
           <div className="bg-slate-50 rounded-xl p-4">
             <p className="text-xs text-gray-500">Price/Unit</p>
             <p className="text-lg font-bold text-gray-900">{formatNaira(property.unitPrice)}</p>

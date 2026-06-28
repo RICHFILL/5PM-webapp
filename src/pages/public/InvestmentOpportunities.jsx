@@ -44,7 +44,7 @@ function InvestmentOpportunities() {
     <div>
       <section className="bg-gradient-to-br from-navy-900 via-navy-800 to-brand-700 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">Investment Opportunities</h1>
+          <h1 className="text-2xl md:text-5xl font-bold mb-6">Investment Opportunities</h1>
           <p className="text-xl text-gray-300 max-w-3xl">
             Explore our carefully curated range of asset-backed investment products designed to help you grow your wealth.
           </p>
@@ -61,7 +61,7 @@ function InvestmentOpportunities() {
                     <div className="w-12 h-12 bg-brand-50 rounded-xl flex items-center justify-center">
                       <product.icon className="text-brand-500" size={24} />
                     </div>
-                    <h2 className="text-2xl font-bold text-gray-900">{product.name}</h2>
+                    <h2 className="text-xl md:text-2xl font-bold text-gray-900">{product.name}</h2>
                   </div>
                   <p className="text-gray-600 mb-6">{product.description}</p>
                   <ul className="space-y-2 mb-6">
@@ -77,7 +77,7 @@ function InvestmentOpportunities() {
                   <div className="space-y-4">
                     <div>
                       <p className="text-sm text-gray-500">Target ROI</p>
-                      <p className="text-2xl font-bold text-brand-500">{product.roi}</p>
+                      <p className="text-xl md:text-2xl font-bold text-brand-500">{product.roi}</p>
                     </div>
                     <div>
                       <p className="text-sm text-gray-500">Minimum Investment</p>
@@ -100,7 +100,7 @@ function InvestmentOpportunities() {
 
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">Why Invest With Us</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-900 mb-12">Why Invest With Us</h2>
           <div className="grid md:grid-cols-3 gap-8">
             {benefits.map((b) => (
               <div key={b.title} className="bg-white rounded-2xl p-8 border border-gray-100">

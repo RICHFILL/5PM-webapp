@@ -98,7 +98,7 @@ export default function InvestmentDetail() {
       </button>
 
       <section className="rounded-3xl bg-gradient-to-r from-slate-900 via-slate-800 to-cyan-700 text-white overflow-hidden">
-        <div className="px-8 py-8 md:px-10 md:py-10">
+          <div className="p-4 md:p-8">
           <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
             <div className="space-y-5">
               <div className="flex items-center gap-3">
@@ -107,12 +107,12 @@ export default function InvestmentDetail() {
               </div>
               <div>
                 <p className="text-sm uppercase tracking-[0.25em] text-cyan-100">Investment Record</p>
-                <h2 className="mt-2 text-3xl font-bold capitalize md:text-4xl">{investment?.projectData?.projectName || investment?.project?.projectName || "--"}</h2>
+                <h2 className="mt-2 text-2xl md:text-3xl font-bold capitalize">{investment?.projectData?.projectName || investment?.project?.projectName || "--"}</h2>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4 rounded-2xl bg-white/10 p-5 backdrop-blur-sm sm:min-w-[320px]">
-              <div><p className="text-xs uppercase tracking-wide text-cyan-100">Interest Rate</p><p className="mt-2 text-2xl font-bold">{investment?.interestRatePerAnnum || 0}%</p></div>
-              <div><p className="text-xs uppercase tracking-wide text-cyan-100">Duration</p><p className="mt-2 text-2xl font-bold">{investment?.tenure || 0} mo</p></div>
+              <div><p className="text-xs uppercase tracking-wide text-cyan-100">Interest Rate</p><p className="mt-2 text-xl md:text-2xl font-bold">{investment?.interestRatePerAnnum || 0}%</p></div>
+              <div><p className="text-xs uppercase tracking-wide text-cyan-100">Duration</p><p className="mt-2 text-xl md:text-2xl font-bold">{investment?.tenure || 0} mo</p></div>
               <div><p className="text-xs uppercase tracking-wide text-cyan-100">Start</p><p className="mt-2 text-sm font-semibold">{formatDate(investment?.startDate)}</p></div>
               <div><p className="text-xs uppercase tracking-wide text-cyan-100">End</p><p className="mt-2 text-sm font-semibold">{formatDate(investment?.endDate)}</p></div>
             </div>
@@ -127,7 +127,7 @@ export default function InvestmentDetail() {
             <div key={card.label} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
               <div className="inline-flex rounded-xl border border-gray-200 bg-gray-50 p-3"><Icon className="h-5 w-5 text-gray-600" /></div>
               <p className="mt-4 text-sm text-gray-500">{card.label}</p>
-              <p className="mt-2 text-2xl font-bold text-gray-900">{card.value}</p>
+              <p className="mt-2 text-xl md:text-2xl font-bold text-gray-900">{card.value}</p>
             </div>
           );
         })}
@@ -140,23 +140,23 @@ export default function InvestmentDetail() {
         <div className="grid gap-4 border-b border-gray-100 px-6 py-6 md:grid-cols-3">
           <div className="rounded-2xl bg-slate-50 p-4">
             <p className="text-xs uppercase tracking-wide text-gray-500">Total Payments Recorded</p>
-            <p className="mt-2 text-2xl font-semibold text-gray-900">{formatCurrency(paymentTotals.totalPaymentAmountRecorded)}</p>
+            <p className="mt-2 text-xl md:text-2xl font-semibold text-gray-900">{formatCurrency(paymentTotals.totalPaymentAmountRecorded)}</p>
           </div>
           <div className="rounded-2xl bg-slate-50 p-4">
             <p className="text-xs uppercase tracking-wide text-gray-500">Total Due</p>
-            <p className="mt-2 text-2xl font-semibold text-gray-900">{formatCurrency(paymentTotals.investmentTotalDue)}</p>
+            <p className="mt-2 text-xl md:text-2xl font-semibold text-gray-900">{formatCurrency(paymentTotals.investmentTotalDue)}</p>
           </div>
           <div className="rounded-2xl bg-slate-50 p-4">
             <p className="text-xs uppercase tracking-wide text-gray-500">Balance Left</p>
-            <p className="mt-2 text-2xl font-semibold text-gray-900">{formatCurrency(paymentTotals.balanceLeft)}</p>
+            <p className="mt-2 text-xl md:text-2xl font-semibold text-gray-900">{formatCurrency(paymentTotals.balanceLeft)}</p>
           </div>
         </div>
         <div className="p-6">
           {paymentsLoading ? (
             <Skeleton.Table rows={3} />
           ) : payments.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="w-full">
+            <div className="overflow-x-auto -mx-6">
+              <table className="w-full min-w-[600px]">
                 <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Amount</th>

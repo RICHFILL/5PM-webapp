@@ -50,19 +50,19 @@ export default function WealthPlanDetail() {
       </button>
 
       <section className="rounded-3xl bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 text-white overflow-hidden">
-        <div className="px-8 py-8 md:px-10 md:py-10">
+        <div className="px-4 py-4 md:px-10 md:py-10">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <Badge variant={plan.status === "active" ? "success" : plan.status === "completed" ? "info" : "danger"}>{plan.status}</Badge>
               </div>
-              <h2 className="text-3xl font-bold">Salary Wealth Plan</h2>
+              <h2 className="text-2xl md:text-3xl font-bold">Salary Wealth Plan</h2>
               <p className="text-emerald-100">{plan.employerName ? `Employer: ${plan.employerName}` : "Self sponsored"}</p>
             </div>
             <div className="grid grid-cols-2 gap-4 rounded-2xl bg-white/10 p-5 backdrop-blur-sm min-w-[260px]">
-              <div><p className="text-xs uppercase tracking-wide text-emerald-100">Monthly</p><p className="mt-1 text-xl font-bold">{formatNaira(plan.monthlyContribution)}</p></div>
-              <div><p className="text-xs uppercase tracking-wide text-emerald-100">Contributed</p><p className="mt-1 text-xl font-bold">{formatNaira(plan.totalContributed)}</p></div>
-              <div><p className="text-xs uppercase tracking-wide text-emerald-100">Duration</p><p className="mt-1 text-xl font-bold">{plan.duration || "--"} mo</p></div>
+              <div><p className="text-xs uppercase tracking-wide text-emerald-100">Monthly</p><p className="mt-1 text-lg md:text-xl font-bold">{formatNaira(plan.monthlyContribution)}</p></div>
+              <div><p className="text-xs uppercase tracking-wide text-emerald-100">Contributed</p><p className="mt-1 text-lg md:text-xl font-bold">{formatNaira(plan.totalContributed)}</p></div>
+              <div><p className="text-xs uppercase tracking-wide text-emerald-100">Duration</p><p className="mt-1 text-lg md:text-xl font-bold">{plan.duration || "--"} mo</p></div>
               <div><p className="text-xs uppercase tracking-wide text-emerald-100">Started</p><p className="mt-1 text-sm font-semibold">{formatDate(plan.startDate)}</p></div>
             </div>
           </div>
@@ -82,8 +82,8 @@ export default function WealthPlanDetail() {
       <Card>
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Contribution History</h3>
         {contributions.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+          <div className="overflow-x-auto -mx-6">
+            <table className="w-full text-sm min-w-[500px]">
               <thead>
                 <tr className="border-b border-gray-100 text-xs text-gray-400 uppercase tracking-[0.18em]">
                   <th className="text-left pb-3 font-semibold">Amount</th>

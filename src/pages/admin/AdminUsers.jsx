@@ -37,14 +37,15 @@ export default function AdminUsers() {
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900">User Management ({users.length})</h1>
+      <h1 className="text-xl md:text-2xl font-bold text-gray-900">User Management ({users.length})</h1>
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
         <input type="text" placeholder="Search users..." value={search} onChange={(e) => setSearch(e.target.value)}
           className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none text-sm" />
       </div>
       <Card className="p-0 overflow-hidden">
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto -mx-6">
+        <table className="w-full min-w-[600px] text-sm">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Name</th>
@@ -75,6 +76,7 @@ export default function AdminUsers() {
             ))}
           </tbody>
         </table>
+        </div>
         {filtered.length === 0 && <p className="text-gray-500 text-center py-12">No users found.</p>}
       </Card>
     </div>

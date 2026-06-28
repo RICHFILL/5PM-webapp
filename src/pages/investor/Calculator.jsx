@@ -27,13 +27,13 @@ function Calculator() {
   return (
     <div className="p-4 md:p-8 max-w-4xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Investment Calculator</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Investment Calculator</h1>
         <p className="text-gray-600">Calculate your potential returns on investments</p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-8">
         <Card>
-          <h3 className="text-xl font-semibold text-gray-900 mb-6">Input Parameters</h3>
+          <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-6">Input Parameters</h3>
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">Principal Amount (NGN)</label>
@@ -70,14 +70,14 @@ function Calculator() {
         </Card>
 
         <Card>
-          <h3 className="text-xl font-semibold text-gray-900 mb-6">Calculation Results</h3>
+          <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-6">Calculation Results</h3>
           {result ? (
             <div className="space-y-4">
               <div className="bg-gradient-to-br from-teal-50 to-blue-50 rounded-lg p-6 border border-brand-500">
                 <p className="text-gray-600 text-sm mb-2">Total Return</p>
-                <p className="text-4xl font-bold text-brand-500">{formatCurrency(result.totalReturn)}</p>
+                <p className="text-2xl md:text-4xl font-bold text-brand-500">{formatCurrency(result.totalReturn)}</p>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="bg-gray-50 rounded-lg p-4"><p className="text-gray-600 text-xs mb-1 uppercase tracking-wider">Investment</p><p className="font-bold text-lg text-gray-900">{formatCurrency(result.totalInvestment)}</p></div>
                 <div className="bg-gray-50 rounded-lg p-4"><p className="text-gray-600 text-xs mb-1 uppercase tracking-wider">Final Amount</p><p className="font-bold text-lg text-gray-900">{formatCurrency(result.finalAmount)}</p></div>
                 <div className="bg-gray-50 rounded-lg p-4"><p className="text-gray-600 text-xs mb-1 uppercase tracking-wider">Monthly Return</p><p className="font-bold text-lg text-gray-900">{formatCurrency(result.monthlyReturn)}</p></div>

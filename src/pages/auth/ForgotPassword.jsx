@@ -47,7 +47,7 @@ function ForgotPassword() {
         <ArrowLeft size={20} />
         <span className="text-sm font-medium">Back to Login</span>
       </Link>
-      <h2 className="text-2xl font-bold text-gray-900 mb-2">Reset Password</h2>
+      <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">Reset Password</h2>
       <p className="text-gray-600 mb-6">
         {step === 1 ? "Enter your email to receive reset instructions" : "Enter your reset token and new password"}
       </p>

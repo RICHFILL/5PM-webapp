@@ -58,7 +58,7 @@ export default function CreateWealthPlan() {
       </button>
 
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Create Wealth Plan</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Create Wealth Plan</h1>
         <p className="text-gray-600">Set up a structured monthly savings plan</p>
       </div>
 

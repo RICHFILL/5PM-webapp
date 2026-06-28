@@ -55,9 +55,9 @@ export default function Loans() {
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
-      <div className="bg-gradient-to-br from-green-600 to-green-800 rounded-2xl p-8 text-white flex items-center justify-between">
+      <div className="bg-gradient-to-br from-green-600 to-green-800 rounded-2xl p-4 md:p-8 text-white flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Asset-Backed Loans</h1>
+          <h1 className="text-2xl md:text-3xl font-bold mb-2">Asset-Backed Loans</h1>
           <p className="text-green-200">Access credit backed by your investment portfolio</p>
         </div>
         <Button onClick={() => setShowModal(true)} variant="secondary" size="sm"><Plus size={16} /> Apply for Loan</Button>
@@ -104,7 +104,7 @@ export default function Loans() {
       <Modal isOpen={showModal} onClose={() => { setShowModal(false); setForm(defaultForm); }} title="Apply for Loan" size="md">
         <div className="space-y-4">
           <Input label="Loan Amount (₦)" type="number" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} placeholder="e.g. 500000" />
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input label="Term (months)" type="number" value={form.term} onChange={(e) => setForm({ ...form, term: e.target.value })} placeholder="e.g. 12" />
             <Input label="Interest Rate (%)" type="number" value={form.interestRate} onChange={(e) => setForm({ ...form, interestRate: e.target.value })} placeholder="e.g. 10" />
           </div>

@@ -32,7 +32,7 @@ export default function WealthPlans() {
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Salary Wealth Plans</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Salary Wealth Plans</h1>
           <p className="text-gray-600">Build wealth through consistent monthly contributions</p>
         </div>
         <Button onClick={() => navigate("/wealth-plans/create")}><Plus size={16} /> New Plan</Button>
@@ -63,7 +63,7 @@ export default function WealthPlans() {
                 </div>
                 <Badge variant={plan.status === "active" ? "success" : plan.status === "completed" ? "info" : "danger"}>{plan.status}</Badge>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                 <div>
                   <p className="text-xs text-gray-500 mb-1">Monthly Contribution</p>
                   <p className="font-semibold text-gray-900">{formatNaira(plan.monthlyContribution)}</p>

@@ -72,8 +72,9 @@ export default function AdminDistributions() {
         <input type="text" placeholder="Search by reference or user..." value={search} onChange={(e) => setSearch(e.target.value)}
           className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none text-sm" />
       </div>
-      <Card className="p-0 overflow-hidden">
-        <table className="w-full text-sm">
+      <div className="overflow-x-auto -mx-6">
+        <Card className="p-0">
+          <table className="w-full text-sm min-w-[600px]">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">User</th>
@@ -99,6 +100,7 @@ export default function AdminDistributions() {
         </table>
         {filtered.length === 0 && <p className="text-gray-500 text-center py-12">No distributions found.</p>}
       </Card>
+      </div>
 
       <Modal isOpen={showCreate} onClose={() => { setShowCreate(false); setForm({ investmentId: "", amount: "", type: "monthly" }); }} title="New Distribution" size="md">
         <div className="space-y-4">

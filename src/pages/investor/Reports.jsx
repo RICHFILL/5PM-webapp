@@ -68,7 +68,7 @@ export default function Reports() {
     return (
       <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
         <Skeleton className="h-8 w-48" />
-        <div className="grid md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Skeleton.Card /><Skeleton.Card /><Skeleton.Card />
         </div>
         <Skeleton.Card />
@@ -80,7 +80,7 @@ export default function Reports() {
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Reports</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Reports</h1>
           <p className="text-gray-600">Investment performance and analytics</p>
         </div>
         <Button onClick={handleExport} variant="outline"><Download size={16} /> Export CSV</Button>
@@ -101,15 +101,15 @@ export default function Reports() {
       <div className="grid md:grid-cols-3 gap-4">
         <div className="bg-gradient-to-br from-brand-500 to-brand-700 rounded-xl p-5 text-white">
           <p className="text-sm text-cyan-100 mb-1">Total Invested</p>
-          <p className="text-2xl font-bold">{formatNaira(totalInvested)}</p>
+          <p className="text-xl md:text-2xl font-bold">{formatNaira(totalInvested)}</p>
         </div>
         <div className="bg-white rounded-xl border border-gray-100 p-5">
           <div className="flex items-center gap-2 text-xs text-gray-500 mb-1"><TrendingUp size={14} className="text-green-500" />Total Returns</div>
-          <p className="text-2xl font-bold text-gray-900">{formatNaira(totalReturns)}</p>
+          <p className="text-xl md:text-2xl font-bold text-gray-900">{formatNaira(totalReturns)}</p>
         </div>
         <div className="bg-white rounded-xl border border-gray-100 p-5">
           <div className="flex items-center gap-2 text-xs text-gray-500 mb-1"><PiggyBank size={14} className="text-brand-500" />Active Investments</div>
-          <p className="text-2xl font-bold text-gray-900">{activeCount}</p>
+          <p className="text-xl md:text-2xl font-bold text-gray-900">{activeCount}</p>
         </div>
       </div>
 
@@ -128,7 +128,7 @@ export default function Reports() {
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Investment Details</h3>
         {investments.length > 0 ? (
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full min-w-[600px] text-sm">
               <thead>
                 <tr className="border-b border-gray-100 text-xs text-gray-400 uppercase tracking-[0.18em]">
                   <th className="text-left pb-3 font-semibold">Ref #</th>

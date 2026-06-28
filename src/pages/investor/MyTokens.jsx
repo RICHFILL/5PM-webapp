@@ -36,8 +36,8 @@ export default function MyTokens() {
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
-      <div className="bg-gradient-to-br from-amber-600 to-amber-800 rounded-2xl p-8 text-white">
-        <h1 className="text-3xl font-bold mb-2">Digital Asset Tokens</h1>
+      <div className="bg-gradient-to-br from-amber-600 to-amber-800 rounded-2xl p-4 md:p-8 text-white">
+        <h1 className="text-2xl md:text-3xl font-bold mb-2">Digital Asset Tokens</h1>
         <p className="text-amber-200">Your tokenized real estate holdings with digital ownership certificates</p>
       </div>
 
@@ -54,7 +54,7 @@ export default function MyTokens() {
                   <p className="text-xs text-gray-500">{token.propertyData?.title || "Property Token"}</p>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-3 mb-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
                 <div className="bg-slate-50 rounded-lg p-3">
                   <p className="text-xs text-gray-500">Units</p>
                   <p className="text-lg font-bold text-gray-900">{token.units}</p>
