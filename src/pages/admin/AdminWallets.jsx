@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { Search, Wallet, DollarSign, ArrowUpRight, ArrowDownLeft, AlertCircle } from "lucide-react";
+import { Search, Wallet, DollarSign, AlertCircle } from "lucide-react";
 import { adminApi } from "../../services/api";
-import { Card, Skeleton, Badge, Input, Button } from "../../components/common";
+import { Card, Skeleton, Badge, Pagination } from "../../components/common";
 import toast from "react-hot-toast";
 
 const formatNaira = (amount) => "₦" + (amount || 0).toLocaleString("en-NG");
@@ -12,13 +12,19 @@ export default function AdminWallets() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({ total: 0, pages: 0 });
 
   const fetch = async () => {
     setLoading(true);
     setError("");
     try {
-      const data = await adminApi.getWallets();
+      const params = { page, limit: 20 };
+      if (search) params.search = search;
+      const data = await adminApi.getWallets(params);
       setWallets(Array.isArray(data) ? data : data?.data ?? data?.wallets ?? []);
+      const pg = data?.pagination;
+      if (pg) setPagination({ total: pg.total, pages: pg.pages });
     } catch (err) {
       setWallets([]);
       setError(err?.response?.data?.message || err.message || "Failed to load wallets");
@@ -26,14 +32,7 @@ export default function AdminWallets() {
     } finally { setLoading(false); }
   };
 
-  useEffect(() => { fetch(); }, []);
-
-  const filtered = wallets.filter((w) => {
-    const q = search.toLowerCase();
-    return (w.user?.firstName || "").toLowerCase().includes(q)
-      || (w.user?.lastName || "").toLowerCase().includes(q)
-      || (w.user?.email || "").toLowerCase().includes(q);
-  });
+  useEffect(() => { fetch(); }, [page]);
 
   const totalBalance = wallets.reduce((sum, w) => sum + (w.balance || 0), 0);
 
@@ -91,6 +90,7 @@ export default function AdminWallets() {
         </div>
         {filtered.length === 0 && <p className="text-gray-500 text-center py-12">No wallets found.</p>}
       </Card>
+      <Pagination page={page} pages={pagination.pages} total={pagination.total} onPageChange={setPage} />
     </div>
   );
 }

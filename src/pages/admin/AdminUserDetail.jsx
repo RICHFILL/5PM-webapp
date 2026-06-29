@@ -45,6 +45,9 @@ export default function AdminUserDetail() {
     setSaving(true);
     try {
       await adminApi.updateUser(id, editForm);
+      if (editForm.role !== user?.role) {
+        await adminApi.assignUserRole(id, editForm.role);
+      }
       setShowEdit(false);
       fetchUser();
     } catch (err) {

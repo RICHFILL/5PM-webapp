@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, Mail, Phone, Shield, AlertCircle } from "lucide-react";
 import { adminApi } from "../../services/api";
-import { Card, Skeleton, Badge, Input, Button } from "../../components/common";
+import { Card, Skeleton, Badge, Pagination } from "../../components/common";
 import toast from "react-hot-toast";
 
 const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }) : "--";
@@ -13,13 +13,19 @@ export default function AdminUsers() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [error, setError] = useState("");
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({ total: 0, pages: 0 });
 
   const fetch = async () => {
     setLoading(true);
     setError("");
     try {
-      const data = await adminApi.getUsers();
+      const params = { page, limit: 20 };
+      if (search) params.search = search;
+      const data = await adminApi.getUsers(params);
       setUsers(Array.isArray(data) ? data : data?.data ?? data?.users ?? []);
+      const pg = data?.pagination;
+      if (pg) setPagination({ total: pg.total, pages: pg.pages });
     } catch (err) {
       setUsers([]);
       setError(err?.response?.data?.message || err.message || "Failed to load users");
@@ -27,14 +33,7 @@ export default function AdminUsers() {
     } finally { setLoading(false); }
   };
 
-  useEffect(() => { fetch(); }, []);
-
-  const filtered = users.filter((u) => {
-    const q = search.toLowerCase();
-    return (u.firstName || "").toLowerCase().includes(q)
-      || (u.lastName || "").toLowerCase().includes(q)
-      || (u.email || "").toLowerCase().includes(q);
-  });
+  useEffect(() => { fetch(); }, [page]);
 
   if (loading) {
     return <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-4 md:space-y-6"><Skeleton className="h-8 w-48" /><Skeleton.Table rows={8} /></div>;
@@ -91,6 +90,7 @@ export default function AdminUsers() {
         </div>
         {filtered.length === 0 && <p className="text-gray-500 text-center py-12">No users found.</p>}
       </Card>
+      <Pagination page={page} pages={pagination.pages} total={pagination.total} onPageChange={setPage} />
     </div>
   );
 }

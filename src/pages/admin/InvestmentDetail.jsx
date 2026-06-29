@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, CalendarDays, CircleDollarSign, FileText, TrendingUp } from "lucide-react";
+import { ArrowLeft, CalendarDays, CircleDollarSign, FileText, TrendingUp, Plus } from "lucide-react";
 import { adminApi, investmentApi } from "../../services/api";
-import { Card, Skeleton, Badge } from "../../components/common";
+import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
 import toast from "react-hot-toast";
 
 export default function InvestmentDetail() {
@@ -13,6 +13,9 @@ export default function InvestmentDetail() {
   const [payments, setPayments] = useState([]);
   const [paymentsLoading, setPaymentsLoading] = useState(true);
   const [paymentTotals, setPaymentTotals] = useState({ totalPaymentAmountRecorded: 0, investmentTotalDue: 0, balanceLeft: 0 });
+  const [showRecordPayment, setShowRecordPayment] = useState(false);
+  const [paymentForm, setPaymentForm] = useState({ amount: "", paymentDate: "", dueDate: "" });
+  const [savingPayment, setSavingPayment] = useState(false);
 
   const fetchInvestment = useCallback(async () => {
     try {
@@ -53,6 +56,24 @@ export default function InvestmentDetail() {
       default: return "default";
     }
   };
+  const handleRecordPayment = async () => {
+    if (!paymentForm.amount) return;
+    setSavingPayment(true);
+    try {
+      await adminApi.recordInvestmentPayment(id, {
+        amount: parseFloat(paymentForm.amount),
+        paymentDate: paymentForm.paymentDate || undefined,
+        dueDate: paymentForm.dueDate || undefined,
+      });
+      setShowRecordPayment(false);
+      setPaymentForm({ amount: "", paymentDate: "", dueDate: "" });
+      toast.success("Payment recorded");
+      fetchInvestmentPayments();
+    } catch {
+      toast.error("Failed to record payment");
+    } finally { setSavingPayment(false); }
+  };
+
   const getPaymentBadge = (status) => {
     switch ((status || "").toLowerCase()) {
       case "verified": return "success";
@@ -137,8 +158,9 @@ export default function InvestmentDetail() {
       </section>
 
       <section className="rounded-2xl border border-gray-200 bg-white shadow-sm">
-        <div className="border-b border-gray-100 px-6 py-5">
+        <div className="border-b border-gray-100 px-6 py-5 flex items-center justify-between">
           <h3 className="text-lg font-semibold text-gray-900">Payment Records</h3>
+          <Button size="sm" onClick={() => setShowRecordPayment(true)}><Plus size={16} /> Record Payment</Button>
         </div>
         <div className="grid gap-4 border-b border-gray-100 px-6 py-6 md:grid-cols-3">
           <div className="rounded-2xl bg-slate-50 p-4">
@@ -183,6 +205,20 @@ export default function InvestmentDetail() {
           ) : <p className="text-gray-500 text-center py-12">No payment records found.</p>}
         </div>
       </section>
+
+      <Modal isOpen={showRecordPayment} onClose={() => { setShowRecordPayment(false); setPaymentForm({ amount: "", paymentDate: "", dueDate: "" }); }} title="Record Payment" size="sm">
+        <div className="space-y-4">
+          <Input label="Amount (₦)" type="number" value={paymentForm.amount} onChange={(e) => setPaymentForm({ ...paymentForm, amount: e.target.value })} placeholder="e.g. 50000" />
+          <Input label="Payment Date" type="date" value={paymentForm.paymentDate} onChange={(e) => setPaymentForm({ ...paymentForm, paymentDate: e.target.value })} />
+          <Input label="Due Date" type="date" value={paymentForm.dueDate} onChange={(e) => setPaymentForm({ ...paymentForm, dueDate: e.target.value })} />
+          <div className="flex gap-3 justify-end pt-2">
+            <Button variant="outline" onClick={() => { setShowRecordPayment(false); setPaymentForm({ amount: "", paymentDate: "", dueDate: "" }); }}>Cancel</Button>
+            <Button onClick={handleRecordPayment} disabled={savingPayment || !paymentForm.amount}>
+              {savingPayment ? "Recording..." : "Record Payment"}
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

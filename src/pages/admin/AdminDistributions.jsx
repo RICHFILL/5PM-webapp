@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { Search, Gift, Plus, CheckCircle, XCircle, Clock, ChevronDown } from "lucide-react";
+import { Search, Gift, Plus, CheckCircle, XCircle, Clock, ChevronDown, Loader } from "lucide-react";
 import { adminApi } from "../../services/api";
-import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
+import { Card, Skeleton, Badge, Button, Modal, Input, Pagination } from "../../components/common";
 import toast from "react-hot-toast";
 
 const formatNaira = (amount) => "₦" + (amount || 0).toLocaleString("en-NG");
@@ -26,16 +26,22 @@ export default function AdminDistributions() {
   const [saving, setSaving] = useState(false);
   const [investSearch, setInvestSearch] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({ total: 0, pages: 0 });
 
   const fetch = async () => {
     try {
-      const data = await adminApi.getDistributions();
+      const data = await adminApi.getDistributions({ page, limit: 20 });
       setDistributions(Array.isArray(data) ? data : data?.data ?? data?.distributions ?? []);
+      const pg = data?.pagination;
+      if (pg) setPagination({ total: pg.total, pages: pg.pages });
     } catch (err) {
       setDistributions([]);
       toast.error("Failed to load distributions");
     } finally { setLoading(false); }
   };
+
+  useEffect(() => { fetch(); }, [page]);
 
   const fetchInvestments = async () => {
     try {
@@ -44,7 +50,7 @@ export default function AdminDistributions() {
     } catch { /* ignore */ }
   };
 
-  useEffect(() => { fetch(); }, []);
+
 
   const selectedInvest = investments.find((i) => (i.id || i._id) === form.investmentId);
 
@@ -64,6 +70,22 @@ export default function AdminDistributions() {
       toast.error(err?.response?.data?.message || "Failed to create distribution");
     }
     finally { setSaving(false); }
+  };
+
+  const handleApprove = async (id) => {
+    try {
+      await adminApi.approveDistribution(id);
+      toast.success("Distribution approved");
+      fetch();
+    } catch { toast.error("Failed to approve distribution"); }
+  };
+
+  const handlePay = async (id) => {
+    try {
+      await adminApi.payDistribution(id);
+      toast.success("Distribution paid");
+      fetch();
+    } catch { toast.error("Failed to pay distribution"); }
   };
 
   const filtered = distributions.filter((d) => {
@@ -97,8 +119,9 @@ export default function AdminDistributions() {
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Investment</th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Amount</th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Type</th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Created</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Created</th>
+                <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
@@ -110,6 +133,18 @@ export default function AdminDistributions() {
                 <td className="px-6 py-4"><Badge variant={d.type === "monthly" ? "info" : "default"}>{d.type || "monthly"}</Badge></td>
                 <td className="px-6 py-4"><Badge variant={statusVariant(d.status)}>{d.status || "pending"}</Badge></td>
                 <td className="px-6 py-4 text-gray-500">{formatDate(d.createdAt)}</td>
+                <td className="px-6 py-4 text-right">
+                  {d.status === "pending" && (
+                    <Button size="sm" onClick={() => handleApprove(d.id || d._id)}>
+                      <CheckCircle size={14} /> Approve
+                    </Button>
+                  )}
+                  {d.status === "approved" && (
+                    <Button size="sm" variant="secondary" onClick={() => handlePay(d.id || d._id)}>
+                      <Loader size={14} /> Pay
+                    </Button>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -117,6 +152,7 @@ export default function AdminDistributions() {
         {filtered.length === 0 && <p className="text-gray-500 text-center py-12">No distributions found.</p>}
       </Card>
       </div>
+      <Pagination page={page} pages={pagination.pages} total={pagination.total} onPageChange={setPage} />
 
       <Modal isOpen={showCreate} onClose={() => { setShowCreate(false); setForm({ investmentId: "", amount: "", type: "monthly" }); }} title="New Distribution" size="md">
         <div className="space-y-4">

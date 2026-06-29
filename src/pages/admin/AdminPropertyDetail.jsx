@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Home, Plus, Trash2, FileText, Image, Construction, Calendar } from "lucide-react";
+import { ArrowLeft, Home, Plus, Trash2, Pencil, FileText, Image, Construction, Calendar } from "lucide-react";
 import { adminApi, propertyUpdateApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
 import toast from "react-hot-toast";
@@ -27,6 +27,7 @@ export default function AdminPropertyDetail() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState(defaultForm);
+  const [editingUpdate, setEditingUpdate] = useState(null);
   const [saving, setSaving] = useState(false);
 
   const fetch = async () => {
@@ -60,13 +61,26 @@ export default function AdminPropertyDetail() {
     if (!form.title) return;
     setSaving(true);
     try {
-      await propertyUpdateApi.createUpdate(id, form);
+      if (editingUpdate) {
+        await propertyUpdateApi.updateUpdate(id, editingUpdate.id, form);
+        toast.success("Update edited");
+      } else {
+        await propertyUpdateApi.createUpdate(id, form);
+        toast.success("Update created");
+      }
       setShowModal(false);
+      setEditingUpdate(null);
       setForm(defaultForm);
       fetchUpdates();
     } catch {
-      toast.error("Failed to create update");
+      toast.error(editingUpdate ? "Failed to edit update" : "Failed to create update");
     } finally { setSaving(false); }
+  };
+
+  const handleEdit = (update) => {
+    setEditingUpdate(update);
+    setForm({ title: update.title, description: update.description || "", updateType: update.updateType || "general" });
+    setShowModal(true);
   };
 
   const handleDelete = async (updateId) => {
@@ -152,6 +166,9 @@ export default function AdminPropertyDetail() {
                   </div>
                   <div className="flex items-center gap-2">
                     <Badge variant={u.updateType === "construction" ? "info" : "default"} size="sm">{u.updateType}</Badge>
+                    <button onClick={() => handleEdit(u)} className="p-1.5 text-gray-400 hover:text-brand-500 transition-colors">
+                      <Pencil size={14} />
+                    </button>
                     <button onClick={() => handleDelete(u.id)} className="p-1.5 text-gray-400 hover:text-red-500 transition-colors">
                       <Trash2 size={14} />
                     </button>
@@ -165,7 +182,7 @@ export default function AdminPropertyDetail() {
         <Card><p className="text-center text-gray-500 py-12">No updates yet. Add the first update.</p></Card>
       )}
 
-      <Modal isOpen={showModal} onClose={() => { setShowModal(false); setForm(defaultForm); }} title="Add Property Update" size="md">
+      <Modal isOpen={showModal} onClose={() => { setShowModal(false); setForm(defaultForm); setEditingUpdate(null); }} title={editingUpdate ? "Edit Property Update" : "Add Property Update"} size="md">
         <div className="space-y-4">
           <Input label="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Update title" />
           <div>
@@ -185,9 +202,9 @@ export default function AdminPropertyDetail() {
               className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none resize-none" placeholder="Update details..." />
           </div>
           <div className="flex gap-3 justify-end pt-2">
-            <Button variant="outline" onClick={() => { setShowModal(false); setForm(defaultForm); }}>Cancel</Button>
+            <Button variant="outline" onClick={() => { setShowModal(false); setForm(defaultForm); setEditingUpdate(null); }}>Cancel</Button>
             <Button onClick={handleSave} disabled={saving || !form.title}>
-              {saving ? "Adding..." : "Add Update"}
+              {saving ? "Saving..." : editingUpdate ? "Save Changes" : "Add Update"}
             </Button>
           </div>
         </div>

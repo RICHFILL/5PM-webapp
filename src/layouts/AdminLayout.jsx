@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -22,8 +22,12 @@ import {
   Banknote,
   Award,
   Brain,
+  Landmark,
+  ArrowUpDown,
+  ClipboardList,
 } from 'lucide-react';
 import useAuthStore from '../store/authStore';
+import { notificationApi } from '../services/api';
 import EmailVerificationModal from '../components/EmailVerificationModal';
 
 const adminMenuItems = [
@@ -40,6 +44,9 @@ const adminMenuItems = [
   { label: 'Loans', icon: Banknote, path: '/admin/loans' },
   { label: 'REIT Pools', icon: Building2, path: '/admin/reit' },
   { label: 'Token Registry', icon: Award, path: '/admin/tokens' },
+  { label: 'Deposits', icon: Landmark, path: '/admin/deposits' },
+  { label: 'Withdrawals', icon: ArrowUpDown, path: '/admin/withdrawals' },
+  { label: 'Audit Logs', icon: ClipboardList, path: '/admin/audit-logs' },
   { label: 'Support', icon: MessageSquare, path: '/admin/support' },
   { label: 'Reports', icon: FileBarChart, path: '/admin/reports' },
 ];
@@ -48,12 +55,44 @@ function AdminLayout({ children }) {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [verifyModalOpen, setVerifyModalOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [showNotifDropdown, setShowNotifDropdown] = useState(false);
+  const notifRef = useRef(null);
   const { user, logout } = useAuthStore();
 
   const isActive = (path) => location.pathname === path;
   const initials = user
     ? `${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`.toUpperCase()
     : 'U';
+
+  useEffect(() => {
+    const fetchNotifs = async () => {
+      try {
+        const res = await notificationApi.getNotifications();
+        setNotifications(Array.isArray(res) ? res : res?.data ?? []);
+      } catch { /* silent */ }
+    };
+    fetchNotifs();
+    const interval = setInterval(fetchNotifs, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const handleClick = (e) => {
+      if (notifRef.current && !notifRef.current.contains(e.target)) setShowNotifDropdown(false);
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
+  const unreadCount = notifications.filter((n) => !n.read).length;
+
+  const handleMarkRead = async (id) => {
+    try {
+      await notificationApi.markAsRead(id);
+      setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
+    } catch { /* silent */ }
+  };
 
   const needsVerification = user && !user.isVerified && !(
     location.pathname.startsWith('/verify-email') ||
@@ -143,10 +182,28 @@ function AdminLayout({ children }) {
             <Menu size={24} />
           </button>
           <div className="flex-1" />
-          <div className="flex items-center gap-4">
-            <button className="relative p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+          <div className="flex items-center gap-4 relative" ref={notifRef}>
+            <button onClick={() => setShowNotifDropdown(!showNotifDropdown)} className="relative p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
               <Bell size={20} />
+              {unreadCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+              )}
             </button>
+            {showNotifDropdown && (
+              <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-200 z-50 max-h-96 overflow-y-auto">
+                <div className="p-3 border-b border-gray-100">
+                  <p className="text-sm font-semibold text-gray-900">Notifications</p>
+                </div>
+                {notifications.length > 0 ? notifications.slice(0, 10).map((n) => (
+                  <div key={n.id} className={`p-3 border-b border-gray-50 hover:bg-gray-50 cursor-pointer ${n.read ? '' : 'bg-brand-50/50'}`} onClick={() => handleMarkRead(n.id)}>
+                    <p className="text-sm font-medium text-gray-900">{n.title}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">{n.message}</p>
+                  </div>
+                )) : <p className="text-sm text-gray-400 text-center py-6">No notifications yet.</p>}
+              </div>
+            )}
           </div>
         </header>
         <main className="flex-1 overflow-y-auto">{children}</main>

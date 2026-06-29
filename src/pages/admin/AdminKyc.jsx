@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Shield, CheckCircle, XCircle, Clock, Search, ExternalLink, AlertCircle } from "lucide-react";
 import { adminApi } from "../../services/api";
-import { Card, Skeleton, Badge, Button, Modal } from "../../components/common";
+import { Card, Skeleton, Badge, Button, Modal, Pagination } from "../../components/common";
 import toast from "react-hot-toast";
 
 const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }) : "--";
@@ -23,13 +23,17 @@ export default function AdminKyc() {
   const [selected, setSelected] = useState(null);
   const [rejectionNote, setRejectionNote] = useState("");
   const [confirmReject, setConfirmReject] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({ total: 0, pages: 0 });
 
   const fetchData = async () => {
     setLoading(true);
     setError("");
     try {
-      const data = await adminApi.getKycRequests();
+      const data = await adminApi.getKycRequests({ page, limit: 20 });
       setRequests(Array.isArray(data) ? data : data?.data ?? data?.kyc ?? []);
+      const pg = data?.pagination;
+      if (pg) setPagination({ total: pg.total, pages: pg.pages });
     } catch (err) {
       setRequests([]);
       setError(err?.response?.data?.message || err.message || "Failed to load KYC requests");
@@ -37,7 +41,7 @@ export default function AdminKyc() {
     } finally { setLoading(false); }
   };
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => { fetchData(); }, [page]);
 
   const handleReview = async (status) => {
     if (!selected) return;
@@ -114,6 +118,7 @@ export default function AdminKyc() {
         </div>
         {filtered.length === 0 && <p className="text-gray-500 text-center py-12">No KYC requests found.</p>}
       </Card>
+      <Pagination page={page} pages={pagination.pages} total={pagination.total} onPageChange={setPage} />
 
       <Modal isOpen={!!selected} onClose={() => { setSelected(null); setRejectionNote(""); setConfirmReject(false); }} title="Review KYC Request" size="lg">
         {selected && (

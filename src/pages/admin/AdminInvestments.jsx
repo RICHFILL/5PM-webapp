@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, TrendingUp, CircleDollarSign, CalendarDays, AlertCircle } from "lucide-react";
 import { adminApi } from "../../services/api";
-import { Card, Skeleton, Badge, Button } from "../../components/common";
+import { Card, Skeleton, Badge, Pagination } from "../../components/common";
 import toast from "react-hot-toast";
 
 const formatNaira = (amount) => "₦" + (amount || 0).toLocaleString("en-NG");
@@ -24,13 +24,17 @@ export default function AdminInvestments() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({ total: 0, pages: 0 });
 
   const fetch = async () => {
     setLoading(true);
     setError("");
     try {
-      const data = await adminApi.getInvestments();
+      const data = await adminApi.getInvestments({ page, limit: 20 });
       setInvestments(Array.isArray(data) ? data : data?.data ?? data?.investments ?? []);
+      const pg = data?.pagination;
+      if (pg) setPagination({ total: pg.total, pages: pg.pages });
     } catch (err) {
       setInvestments([]);
       setError(err?.response?.data?.message || err.message || "Failed to load investments");
@@ -38,7 +42,7 @@ export default function AdminInvestments() {
     } finally { setLoading(false); }
   };
 
-  useEffect(() => { fetch(); }, []);
+  useEffect(() => { fetch(); }, [page]);
 
   const filtered = investments.filter((inv) => {
     const q = search.toLowerCase();
@@ -98,6 +102,7 @@ export default function AdminInvestments() {
         </div>
         {filtered.length === 0 && <p className="text-gray-500 text-center py-12">No investments found.</p>}
       </Card>
+      <Pagination page={page} pages={pagination.pages} total={pagination.total} onPageChange={setPage} />
     </div>
   );
 }

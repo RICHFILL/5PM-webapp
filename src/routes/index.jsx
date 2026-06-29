@@ -80,6 +80,9 @@ const AdminPropertyDetail = lazy(() => import('../pages/admin/AdminPropertyDetai
 const AdminLoans = lazy(() => import('../pages/admin/AdminLoans'));
 const AdminReit = lazy(() => import('../pages/admin/AdminReit'));
 const AdminTokens = lazy(() => import('../pages/admin/AdminTokens'));
+const AdminDeposits = lazy(() => import('../pages/admin/AdminDeposits'));
+const AdminWithdrawals = lazy(() => import('../pages/admin/AdminWithdrawals'));
+const AdminAuditLogs = lazy(() => import('../pages/admin/AdminAuditLogs'));
 const InvestmentDetail = lazy(() => import('../pages/admin/InvestmentDetail'));
 
 function Loading() {
@@ -245,6 +248,9 @@ function AppRoutes() {
         <Route path="/admin/loans" element={<AdminRoute><AdminLoans /></AdminRoute>} />
         <Route path="/admin/reit" element={<AdminRoute><AdminReit /></AdminRoute>} />
         <Route path="/admin/tokens" element={<AdminRoute><AdminTokens /></AdminRoute>} />
+        <Route path="/admin/deposits" element={<AdminRoute><AdminDeposits /></AdminRoute>} />
+        <Route path="/admin/withdrawals" element={<AdminRoute><AdminWithdrawals /></AdminRoute>} />
+        <Route path="/admin/audit-logs" element={<AdminRoute><AdminAuditLogs /></AdminRoute>} />
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to={isAuthenticated ? '/dashboard' : '/'} replace />} />

@@ -114,35 +114,49 @@ export const propertyApi = {
 
 // --- Admin ---
 export const adminApi = {
-  getDashboard: () => api.get('/admin/dashboard').then(r => {
-    const d = r.data;
-    const stats = d?.data?.stats || d;
-    return {
-      totalUsers: stats?.totalInvestors || stats?.totalUsers || 0,
-      activeInvestments: stats?.activeInvestments || 0,
-      totalInvested: stats?.totalInvestmentValue || stats?.totalInvested || 0,
-      pendingKyc: stats?.pendingKYCReviews || stats?.pendingKyc || 0,
-    };
-  }),
-  getUsers: () => api.get('/admin/users').then(r => r.data),
+  getDashboard: () => api.get('/admin/dashboard').then(r => r.data),
+  getDashboardAnalytics: (params) => {
+    const q = new URLSearchParams(params).toString();
+    return api.get(`/admin/dashboard/analytics?${q}`).then(r => r.data);
+  },
+  getUsers: (params) => {
+    const q = new URLSearchParams(params).toString();
+    return api.get(`/admin/users?${q}`).then(r => r.data);
+  },
   getUserDetail: (id) => api.get(`/admin/users/${id}`).then(r => r.data),
   updateUser: (id, data) => api.put(`/admin/users/${id}`, data).then(r => r.data),
+  assignUserRole: (id, role) => api.patch(`/admin/users/${id}/role`, { role }).then(r => r.data),
   deleteUser: (id) => api.delete(`/admin/users/${id}`).then(r => r.data),
-  getKycRequests: () => api.get('/admin/kyc').then(r => r.data),
+  getKycRequests: (params) => {
+    const q = new URLSearchParams(params).toString();
+    return api.get(`/admin/kyc?${q}`).then(r => r.data);
+  },
   reviewKyc: (id, status, note) => {
     if (status === 'approved') return api.patch(`/admin/kyc/${id}/approve`).then(r => r.data);
     if (status === 'rejected') return api.patch(`/admin/kyc/${id}/reject`, { comment: note }).then(r => r.data);
     return api.patch(`/admin/kyc/${id}/approve`).then(r => r.data);
   },
-  getWallets: () => api.get('/admin/wallets').then(r => r.data),
+  getWallets: (params) => {
+    const q = new URLSearchParams(params).toString();
+    return api.get(`/admin/wallets?${q}`).then(r => r.data);
+  },
   getProperties: () => api.get('/properties').then(r => r.data),
   createProperty: (data) => api.post('/properties', data).then(r => r.data),
   updateProperty: (id, data) => api.patch(`/properties/${id}`, data).then(r => r.data),
-  getDistributions: () => api.get('/admin/distributions').then(r => r.data),
+  getDistributions: (params) => {
+    const q = new URLSearchParams(params).toString();
+    return api.get(`/admin/distributions?${q}`).then(r => r.data);
+  },
   createDistribution: (data) => api.post('/admin/distributions', data).then(r => r.data),
-  getInvestments: () => api.get('/admin/investments').then(r => r.data),
+  approveDistribution: (id) => api.patch(`/admin/distributions/${id}/approve`).then(r => r.data),
+  payDistribution: (id) => api.post(`/admin/distributions/${id}/pay`).then(r => r.data),
+  getInvestments: (params) => {
+    const q = new URLSearchParams(params).toString();
+    return api.get(`/admin/investments?${q}`).then(r => r.data);
+  },
   getInvestmentDetail: (id) => api.get(`/admin/investments/${id}`).then(r => r.data),
-  getPropertyDetail: (id) => api.get(`/admin/properties/${id}`).then(r => r.data),
+  recordInvestmentPayment: (id, data) => api.post(`/admin/investments/${id}/payments`, data).then(r => r.data),
+  getPropertyDetail: (id) => api.get(`/admin/projects/${id}`).then(r => r.data),
   getReports: () => api.get('/admin/reports').then(r => r.data),
 };
 
@@ -183,6 +197,33 @@ export const adminTokenApi = {
   getAllTokens: () => api.get('/admin/tokens').then(r => r.data),
 };
 
+export const adminDepositApi = {
+  getAll: (params) => {
+    const q = new URLSearchParams(params).toString();
+    return api.get(`/admin/deposits?${q}`).then(r => r.data);
+  },
+  approve: (id) => api.patch(`/admin/deposits/${id}/approve`).then(r => r.data),
+  reject: (id, reason) => api.patch(`/admin/deposits/${id}/reject`, { reason }).then(r => r.data),
+};
+
+export const adminWithdrawalApi = {
+  getAll: (params) => {
+    const q = new URLSearchParams(params).toString();
+    return api.get(`/admin/withdrawals?${q}`).then(r => r.data);
+  },
+  approve: (id) => api.patch(`/admin/withdrawals/${id}/approve`).then(r => r.data),
+  reject: (id, notes) => api.patch(`/admin/withdrawals/${id}/reject`, { notes }).then(r => r.data),
+  markProcessing: (id) => api.patch(`/admin/withdrawals/${id}/process`).then(r => r.data),
+  markCompleted: (id) => api.patch(`/admin/withdrawals/${id}/complete`).then(r => r.data),
+};
+
+export const adminAuditApi = {
+  getAll: (params) => {
+    const q = new URLSearchParams(params).toString();
+    return api.get(`/audit-logs?${q}`).then(r => r.data);
+  },
+};
+
 export const adminWealthApi = {
   getAllPlans: () => api.get('/wealth-plans/admin/all').then(r => r.data),
   recordContribution: (id, data) => api.post(`/wealth-plans/${id}/contribute`, data).then(r => r.data),
@@ -211,6 +252,7 @@ export const adminCampaignApi = {
 export const propertyUpdateApi = {
   getUpdates: (propertyId) => api.get(`/property-updates/${propertyId}`).then(r => r.data),
   createUpdate: (propertyId, data) => api.post(`/property-updates/${propertyId}`, data).then(r => r.data),
+  updateUpdate: (propertyId, id, data) => api.put(`/property-updates/${propertyId}/${id}`, data).then(r => r.data),
   deleteUpdate: (propertyId, id) => api.delete(`/property-updates/${propertyId}/${id}`).then(r => r.data),
 };
 
