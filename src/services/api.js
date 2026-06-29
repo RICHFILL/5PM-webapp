@@ -200,7 +200,7 @@ export const depositApi = {
   createDeposit: (amount, currency = 'NGN', reference = '') => api.post('/deposits', { amount, currency, reference }).then(r => r.data),
   getMyDeposits: (params) => {
     const q = new URLSearchParams(params).toString();
-    return api.get(/deposits?).then(r => r.data);
+    return api.get(`/deposits?`).then(r => r.data);
   },
 };
 
