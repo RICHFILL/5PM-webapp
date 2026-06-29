@@ -38,6 +38,7 @@ export default api;
 // --- Auth ---
 export const authApi = {
   login: (email, password) => api.post('/auth/login', { email, password }).then(r => r.data),
+  adminLogin: (email, password) => api.post('/admin/auth/login-admin', { email, password }).then(r => r.data),
   register: (email, password, firstName, lastName) =>
     api.post('/auth/register', { email, password, firstName, lastName }).then(r => r.data),
   forgotPassword: (email) => api.post('/auth/forgot-password', { email }).then(r => r.data),

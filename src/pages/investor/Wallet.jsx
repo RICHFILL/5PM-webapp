@@ -63,39 +63,38 @@ function DepositModal({ isOpen, onClose, onDepositComplete }) {
           </div>
           <Input label={`Amount (${currency})`} type="number" value={amount} onChange={(e) => setAmount(e.target.value)}
             placeholder="e.g., 100000" required min="1000" />
-          <div className="bg-brand-50 border border-brand-200 rounded-xl p-4 text-sm text-brand-800 space-y-2">
-            <p className="font-semibold mb-1">Bank Transfer Details</p>
-            <div className="flex items-center justify-between">
-              <span>Bank: First Bank of Nigeria</span>
-              <button type="button" onClick={() => copyToClipboard("First Bank of Nigeria", "bank")}
-                className="text-brand-600 hover:text-brand-800 p-1">{copied === "bank" ? <CheckCircle2 size={14} /> : <Copy size={14} />}</button>
-            </div>
-            <div className="flex items-center justify-between">
-              <span>Account: 1234567890</span>
-              <button type="button" onClick={() => copyToClipboard("1234567890", "account")}
-                className="text-brand-600 hover:text-brand-800 p-1">{copied === "account" ? <CheckCircle2 size={14} /> : <Copy size={14} />}</button>
-            </div>
-            <div className="flex items-center justify-between">
-              <span>Name: 5PM Nexus Invest Ltd</span>
-              <button type="button" onClick={() => copyToClipboard("5PM Nexus Invest Ltd", "name")}
-                className="text-brand-600 hover:text-brand-800 p-1">{copied === "name" ? <CheckCircle2 size={14} /> : <Copy size={14} />}</button>
-            </div>
-          </div>
-          {currency === "USDT" && (
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm text-blue-800 space-y-2">
-              <p className="font-semibold mb-1">USDT Wallet Address</p>
-              <div className="flex items-center justify-between">
-                <span className="font-mono text-xs break-all">0x742d35Cc6634C0532925a3b844Bc9e7595f2bD18</span>
-                <button type="button" onClick={() => copyToClipboard("0x742d35Cc6634C0532925a3b844Bc9e7595f2bD18", "usdt")}
-                  className="text-blue-600 hover:text-blue-800 p-1">{copied === "usdt" ? <CheckCircle2 size={14} /> : <Copy size={14} />}</button>
+          {currency === "NGN" ? (
+            <>
+              <div className="bg-brand-50 border border-brand-200 rounded-xl p-4 text-sm text-brand-800 space-y-2">
+                <p className="font-semibold mb-1">Bank Transfer Details</p>
+                <div className="flex items-center justify-between">
+                  <span>Bank: FCMB</span>
+                  <button type="button" onClick={() => copyToClipboard("FCMB", "bank")}
+                    className="text-brand-600 hover:text-brand-800 p-1">{copied === "bank" ? <CheckCircle2 size={14} /> : <Copy size={14} />}</button>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Account: 1003799718</span>
+                  <button type="button" onClick={() => copyToClipboard("1003799718", "account")}
+                    className="text-brand-600 hover:text-brand-800 p-1">{copied === "account" ? <CheckCircle2 size={14} /> : <Copy size={14} />}</button>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Name: 5PM NEXUS INVEST LIMITED</span>
+                  <button type="button" onClick={() => copyToClipboard("5PM NEXUS INVEST LIMITED", "name")}
+                    className="text-brand-600 hover:text-brand-800 p-1">{copied === "name" ? <CheckCircle2 size={14} /> : <Copy size={14} />}</button>
+                </div>
               </div>
+              <p className="text-xs text-gray-500">After transfer, your wallet will be credited once the payment is confirmed.</p>
+              {error && <p className="text-sm text-red-600">{error}</p>}
+              <Button type="submit" className="w-full" disabled={loading || !amount}>
+                {loading ? "Processing..." : `Deposit ${cur?.format(Number(amount) || 0)}`}
+              </Button>
+            </>
+          ) : (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 text-center">
+              <p className="text-sm font-semibold text-yellow-800">Coming Soon</p>
+              <p className="text-xs text-yellow-600 mt-1">{currency} deposits are not available yet.</p>
             </div>
           )}
-          <p className="text-xs text-gray-500">After transfer, your wallet will be credited once the payment is confirmed.</p>
-          {error && <p className="text-sm text-red-600">{error}</p>}
-          <Button type="submit" className="w-full" disabled={loading || !amount}>
-            {loading ? "Processing..." : `Deposit ${cur?.format(Number(amount) || 0)}`}
-          </Button>
         </form>
       ) : (
         <div className="text-center space-y-4 py-4">

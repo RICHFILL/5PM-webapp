@@ -15,6 +15,7 @@ const PrivacyPolicy = lazy(() => import('../pages/public/PrivacyPolicy'));
 
 // Auth pages
 const Login = lazy(() => import('../pages/auth/Login'));
+const AdminLogin = lazy(() => import('../pages/auth/AdminLogin'));
 const Register = lazy(() => import('../pages/auth/Register'));
 const ForgotPassword = lazy(() => import('../pages/auth/ForgotPassword'));
 const ResetPassword = lazy(() => import('../pages/auth/ResetPassword'));
@@ -102,7 +103,7 @@ function ProtectedRoute({ children, requiredRole }) {
 
 function AdminRoute({ children }) {
   const { isAuthenticated, user } = useAuthStore();
-  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  if (!isAuthenticated) return <Navigate to="/admin/login" replace />;
   if (user?.role !== 'admin') return <Navigate to="/dashboard" replace />;
   return <AdminLayout>{children}</AdminLayout>;
 }
@@ -130,6 +131,16 @@ function AppRoutes() {
             isAuthenticated ? <Navigate to={user?.role === 'admin' ? '/admin' : '/dashboard'} replace /> : (
               <AuthLayout>
                 <Login />
+              </AuthLayout>
+            )
+          }
+        />
+        <Route
+          path="/admin/login"
+          element={
+            isAuthenticated ? <Navigate to={user?.role === 'admin' ? '/admin' : '/dashboard'} replace /> : (
+              <AuthLayout>
+                <AdminLogin />
               </AuthLayout>
             )
           }
