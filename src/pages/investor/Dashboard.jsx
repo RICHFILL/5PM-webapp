@@ -24,7 +24,7 @@ function Dashboard() {
     if (!userId) { setPayments([]); setPaymentsLoading(false); return; }
     try {
       setPaymentsLoading(true);
-      const paymentsData = await userApi.getPayments(userId);
+      const paymentsData = await userApi.getUserPayments(userId);
       setPayments(Array.isArray(paymentsData) ? paymentsData : paymentsData?.data ?? []);
       setPaymentTotals({
         totalPaymentAmountRecorded: paymentsData?.totals?.totalPaymentAmountRecorded ?? 0,
@@ -310,3 +310,4 @@ function Dashboard() {
 }
 
 export default Dashboard;
+

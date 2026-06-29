@@ -56,7 +56,6 @@ export const userApi = {
   updateProfile: (data) => api.put('/users/profile', data).then(r => r.data),
   changePassword: (currentPassword, newPassword) =>
     api.post('/users/change-password', { currentPassword, newPassword }).then(r => r.data),
-  getPayments: (userId) => api.get(`/users/${userId}/payments`).then(r => r.data),
   getUserById: (id) => api.get(`/users/profile/${id}`).then(r => r.data),
   getUserStats: (id) => api.get(`/users/${id}/stats`).then(r => r.data),
   getUserPayments: (id) => api.get(`/users/${id}/payments`).then(r => r.data),
@@ -197,6 +196,14 @@ export const adminTokenApi = {
   getAllTokens: () => api.get('/admin/tokens').then(r => r.data),
 };
 
+export const depositApi = {
+  createDeposit: (amount, currency = 'NGN', reference = '') => api.post('/deposits', { amount, currency, reference }).then(r => r.data),
+  getMyDeposits: (params) => {
+    const q = new URLSearchParams(params).toString();
+    return api.get(/deposits?).then(r => r.data);
+  },
+};
+
 export const adminDepositApi = {
   getAll: (params) => {
     const q = new URLSearchParams(params).toString();
@@ -299,3 +306,6 @@ export const analyticsApi = {
   getInsights: () => api.get('/analytics/insights').then(r => r.data),
   getAdminAnalytics: () => api.get('/analytics/admin').then(r => r.data),
 };
+
+
+

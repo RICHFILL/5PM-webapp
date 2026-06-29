@@ -145,13 +145,13 @@ function AdminLayout({ children }) {
         </nav>
 
         <div className="p-4 border-t border-navy-700 space-y-3">
-          {/* <Link
-            to="/dashboard"
+          <Link
+            to="/"
             className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-white/5 hover:text-white transition-colors text-sm"
           >
             <ArrowLeft size={18} />
-            <span>Back to App</span>
-          </Link> */}
+            <span>Back to Home</span>
+          </Link>
           <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-white/5">
             <div className="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center text-white font-bold text-xs">
               {initials}
@@ -208,17 +208,6 @@ function AdminLayout({ children }) {
         </header>
         <main className="flex-1 overflow-y-auto">{children}</main>
       </div>
-
-      {/* {needsVerification && (
-        <div className="fixed bottom-4 right-4 z-40">
-          <button onClick={() => setVerifyModalOpen(true)} className="flex items-center gap-2 bg-brand-500 text-white px-4 py-3 rounded-xl shadow-lg hover:bg-brand-600 transition-colors text-sm font-medium">
-            <Mail size={18} />
-            Verify Email
-          </button>
-        </div>
-      )} */}
-
-      {/* <EmailVerificationModal isOpen={verifyModalOpen} onClose={() => setVerifyModalOpen(false)} /> */}
     </div>
   );
 }

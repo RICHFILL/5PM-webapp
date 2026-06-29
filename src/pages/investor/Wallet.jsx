@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { ArrowUpRight, ArrowDownLeft, Filter, CheckCircle2, Copy } from "lucide-react";
-import { dashboardApi, userApi, walletApi } from "../../services/api";
+import { dashboardApi, userApi, walletApi, depositApi } from "../../services/api";
 import useAuthStore from "../../store/authStore";
 import useWalletStore from "../../store/walletStore";
 import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
@@ -21,21 +21,29 @@ const FILTERS = [
   { label: "Returns", value: "return" },
 ];
 
+const DEPOSIT_ADDRESSES = {
+  NGN: { bank: "FCMB", account: "1003799718", name: "5PM NEXUS INVEST LIMITED" },
+  USD: { bank: "5pm Nexus", account: "2000914506", name: "5PM NEXUS INVEST LIMITED" },
+  USDT: { network: "TRC20", address: "TBz5yvdhA5isuWQKUAQqsEy4vNpBP5U85S" },
+};
+
 function DepositModal({ isOpen, onClose, onDepositComplete }) {
   const [amount, setAmount] = useState("");
   const [currency, setCurrency] = useState("NGN");
+  const [reference, setReference] = useState("");
   const [step, setStep] = useState("form");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState("");
 
   const cur = CURRENCIES.find((c) => c.value === currency);
+  const addr = DEPOSIT_ADDRESSES[currency];
 
   const handleDeposit = async (e) => {
     e.preventDefault();
     setLoading(true); setError("");
     try {
-      await walletApi.fundWallet(Number(amount), currency);
+      await depositApi.createDeposit(Number(amount), currency, reference);
       setStep("confirmation");
     } catch (err) {
       setError(err?.response?.data?.message || err.message || "Deposit failed");
@@ -48,7 +56,7 @@ function DepositModal({ isOpen, onClose, onDepositComplete }) {
     setTimeout(() => setCopied(""), 2000);
   };
 
-  const reset = () => { onClose(); setStep("form"); setAmount(""); setCurrency("NGN"); setError(""); };
+  const reset = () => { onClose(); setStep("form"); setAmount(""); setCurrency("NGN"); setReference(""); setError(""); };
 
   return (
     <Modal isOpen={isOpen} onClose={reset} title={step === "form" ? "Fund Wallet" : "Deposit Request Submitted"} size="md">
@@ -63,38 +71,70 @@ function DepositModal({ isOpen, onClose, onDepositComplete }) {
           </div>
           <Input label={`Amount (${currency})`} type="number" value={amount} onChange={(e) => setAmount(e.target.value)}
             placeholder="e.g., 100000" required min="1000" />
-          {currency === "NGN" ? (
-            <>
-              <div className="bg-brand-50 border border-brand-200 rounded-xl p-4 text-sm text-brand-800 space-y-2">
-                <p className="font-semibold mb-1">Bank Transfer Details</p>
-                <div className="flex items-center justify-between">
-                  <span>Bank: FCMB</span>
-                  <button type="button" onClick={() => copyToClipboard("FCMB", "bank")}
-                    className="text-brand-600 hover:text-brand-800 p-1">{copied === "bank" ? <CheckCircle2 size={14} /> : <Copy size={14} />}</button>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span>Account: 1003799718</span>
-                  <button type="button" onClick={() => copyToClipboard("1003799718", "account")}
-                    className="text-brand-600 hover:text-brand-800 p-1">{copied === "account" ? <CheckCircle2 size={14} /> : <Copy size={14} />}</button>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span>Name: 5PM NEXUS INVEST LIMITED</span>
-                  <button type="button" onClick={() => copyToClipboard("5PM NEXUS INVEST LIMITED", "name")}
-                    className="text-brand-600 hover:text-brand-800 p-1">{copied === "name" ? <CheckCircle2 size={14} /> : <Copy size={14} />}</button>
-                </div>
+
+          {currency === "NGN" && (
+            <div className="bg-brand-50 border border-brand-200 rounded-xl p-4 text-sm text-brand-800 space-y-2">
+              <p className="font-semibold mb-1">Bank Transfer Details</p>
+              <div className="flex items-center justify-between">
+                <span>Bank: {addr.bank}</span>
+                <button type="button" onClick={() => copyToClipboard(addr.bank, "bank")}
+                  className="text-brand-600 hover:text-brand-800 p-1">{copied === "bank" ? <CheckCircle2 size={14} /> : <Copy size={14} />}</button>
               </div>
-              <p className="text-xs text-gray-500">After transfer, your wallet will be credited once the payment is confirmed.</p>
-              {error && <p className="text-sm text-red-600">{error}</p>}
-              <Button type="submit" className="w-full" disabled={loading || !amount}>
-                {loading ? "Processing..." : `Deposit ${cur?.format(Number(amount) || 0)}`}
-              </Button>
-            </>
-          ) : (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 text-center">
-              <p className="text-sm font-semibold text-yellow-800">Coming Soon</p>
-              <p className="text-xs text-yellow-600 mt-1">{currency} deposits are not available yet.</p>
+              <div className="flex items-center justify-between">
+                <span>Account: {addr.account}</span>
+                <button type="button" onClick={() => copyToClipboard(addr.account, "account")}
+                  className="text-brand-600 hover:text-brand-800 p-1">{copied === "account" ? <CheckCircle2 size={14} /> : <Copy size={14} />}</button>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>Name: {addr.name}</span>
+                <button type="button" onClick={() => copyToClipboard(addr.name, "name")}
+                  className="text-brand-600 hover:text-brand-800 p-1">{copied === "name" ? <CheckCircle2 size={14} /> : <Copy size={14} />}</button>
+              </div>
             </div>
           )}
+
+          {currency === "USD" && (
+            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm text-blue-800 space-y-2">
+              <p className="font-semibold mb-1">USD Account Details</p>
+              <div className="flex items-center justify-between">
+                <span>Account Name: {addr.name}</span>
+                <button type="button" onClick={() => copyToClipboard(addr.name, "name")}
+                  className="text-blue-600 hover:text-blue-800 p-1">{copied === "name" ? <CheckCircle2 size={14} /> : <Copy size={14} />}</button>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>Account Number: {addr.account}</span>
+                <button type="button" onClick={() => copyToClipboard(addr.account, "account")}
+                  className="text-blue-600 hover:text-blue-800 p-1">{copied === "account" ? <CheckCircle2 size={14} /> : <Copy size={14} />}</button>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>Bank: {addr.bank}</span>
+                <button type="button" onClick={() => copyToClipboard(addr.bank, "bank")}
+                  className="text-blue-600 hover:text-blue-800 p-1">{copied === "bank" ? <CheckCircle2 size={14} /> : <Copy size={14} />}</button>
+              </div>
+            </div>
+          )}
+
+          {currency === "USDT" && (
+            <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-sm text-emerald-800 space-y-2">
+              <p className="font-semibold mb-1">USDT Wallet (TRC20)</p>
+              <div className="flex items-center justify-between break-all">
+                <span className="font-mono text-xs">{addr.address}</span>
+                <button type="button" onClick={() => copyToClipboard(addr.address, "usdt")}
+                  className="text-emerald-600 hover:text-emerald-800 p-1 shrink-0">{copied === "usdt" ? <CheckCircle2 size={14} /> : <Copy size={14} />}</button>
+              </div>
+              <p className="text-xs text-emerald-600 mt-1">Send only USDT on TRC20 network to this address.</p>
+            </div>
+          )}
+
+          <Input label="Transaction Reference (Optional)" value={reference}
+            onChange={(e) => setReference(e.target.value)}
+            placeholder="Enter payment reference or transaction ID" />
+
+          <p className="text-xs text-gray-500">After making the transfer, submit this request. Your wallet will be credited once the payment is confirmed by admin.</p>
+          {error && <p className="text-sm text-red-600">{error}</p>}
+          <Button type="submit" className="w-full" disabled={loading || !amount}>
+            {loading ? "Submitting..." : `Submit Deposit Request`}
+          </Button>
         </form>
       ) : (
         <div className="text-center space-y-4 py-4">
@@ -102,7 +142,11 @@ function DepositModal({ isOpen, onClose, onDepositComplete }) {
             <CheckCircle2 className="text-green-600" size={32} />
           </div>
           <h3 className="text-lg font-semibold text-gray-900">Deposit Request Submitted</h3>
-          <p className="text-sm text-gray-600">Transfer {cur?.format(Number(amount))} using the details above. Your wallet will be credited once confirmed.</p>
+          <p className="text-sm text-gray-600">
+            Your request to deposit {cur?.format(Number(amount))} has been submitted.
+            Please send the funds using the details shown above and include your reference.
+            Your wallet will be credited once the payment is confirmed by admin.
+          </p>
           <Button onClick={() => { reset(); onDepositComplete?.(); }} variant="secondary">Done</Button>
         </div>
       )}
@@ -231,7 +275,7 @@ export default function Wallet() {
     if (!userId) { setPayments([]); setPaymentsLoading(false); return; }
     try {
       setPaymentsLoading(true);
-      const paymentsData = await userApi.getPayments(userId);
+      const paymentsData = await userApi.getUserPayments(userId);
       setPayments(Array.isArray(paymentsData) ? paymentsData : paymentsData?.data ?? []);
       setPaymentTotals({
         totalPaymentAmountRecorded: paymentsData?.totals?.totalPaymentAmountRecorded ?? 0,
@@ -386,3 +430,5 @@ export default function Wallet() {
     </div>
   );
 }
+
+

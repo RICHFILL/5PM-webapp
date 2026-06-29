@@ -1,14 +1,21 @@
 import { useState } from "react";
 import { Mail, Phone, MapPin, Clock, Send } from "lucide-react";
 import { Button, Input } from "../../components/common";
+import api from "../../services/api";
 
 function ContactUs() {
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    try {
+      await api.post("/contact", form);
+      setSubmitted(true);
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to send message");
+    }
   };
 
   return (
@@ -59,20 +66,23 @@ function ContactUs() {
                   <p className="text-gray-600">Thank you for reaching out. We will get back to you within 24 hours.</p>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <Input label="Full Name" value={form.name} onChange={(e) => setForm({...form, name: e.target.value})} required placeholder="John Doe" />
-                  <Input label="Email Address" type="email" value={form.email} onChange={(e) => setForm({...form, email: e.target.value})} required placeholder="john@example.com" />
-                  <Input label="Subject" value={form.subject} onChange={(e) => setForm({...form, subject: e.target.value})} required placeholder="How can we help?" />
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Message</label>
-                    <textarea value={form.message} onChange={(e) => setForm({...form, message: e.target.value})} required rows={5}
-                      className="block w-full rounded-xl border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
-                      placeholder="Tell us more about your inquiry..." />
-                  </div>
-                  <Button type="submit" className="w-full">
-                    <Send size={16} /> Send Message
-                  </Button>
-                </form>
+                <>
+                  {error && (<div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">{error}</div>)}
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <Input label="Full Name" value={form.name} onChange={(e) => setForm({...form, name: e.target.value})} required placeholder="John Doe" />
+                    <Input label="Email Address" type="email" value={form.email} onChange={(e) => setForm({...form, email: e.target.value})} required placeholder="john@example.com" />
+                    <Input label="Subject" value={form.subject} onChange={(e) => setForm({...form, subject: e.target.value})} required placeholder="How can we help?" />
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1.5">Message</label>
+                      <textarea value={form.message} onChange={(e) => setForm({...form, message: e.target.value})} required rows={5}
+                        className="block w-full rounded-xl border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
+                        placeholder="Tell us more about your inquiry..." />
+                    </div>
+                    <Button type="submit" className="w-full">
+                      <Send size={16} /> Send Message
+                    </Button>
+                  </form>
+                </>
               )}
             </div>
           </div>
@@ -83,3 +93,5 @@ function ContactUs() {
 }
 
 export default ContactUs;
+
+

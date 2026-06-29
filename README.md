@@ -1,3 +1,30 @@
+# 5PM Nexus Invest - Frontend
+
+## Quick Start
+
+### Prerequisites
+- Node.js 18+
+- npm
+
+### Setup
+```bash
+# 1. Install dependencies
+npm install
+
+# 2. Create environment file
+cp .env.example .env
+# Edit .env to set VITE_API_URL (default: http://localhost:5056/api/v1)
+
+# 3. Start development server
+npm run dev
+
+# 4. Build for production
+npm run build
+```
+
+The frontend will be available at `http://localhost:5173`.
+
+---
 # 5PM Nexus Invest - Frontend Development Scope & Requirements
 
 ## Project Overview
