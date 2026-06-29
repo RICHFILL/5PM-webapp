@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Mail, Phone, Shield, CalendarDays, TrendingUp, DollarSign, Activity } from "lucide-react";
+import { ArrowLeft, Mail, Phone, CalendarDays, TrendingUp, DollarSign, Activity } from "lucide-react";
 import { adminApi, userApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Input, Modal } from "../../components/common";
+import toast from "react-hot-toast";
 
 const formatNaira = (amount) => "₦" + (amount || 0).toLocaleString("en-NG");
 const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-NG", { day: "numeric", month: "long", year: "numeric" }) : "--";
@@ -27,6 +28,7 @@ export default function AdminUserDetail() {
       setEditForm({ firstName: u.firstName || "", lastName: u.lastName || "", phone: u.phone || "", role: u.role || "investor" });
     } catch (err) {
       setUser(null);
+      toast.error("Failed to load user details");
     } finally { setLoading(false); }
   }, [id]);
 
@@ -45,7 +47,9 @@ export default function AdminUserDetail() {
       await adminApi.updateUser(id, editForm);
       setShowEdit(false);
       fetchUser();
-    } catch (err) { /* silent */ }
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to update user");
+    }
     finally { setSaving(false); }
   };
 
@@ -66,8 +70,8 @@ export default function AdminUserDetail() {
   if (!user) {
     return (
       <div className="p-4 md:p-8 max-w-7xl mx-auto">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6">
-          <ArrowLeft className="w-4 h-4" /><span className="text-sm font-medium">Back</span>
+        <button onClick={() => navigate("/admin/users")} className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6">
+          <ArrowLeft className="w-4 h-4" /><span className="text-sm font-medium">Back to Users</span>
         </button>
         <Card><p className="text-lg font-semibold text-gray-900">User not found</p></Card>
       </div>
@@ -76,8 +80,8 @@ export default function AdminUserDetail() {
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
-      <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-gray-600 hover:text-gray-900">
-        <ArrowLeft className="w-4 h-4" /><span className="text-sm font-medium">Back</span>
+      <button onClick={() => navigate("/admin/users")} className="flex items-center gap-2 text-gray-600 hover:text-gray-900">
+        <ArrowLeft className="w-4 h-4" /><span className="text-sm font-medium">Back to Users</span>
       </button>
 
       <section className="rounded-3xl bg-gradient-to-r from-slate-900 via-slate-800 to-cyan-700 text-white overflow-hidden">
@@ -141,6 +145,20 @@ export default function AdminUserDetail() {
           ))}
         </div>
       </Card>
+
+      <section className="flex justify-end">
+        <Button variant="danger" size="sm" onClick={async () => {
+          if (window.confirm(`Delete user ${user.firstName} ${user.lastName}? This cannot be undone.`)) {
+            try {
+              await adminApi.deleteUser(id);
+              toast.success("User deleted");
+              navigate("/admin/users");
+            } catch (err) {
+              toast.error(err?.response?.data?.message || "Failed to delete user");
+            }
+          }
+        }}>Delete User</Button>
+      </section>
 
       <Modal isOpen={showEdit} onClose={() => setShowEdit(false)} title="Edit User" size="md">
         <div className="space-y-4">

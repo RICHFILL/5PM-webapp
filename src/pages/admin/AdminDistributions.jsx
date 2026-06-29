@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Search, Gift, Plus, CheckCircle, XCircle, Clock } from "lucide-react";
+import { Search, Gift, Plus, CheckCircle, XCircle, Clock, ChevronDown } from "lucide-react";
 import { adminApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
+import toast from "react-hot-toast";
 
 const formatNaira = (amount) => "₦" + (amount || 0).toLocaleString("en-NG");
 const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }) : "--";
@@ -17,11 +18,14 @@ const statusVariant = (status) => {
 
 export default function AdminDistributions() {
   const [distributions, setDistributions] = useState([]);
+  const [investments, setInvestments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [showCreate, setShowCreate] = useState(false);
   const [form, setForm] = useState({ investmentId: "", amount: "", type: "monthly" });
   const [saving, setSaving] = useState(false);
+  const [investSearch, setInvestSearch] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const fetch = async () => {
     try {
@@ -29,10 +33,20 @@ export default function AdminDistributions() {
       setDistributions(Array.isArray(data) ? data : data?.data ?? data?.distributions ?? []);
     } catch (err) {
       setDistributions([]);
+      toast.error("Failed to load distributions");
     } finally { setLoading(false); }
   };
 
+  const fetchInvestments = async () => {
+    try {
+      const data = await adminApi.getInvestments();
+      setInvestments(Array.isArray(data) ? data : data?.data ?? []);
+    } catch { /* ignore */ }
+  };
+
   useEffect(() => { fetch(); }, []);
+
+  const selectedInvest = investments.find((i) => (i.id || i._id) === form.investmentId);
 
   const handleCreate = async () => {
     if (!form.investmentId || !form.amount) return;
@@ -46,7 +60,9 @@ export default function AdminDistributions() {
       setShowCreate(false);
       setForm({ investmentId: "", amount: "", type: "monthly" });
       fetch();
-    } catch (err) { /* silent */ }
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to create distribution");
+    }
     finally { setSaving(false); }
   };
 
@@ -104,7 +120,36 @@ export default function AdminDistributions() {
 
       <Modal isOpen={showCreate} onClose={() => { setShowCreate(false); setForm({ investmentId: "", amount: "", type: "monthly" }); }} title="New Distribution" size="md">
         <div className="space-y-4">
-          <Input label="Investment ID" value={form.investmentId} onChange={(e) => setForm({ ...form, investmentId: e.target.value })} placeholder="Investment UUID" />
+          <div className="relative">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Investment</label>
+            <button type="button" onClick={() => { fetchInvestments(); setShowDropdown(!showDropdown); setInvestSearch(""); }}
+              className="w-full flex items-center justify-between rounded-xl border border-gray-300 px-4 py-2.5 text-sm text-left focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
+              <span className={selectedInvest ? "text-gray-900" : "text-gray-400"}>
+                {selectedInvest ? `${selectedInvest.refNumber || "--"} - ${selectedInvest.investor?.firstName || selectedInvest.user?.firstName || ""} ${selectedInvest.investor?.lastName || selectedInvest.user?.lastName || ""}` : "Select an investment..."}
+              </span>
+              <ChevronDown size={16} className="text-gray-400" />
+            </button>
+            {showDropdown && (
+              <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                <div className="p-2 border-b border-gray-100">
+                  <input type="text" value={investSearch} onChange={(e) => setInvestSearch(e.target.value)} placeholder="Search by ref or name..."
+                    className="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-brand-500" autoFocus />
+                </div>
+                {investments.filter((i) => {
+                  const q = investSearch.toLowerCase();
+                  return (i.refNumber || "").toLowerCase().includes(q)
+                    || (i.investor?.firstName || i.user?.firstName || "").toLowerCase().includes(q)
+                    || (i.investor?.lastName || i.user?.lastName || "").toLowerCase().includes(q);
+                }).map((i) => (
+                  <button key={i.id || i._id} type="button" onClick={() => { setForm({ ...form, investmentId: i.id || i._id }); setShowDropdown(false); }}
+                    className={`w-full text-left px-4 py-2.5 text-sm hover:bg-brand-50 transition-colors ${form.investmentId === (i.id || i._id) ? "bg-brand-50 font-semibold" : ""}`}>
+                    <span className="text-gray-900">{i.refNumber || "--"}</span>
+                    <span className="text-gray-500 ml-2">{(i.investor?.firstName || i.user?.firstName || "")} {(i.investor?.lastName || i.user?.lastName || "")}</span>
+                  </button>
+                )) || <p className="text-center text-gray-400 py-4 text-sm">No investments found.</p>}
+              </div>
+            )}
+          </div>
           <Input label="Amount (₦)" type="number" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} placeholder="e.g. 50000" />
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>

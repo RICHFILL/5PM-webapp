@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, CalendarDays, CircleDollarSign, FileText, TrendingUp } from "lucide-react";
-import { investmentApi } from "../../services/api";
+import { adminApi, investmentApi } from "../../services/api";
 import { Card, Skeleton, Badge } from "../../components/common";
+import toast from "react-hot-toast";
 
 export default function InvestmentDetail() {
   const { id } = useParams();
@@ -16,10 +17,11 @@ export default function InvestmentDetail() {
   const fetchInvestment = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await investmentApi.getInvestmentDetails(id);
+      const response = await adminApi.getInvestmentDetail(id);
       setInvestment(response?.data || response);
     } catch (error) {
-      console.error("Error fetching investment:", error);
+      setInvestment(null);
+      toast.error("Failed to load investment details");
     } finally { setLoading(false); }
   }, [id]);
 
@@ -36,6 +38,7 @@ export default function InvestmentDetail() {
       });
     } catch (error) {
       setPayments([]);
+      toast.error("Failed to load payment records");
     } finally { setPaymentsLoading(false); }
   }, [id]);
 
@@ -74,8 +77,8 @@ export default function InvestmentDetail() {
   if (!investment) {
     return (
       <div className="p-4 md:p-8 max-w-7xl mx-auto">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6">
-          <ArrowLeft className="w-4 h-4" /><span className="text-sm font-medium">Back</span>
+        <button onClick={() => navigate("/admin/investments")} className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6">
+          <ArrowLeft className="w-4 h-4" /><span className="text-sm font-medium">Back to Investments</span>
         </button>
         <Card><p className="text-lg font-semibold text-gray-900">Investment not found</p></Card>
       </div>
@@ -93,8 +96,8 @@ export default function InvestmentDetail() {
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
-      <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-gray-600 hover:text-gray-900">
-        <ArrowLeft className="w-4 h-4" /><span className="text-sm font-medium">Back</span>
+      <button onClick={() => navigate("/admin/investments")} className="flex items-center gap-2 text-gray-600 hover:text-gray-900">
+        <ArrowLeft className="w-4 h-4" /><span className="text-sm font-medium">Back to Investments</span>
       </button>
 
       <section className="rounded-3xl bg-gradient-to-r from-slate-900 via-slate-800 to-cyan-700 text-white overflow-hidden">

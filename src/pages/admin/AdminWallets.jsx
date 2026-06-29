@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Search, Wallet, DollarSign, ArrowUpRight, ArrowDownLeft } from "lucide-react";
+import { Search, Wallet, DollarSign, ArrowUpRight, ArrowDownLeft, AlertCircle } from "lucide-react";
 import { adminApi } from "../../services/api";
-import { Card, Skeleton, Badge, Input } from "../../components/common";
+import { Card, Skeleton, Badge, Input, Button } from "../../components/common";
+import toast from "react-hot-toast";
 
 const formatNaira = (amount) => "₦" + (amount || 0).toLocaleString("en-NG");
 const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }) : "--";
@@ -9,19 +10,23 @@ const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-NG", {
 export default function AdminWallets() {
   const [wallets, setWallets] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [search, setSearch] = useState("");
 
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        const data = await adminApi.getWallets();
-        setWallets(Array.isArray(data) ? data : data?.data ?? data?.wallets ?? []);
-      } catch (err) {
-        setWallets([]);
-      } finally { setLoading(false); }
-    };
-    fetch();
-  }, []);
+  const fetch = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const data = await adminApi.getWallets();
+      setWallets(Array.isArray(data) ? data : data?.data ?? data?.wallets ?? []);
+    } catch (err) {
+      setWallets([]);
+      setError(err?.response?.data?.message || err.message || "Failed to load wallets");
+      toast.error("Failed to load wallets");
+    } finally { setLoading(false); }
+  };
+
+  useEffect(() => { fetch(); }, []);
 
   const filtered = wallets.filter((w) => {
     const q = search.toLowerCase();
@@ -48,6 +53,13 @@ export default function AdminWallets() {
         <input type="text" placeholder="Search by user..." value={search} onChange={(e) => setSearch(e.target.value)}
           className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none text-sm" />
       </div>
+      {error && (
+        <div className="flex items-center gap-3 bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700">
+          <AlertCircle size={16} />
+          <span className="flex-1">{error}</span>
+          <button onClick={fetch} className="text-red-600 font-semibold hover:text-red-800 underline">Retry</button>
+        </div>
+      )}
       <Card className="p-0 overflow-hidden">
         <div className="overflow-x-auto -mx-6">
         <table className="w-full min-w-[600px] text-sm">
@@ -69,7 +81,7 @@ export default function AdminWallets() {
                 <td className="px-6 py-4 text-gray-600">{w.user?.email}</td>
                 <td className="px-6 py-4 font-bold text-gray-900">{formatNaira(w.balance || 0)}</td>
                 <td className="px-6 py-4">
-                  <Badge variant={w.currency === "USD" ? "warning" : "default"}>{w.currency || "NGN"}</Badge>
+                  <Badge variant={w.currency === "USD" ? "info" : w.currency === "USDT" ? "brand" : "default"}>{w.currency || "NGN"}</Badge>
                 </td>
                 <td className="px-6 py-4 text-gray-500">{formatDate(w.updatedAt)}</td>
               </tr>

@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Search, Building2, Plus, TrendingUp, DollarSign } from "lucide-react";
+import { Search, Plus, AlertCircle } from "lucide-react";
 import { adminReitApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
+import toast from "react-hot-toast";
 
 const formatNaira = (amount) => "₦" + (amount || 0).toLocaleString("en-NG");
 const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }) : "--";
@@ -11,6 +12,7 @@ const defaultForm = { name: "", description: "", totalShares: "", sharePrice: ""
 export default function AdminReit() {
   const [pools, setPools] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState(defaultForm);
@@ -19,10 +21,16 @@ export default function AdminReit() {
   const [distribAmount, setDistribAmount] = useState("");
 
   const fetch = async () => {
+    setLoading(true);
+    setError("");
     try {
       const res = await adminReitApi.getAllPools();
       setPools(Array.isArray(res) ? res : res?.data ?? []);
-    } catch { setPools([]); } finally { setLoading(false); }
+    } catch {
+      setPools([]);
+      setError("Failed to load REIT pools");
+      toast.error("Failed to load REIT pools");
+    } finally { setLoading(false); }
   };
   useEffect(() => { fetch(); }, []);
 
@@ -35,8 +43,12 @@ export default function AdminReit() {
         totalShares: parseFloat(form.totalShares), sharePrice: parseFloat(form.sharePrice),
         annualYield: parseFloat(form.annualYield),
       });
-      setShowModal(false); setForm(defaultForm); fetch();
-    } catch { /* silent */ } finally { setSaving(false); }
+      setShowModal(false); setForm(defaultForm);
+      toast.success("Pool created");
+      fetch();
+    } catch {
+      toast.error("Failed to create pool");
+    } finally { setSaving(false); }
   };
 
   const handleDistribute = async () => {
@@ -44,8 +56,12 @@ export default function AdminReit() {
     setSaving(true);
     try {
       await adminReitApi.createDistribution(distribPool.id, { amount: parseFloat(distribAmount), date: new Date().toISOString().split('T')[0] });
-      setDistribPool(null); setDistribAmount(""); fetch();
-    } catch { /* silent */ } finally { setSaving(false); }
+      setDistribPool(null); setDistribAmount("");
+      toast.success("Distribution recorded");
+      fetch();
+    } catch {
+      toast.error("Failed to record distribution");
+    } finally { setSaving(false); }
   };
 
   const filtered = pools.filter((p) => (p.name || "").toLowerCase().includes(search.toLowerCase()));
@@ -63,6 +79,13 @@ export default function AdminReit() {
         <input type="text" placeholder="Search pools..." value={search} onChange={(e) => setSearch(e.target.value)}
           className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:border-brand-500 outline-none text-sm" />
       </div>
+      {error && (
+        <div className="flex items-center gap-3 bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700">
+          <AlertCircle size={16} />
+          <span className="flex-1">{error}</span>
+          <button onClick={fetch} className="text-red-600 font-semibold hover:text-red-800 underline">Retry</button>
+        </div>
+      )}
       <div className="overflow-x-auto -mx-6">
         <Card className="p-0">
           <table className="w-full text-sm min-w-[600px]">
@@ -87,7 +110,7 @@ export default function AdminReit() {
                 <td className="px-6 py-4"><Badge variant={p.status === "open" ? "success" : "default"}>{p.status}</Badge></td>
                 <td className="px-6 py-4 text-gray-500">{formatDate(p.createdAt)}</td>
                 <td className="px-6 py-4">
-                  <Button size="xs" variant="outline" onClick={() => { setDistribPool(p); setDistribAmount(""); }}>Distribute</Button>
+                  <Button size="sm" variant="outline" onClick={() => { setDistribPool(p); setDistribAmount(""); }}>Distribute</Button>
                 </td>
               </tr>
             ))}
@@ -108,7 +131,7 @@ export default function AdminReit() {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
             <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none resize-none" />
+              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none resize-none" />
           </div>
           <div className="flex gap-3 justify-end">
             <Button variant="outline" onClick={() => setShowModal(false)}>Cancel</Button>

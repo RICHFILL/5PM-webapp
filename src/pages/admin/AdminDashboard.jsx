@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Users, ShieldCheck, Wallet, TrendingUp, DollarSign, Activity } from "lucide-react";
+import { Users, ShieldCheck, TrendingUp, DollarSign, Activity } from "lucide-react";
 import { adminApi } from "../../services/api";
 import { Card, Skeleton } from "../../components/common";
+import toast from "react-hot-toast";
 
 const formatNaira = (amount) => "₦" + (amount || 0).toLocaleString("en-NG");
 
@@ -16,6 +17,7 @@ export default function AdminDashboard() {
         setData(res?.data || res);
       } catch (err) {
         setData(null);
+        toast.error("Failed to load dashboard data");
       } finally { setLoading(false); }
     };
     fetch();

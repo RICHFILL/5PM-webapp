@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, TrendingUp, CircleDollarSign, CalendarDays } from "lucide-react";
+import { Search, TrendingUp, CircleDollarSign, CalendarDays, AlertCircle } from "lucide-react";
 import { adminApi } from "../../services/api";
-import { Card, Skeleton, Badge } from "../../components/common";
+import { Card, Skeleton, Badge, Button } from "../../components/common";
+import toast from "react-hot-toast";
 
 const formatNaira = (amount) => "₦" + (amount || 0).toLocaleString("en-NG");
 const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }) : "--";
@@ -21,19 +22,23 @@ export default function AdminInvestments() {
   const navigate = useNavigate();
   const [investments, setInvestments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [search, setSearch] = useState("");
 
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        const data = await adminApi.getInvestments();
-        setInvestments(Array.isArray(data) ? data : data?.data ?? data?.investments ?? []);
-      } catch (err) {
-        setInvestments([]);
-      } finally { setLoading(false); }
-    };
-    fetch();
-  }, []);
+  const fetch = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const data = await adminApi.getInvestments();
+      setInvestments(Array.isArray(data) ? data : data?.data ?? data?.investments ?? []);
+    } catch (err) {
+      setInvestments([]);
+      setError(err?.response?.data?.message || err.message || "Failed to load investments");
+      toast.error("Failed to load investments");
+    } finally { setLoading(false); }
+  };
+
+  useEffect(() => { fetch(); }, []);
 
   const filtered = investments.filter((inv) => {
     const q = search.toLowerCase();
@@ -57,6 +62,13 @@ export default function AdminInvestments() {
         <input type="text" placeholder="Search by reference or user..." value={search} onChange={(e) => setSearch(e.target.value)}
           className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none text-sm" />
       </div>
+      {error && (
+        <div className="flex items-center gap-3 bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700">
+          <AlertCircle size={16} />
+          <span className="flex-1">{error}</span>
+          <button onClick={fetch} className="text-red-600 font-semibold hover:text-red-800 underline">Retry</button>
+        </div>
+      )}
       <Card className="p-0 overflow-hidden">
         <div className="overflow-x-auto -mx-6">
         <table className="w-full min-w-[600px] text-sm">

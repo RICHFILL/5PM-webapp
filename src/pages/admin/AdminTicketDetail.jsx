@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Send, User, Shield } from "lucide-react";
 import { adminTicketApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button } from "../../components/common";
+import toast from "react-hot-toast";
 
 const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-NG", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "--";
 
@@ -31,6 +32,7 @@ export default function AdminTicketDetail() {
       setTicket(data?.data || data);
     } catch (err) {
       setTicket(null);
+      toast.error("Failed to load ticket");
     } finally { setLoading(false); }
   }, [id]);
 
@@ -44,7 +46,9 @@ export default function AdminTicketDetail() {
       if (ticket.status === "open") await adminTicketApi.updateTicket(id, { status: "in_progress" });
       setReply("");
       fetch();
-    } catch (err) { /* silent */ }
+    } catch (err) {
+      toast.error("Failed to send reply");
+    }
     finally { setSending(false); }
   };
 
@@ -52,7 +56,9 @@ export default function AdminTicketDetail() {
     try {
       await adminTicketApi.updateTicket(id, { status });
       fetch();
-    } catch (err) { /* silent */ }
+    } catch (err) {
+      toast.error("Failed to update ticket status");
+    }
   };
 
   if (loading) {
@@ -62,8 +68,8 @@ export default function AdminTicketDetail() {
   if (!ticket) {
     return (
       <div className="p-4 md:p-8 max-w-4xl mx-auto">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6">
-          <ArrowLeft className="w-4 h-4" /><span className="text-sm font-medium">Back</span>
+        <button onClick={() => navigate("/admin/support")} className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6">
+          <ArrowLeft className="w-4 h-4" /><span className="text-sm font-medium">Back to Tickets</span>
         </button>
         <Card><p className="text-lg font-semibold text-gray-900">Ticket not found</p></Card>
       </div>
@@ -74,8 +80,8 @@ export default function AdminTicketDetail() {
 
   return (
     <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
-      <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-gray-600 hover:text-gray-900">
-        <ArrowLeft className="w-4 h-4" /><span className="text-sm font-medium">Back</span>
+      <button onClick={() => navigate("/admin/support")} className="flex items-center gap-2 text-gray-600 hover:text-gray-900">
+        <ArrowLeft className="w-4 h-4" /><span className="text-sm font-medium">Back to Tickets</span>
       </button>
 
       <Card>

@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Search, Plus, Building2, Users, MapPin } from "lucide-react";
+import { Search, Plus, AlertCircle } from "lucide-react";
 import { adminWealthApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Input, Modal } from "../../components/common";
+import toast from "react-hot-toast";
 
 const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }) : "--";
 
@@ -10,17 +11,22 @@ const defaultForm = { name: "", registrationNumber: "", email: "", phone: "", ad
 export default function AdminCooperatives() {
   const [cooperatives, setCooperatives] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState(defaultForm);
   const [saving, setSaving] = useState(false);
 
   const fetch = async () => {
+    setLoading(true);
+    setError("");
     try {
       const data = await adminWealthApi.getCooperatives();
       setCooperatives(Array.isArray(data) ? data : data?.data ?? []);
     } catch (err) {
       setCooperatives([]);
+      setError(err?.response?.data?.message || err.message || "Failed to load cooperatives");
+      toast.error("Failed to load cooperatives");
     } finally { setLoading(false); }
   };
 
@@ -44,8 +50,11 @@ export default function AdminCooperatives() {
       });
       setShowModal(false);
       setForm(defaultForm);
+      toast.success("Cooperative created");
       fetch();
-    } catch (err) { /* silent */ }
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to create cooperative");
+    }
     finally { setSaving(false); }
   };
 
@@ -70,7 +79,14 @@ export default function AdminCooperatives() {
           className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none text-sm" />
       </div>
       <div className="overflow-x-auto -mx-6">
-        <Card className="p-0">
+        {error && (
+        <div className="flex items-center gap-3 bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700">
+          <AlertCircle size={16} />
+          <span className="flex-1">{error}</span>
+          <button onClick={fetch} className="text-red-600 font-semibold hover:text-red-800 underline">Retry</button>
+        </div>
+      )}
+      <Card className="p-0">
           <table className="w-full text-sm min-w-[600px]">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>

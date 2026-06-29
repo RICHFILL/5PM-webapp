@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Search, PiggyBank, TrendingUp, DollarSign, CalendarDays } from "lucide-react";
+import { Search, AlertCircle } from "lucide-react";
 import { adminWealthApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Input, Modal } from "../../components/common";
+import toast from "react-hot-toast";
 
 const formatNaira = (amount) => "₦" + (amount || 0).toLocaleString("en-NG");
 const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }) : "--";
@@ -9,6 +10,7 @@ const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-NG", {
 export default function AdminWealthPlans() {
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [showContribute, setShowContribute] = useState(false);
@@ -16,11 +18,15 @@ export default function AdminWealthPlans() {
   const [saving, setSaving] = useState(false);
 
   const fetch = async () => {
+    setLoading(true);
+    setError("");
     try {
       const data = await adminWealthApi.getAllPlans();
       setPlans(Array.isArray(data) ? data : data?.data ?? []);
     } catch (err) {
       setPlans([]);
+      setError(err?.response?.data?.message || err.message || "Failed to load wealth plans");
+      toast.error("Failed to load wealth plans");
     } finally { setLoading(false); }
   };
 
@@ -37,8 +43,11 @@ export default function AdminWealthPlans() {
       setShowContribute(false);
       setContributionForm({ amount: "", reference: "" });
       setSelectedPlan(null);
+      toast.success("Contribution recorded");
       fetch();
-    } catch (err) { /* silent */ }
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to record contribution");
+    }
     finally { setSaving(false); }
   };
 
@@ -68,7 +77,14 @@ export default function AdminWealthPlans() {
           className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none text-sm" />
       </div>
       <div className="overflow-x-auto -mx-6">
-        <Card className="p-0">
+        {error && (
+        <div className="flex items-center gap-3 bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700">
+          <AlertCircle size={16} />
+          <span className="flex-1">{error}</span>
+          <button onClick={fetch} className="text-red-600 font-semibold hover:text-red-800 underline">Retry</button>
+        </div>
+      )}
+      <Card className="p-0">
           <table className="w-full text-sm min-w-[600px]">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>

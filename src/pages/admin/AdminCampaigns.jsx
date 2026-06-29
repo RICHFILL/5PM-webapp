@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Search, Target, Plus, Calendar, Clock } from "lucide-react";
+import { Search, Target, Plus, AlertCircle } from "lucide-react";
 import { adminCampaignApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
+import toast from "react-hot-toast";
 
 const formatNaira = (amount) => "₦" + (amount || 0).toLocaleString("en-NG");
 const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }) : "--";
@@ -21,6 +22,7 @@ const defaultForm = { title: "", description: "", targetAmount: "", minInvestmen
 export default function AdminCampaigns() {
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -28,10 +30,16 @@ export default function AdminCampaigns() {
   const [saving, setSaving] = useState(false);
 
   const fetch = async () => {
+    setLoading(true);
+    setError("");
     try {
       const res = await adminCampaignApi.getAllCampaigns({ status: statusFilter });
       setCampaigns(Array.isArray(res) ? res : res?.data ?? []);
-    } catch { setCampaigns([]); } finally { setLoading(false); }
+    } catch {
+      setCampaigns([]);
+      setError("Failed to load campaigns");
+      toast.error("Failed to load campaigns");
+    } finally { setLoading(false); }
   };
 
   useEffect(() => { fetch(); }, [statusFilter]);
@@ -50,8 +58,11 @@ export default function AdminCampaigns() {
       });
       setShowModal(false);
       setForm(defaultForm);
+      toast.success("Campaign created");
       fetch();
-    } catch { /* silent */ } finally { setSaving(false); }
+    } catch {
+      toast.error("Failed to create campaign");
+    } finally { setSaving(false); }
   };
 
   const filtered = campaigns.filter((c) =>
@@ -85,6 +96,13 @@ export default function AdminCampaigns() {
         </div>
       </div>
 
+      {error && (
+        <div className="flex items-center gap-3 bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700">
+          <AlertCircle size={16} />
+          <span className="flex-1">{error}</span>
+          <button onClick={fetch} className="text-red-600 font-semibold hover:text-red-800 underline">Retry</button>
+        </div>
+      )}
       <div className="overflow-x-auto -mx-6">
         <Card className="p-0">
           <table className="w-full text-sm min-w-[600px]">

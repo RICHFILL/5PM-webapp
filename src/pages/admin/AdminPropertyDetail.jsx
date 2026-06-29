@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Home, Plus, Trash2, FileText, Image, Construction, Calendar } from "lucide-react";
 import { adminApi, propertyUpdateApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
+import toast from "react-hot-toast";
 
 const formatNaira = (amount) => "₦" + (amount || 0).toLocaleString("en-NG");
 const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }) : "--";
@@ -30,18 +31,22 @@ export default function AdminPropertyDetail() {
 
   const fetch = async () => {
     try {
-      const res = await adminApi.getProperties();
-      const props = Array.isArray(res) ? res : res?.data ?? [];
-      const found = props.find((p) => (p.id || p._id) === id);
-      setProperty(found || null);
-    } catch { setProperty(null); }
+      const res = await adminApi.getPropertyDetail(id);
+      setProperty(res?.data || res);
+    } catch {
+      setProperty(null);
+      toast.error("Failed to load property details");
+    }
   };
 
   const fetchUpdates = async () => {
     try {
       const res = await propertyUpdateApi.getUpdates(id);
       setUpdates(Array.isArray(res) ? res : res?.data ?? []);
-    } catch { setUpdates([]); } finally { setLoading(false); }
+    } catch {
+      setUpdates([]);
+      toast.error("Failed to load property updates");
+    } finally { setLoading(false); }
   };
 
   useEffect(() => {
@@ -59,18 +64,24 @@ export default function AdminPropertyDetail() {
       setShowModal(false);
       setForm(defaultForm);
       fetchUpdates();
-    } catch { /* silent */ } finally { setSaving(false); }
+    } catch {
+      toast.error("Failed to create update");
+    } finally { setSaving(false); }
   };
 
   const handleDelete = async (updateId) => {
+    if (!window.confirm("Delete this update? This cannot be undone.")) return;
     try {
       await propertyUpdateApi.deleteUpdate(id, updateId);
+      toast.success("Update deleted");
       fetchUpdates();
-    } catch { /* silent */ }
+    } catch {
+      toast.error("Failed to delete update");
+    }
   };
 
   if (loading) {
-    return <div className="p-4 md:p-4 md:p-6 max-w-5xl mx-auto space-y-4 md:space-y-6"><Skeleton className="h-6 w-24" /><Skeleton className="h-48 w-full" /></div>;
+    return <div className="p-4 md:p-6 max-w-5xl mx-auto space-y-4 md:space-y-6"><Skeleton className="h-6 w-24" /><Skeleton className="h-48 w-full" /></div>;
   }
 
   if (!property) {
@@ -84,7 +95,7 @@ export default function AdminPropertyDetail() {
   const Icon = updateTypeIcon;
 
   return (
-    <div className="p-4 md:p-4 md:p-6 max-w-5xl mx-auto space-y-4 md:space-y-6">
+    <div className="p-4 md:p-6 max-w-5xl mx-auto space-y-4 md:space-y-6">
       <Link to="/admin/properties" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-brand-500 transition-colors">
         <ArrowLeft size={16} /> Back to Properties
       </Link>

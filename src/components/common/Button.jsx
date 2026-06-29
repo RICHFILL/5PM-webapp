@@ -8,6 +8,7 @@ function Button({ children, variant = 'primary', size = 'md', className = '', ..
     danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
   };
   const sizes = {
+    xs: 'px-2 py-1 text-xs gap-1',
     sm: 'px-3 py-1.5 text-sm gap-1.5',
     md: 'px-5 py-2.5 text-sm gap-2',
     lg: 'px-6 py-3 text-base gap-2',

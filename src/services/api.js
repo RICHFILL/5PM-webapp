@@ -141,6 +141,8 @@ export const adminApi = {
   getDistributions: () => api.get('/admin/distributions').then(r => r.data),
   createDistribution: (data) => api.post('/admin/distributions', data).then(r => r.data),
   getInvestments: () => api.get('/admin/investments').then(r => r.data),
+  getInvestmentDetail: (id) => api.get(`/admin/investments/${id}`).then(r => r.data),
+  getPropertyDetail: (id) => api.get(`/admin/properties/${id}`).then(r => r.data),
   getReports: () => api.get('/admin/reports').then(r => r.data),
 };
 
@@ -175,6 +177,10 @@ export const adminTicketApi = {
   getTicketDetail: (id) => api.get(`/tickets/${id}`).then(r => r.data),
   addReply: (id, message) => api.post(`/tickets/${id}/reply`, { message }).then(r => r.data),
   updateTicket: (id, data) => api.patch(`/tickets/${id}`, data).then(r => r.data),
+};
+
+export const adminTokenApi = {
+  getAllTokens: () => api.get('/admin/tokens').then(r => r.data),
 };
 
 export const adminWealthApi = {

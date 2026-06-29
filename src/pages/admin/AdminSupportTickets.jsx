@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, MessageSquare, Filter } from "lucide-react";
+import { Search, MessageSquare, Filter, AlertCircle } from "lucide-react";
 import { adminTicketApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button } from "../../components/common";
+import toast from "react-hot-toast";
 
 const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }) : "--";
 
@@ -22,10 +23,13 @@ export default function AdminSupportTickets() {
   const navigate = useNavigate();
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
   const fetch = async () => {
+    setLoading(true);
+    setError("");
     try {
       const filters = {};
       if (statusFilter !== "all") filters.status = statusFilter;
@@ -33,6 +37,8 @@ export default function AdminSupportTickets() {
       setTickets(Array.isArray(data) ? data : data?.data ?? []);
     } catch (err) {
       setTickets([]);
+      setError("Failed to load tickets");
+      toast.error("Failed to load tickets");
     } finally { setLoading(false); }
   };
 
@@ -70,6 +76,13 @@ export default function AdminSupportTickets() {
           ))}
         </div>
       </div>
+      {error && (
+        <div className="flex items-center gap-3 bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700">
+          <AlertCircle size={16} />
+          <span className="flex-1">{error}</span>
+          <button onClick={fetch} className="text-red-600 font-semibold hover:text-red-800 underline">Retry</button>
+        </div>
+      )}
       <div className="overflow-x-auto -mx-6">
         <Card className="p-0">
           <table className="w-full text-sm min-w-[600px]">

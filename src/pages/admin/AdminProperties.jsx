@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Building2, Plus, MapPin, DollarSign, Home, X } from "lucide-react";
+import { Search, Building2, Plus, AlertCircle } from "lucide-react";
 import { adminApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
+import toast from "react-hot-toast";
 
 const formatNaira = (amount) => "₦" + (amount || 0).toLocaleString("en-NG");
 const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }) : "--";
@@ -28,12 +29,18 @@ export default function AdminProperties() {
   const [form, setForm] = useState(defaultForm);
   const [saving, setSaving] = useState(false);
 
+  const [error, setError] = useState("");
+
   const fetch = async () => {
+    setLoading(true);
+    setError("");
     try {
       const data = await adminApi.getProperties();
       setProperties(Array.isArray(data) ? data : data?.data ?? data?.properties ?? []);
     } catch (err) {
       setProperties([]);
+      setError(err?.response?.data?.message || err.message || "Failed to load properties");
+      toast.error("Failed to load properties");
     } finally { setLoading(false); }
   };
 
@@ -55,8 +62,11 @@ export default function AdminProperties() {
       });
       setShowModal(false);
       setForm(defaultForm);
+      toast.success("Property created");
       fetch();
-    } catch (err) { /* silent */ }
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to create property");
+    }
     finally { setSaving(false); }
   };
 
@@ -81,7 +91,14 @@ export default function AdminProperties() {
           className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none text-sm" />
       </div>
       <div className="overflow-x-auto -mx-6">
-        <Card className="p-0">
+        {error && (
+        <div className="flex items-center gap-3 bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700">
+          <AlertCircle size={16} />
+          <span className="flex-1">{error}</span>
+          <button onClick={fetch} className="text-red-600 font-semibold hover:text-red-800 underline">Retry</button>
+        </div>
+      )}
+      <Card className="p-0">
           <table className="w-full text-sm min-w-[600px]">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>

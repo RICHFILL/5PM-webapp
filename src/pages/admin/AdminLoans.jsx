@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Search, Banknote, CheckCircle2 } from "lucide-react";
+import { Search, AlertCircle } from "lucide-react";
 import { adminLoanApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
+import toast from "react-hot-toast";
 
 const formatNaira = (amount) => "₦" + (amount || 0).toLocaleString("en-NG");
 const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }) : "--";
@@ -19,6 +20,7 @@ const statusVariant = (s) => {
 export default function AdminLoans() {
   const [loans, setLoans] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [actionLoan, setActionLoan] = useState(null);
@@ -27,10 +29,16 @@ export default function AdminLoans() {
   const [saving, setSaving] = useState(false);
 
   const fetch = async () => {
+    setLoading(true);
+    setError("");
     try {
       const res = await adminLoanApi.getAllLoans({ status: statusFilter });
       setLoans(Array.isArray(res) ? res : res?.data ?? []);
-    } catch { setLoans([]); } finally { setLoading(false); }
+    } catch {
+      setLoans([]);
+      setError("Failed to load loans");
+      toast.error("Failed to load loans");
+    } finally { setLoading(false); }
   };
   useEffect(() => { fetch(); }, [statusFilter]);
 
@@ -39,8 +47,11 @@ export default function AdminLoans() {
     try {
       await adminLoanApi.approveLoan(id, status);
       setActionLoan(null);
+      toast.success(`Loan ${status}`);
       fetch();
-    } catch { /* silent */ } finally { setSaving(false); }
+    } catch {
+      toast.error("Failed to update loan");
+    } finally { setSaving(false); }
   };
 
   const handleRepay = async (id) => {
@@ -50,8 +61,11 @@ export default function AdminLoans() {
       await adminLoanApi.recordRepayment(id, { amount: parseFloat(repayAmount) });
       setActionLoan(null);
       setRepayAmount("");
+      toast.success("Repayment recorded");
       fetch();
-    } catch { /* silent */ } finally { setSaving(false); }
+    } catch {
+      toast.error("Failed to record repayment");
+    } finally { setSaving(false); }
   };
 
   const filtered = loans.filter((l) =>
@@ -80,6 +94,13 @@ export default function AdminLoans() {
         </div>
       </div>
 
+      {error && (
+        <div className="flex items-center gap-3 bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700">
+          <AlertCircle size={16} />
+          <span className="flex-1">{error}</span>
+          <button onClick={fetch} className="text-red-600 font-semibold hover:text-red-800 underline">Retry</button>
+        </div>
+      )}
       <div className="overflow-x-auto -mx-6">
         <Card className="p-0">
           <table className="w-full text-sm min-w-[600px]">
@@ -107,12 +128,12 @@ export default function AdminLoans() {
                   <div className="flex gap-2">
                     {l.status === "pending" && (
                       <>
-                        <Button size="xs" onClick={() => { setActionLoan(l); setActionType("approve"); }}>Approve</Button>
-                        <Button size="xs" variant="outline" onClick={() => handleApprove(l.id, "defaulted")}>Reject</Button>
+                        <Button size="sm" onClick={() => { setActionLoan(l); setActionType("approve"); }}>Approve</Button>
+                        <Button size="sm" variant="outline" onClick={() => handleApprove(l.id, "defaulted")}>Reject</Button>
                       </>
                     )}
                     {l.status === "active" && (
-                      <Button size="xs" onClick={() => { setActionLoan(l); setActionType("repay"); setRepayAmount(""); }}>Record Repayment</Button>
+                      <Button size="sm" onClick={() => { setActionLoan(l); setActionType("repay"); setRepayAmount(""); }}>Record Repayment</Button>
                     )}
                   </div>
                 </td>

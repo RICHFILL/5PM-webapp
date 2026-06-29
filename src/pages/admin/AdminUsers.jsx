@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Mail, Phone, Shield } from "lucide-react";
+import { Search, Mail, Phone, Shield, AlertCircle } from "lucide-react";
 import { adminApi } from "../../services/api";
-import { Card, Skeleton, Badge, Input } from "../../components/common";
+import { Card, Skeleton, Badge, Input, Button } from "../../components/common";
+import toast from "react-hot-toast";
 
 const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }) : "--";
 
@@ -11,18 +12,22 @@ export default function AdminUsers() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [error, setError] = useState("");
 
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        const data = await adminApi.getUsers();
-        setUsers(Array.isArray(data) ? data : data?.data ?? data?.users ?? []);
-      } catch (err) {
-        setUsers([]);
-      } finally { setLoading(false); }
-    };
-    fetch();
-  }, []);
+  const fetch = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const data = await adminApi.getUsers();
+      setUsers(Array.isArray(data) ? data : data?.data ?? data?.users ?? []);
+    } catch (err) {
+      setUsers([]);
+      setError(err?.response?.data?.message || err.message || "Failed to load users");
+      toast.error("Failed to load users");
+    } finally { setLoading(false); }
+  };
+
+  useEffect(() => { fetch(); }, []);
 
   const filtered = users.filter((u) => {
     const q = search.toLowerCase();
@@ -43,6 +48,13 @@ export default function AdminUsers() {
         <input type="text" placeholder="Search users..." value={search} onChange={(e) => setSearch(e.target.value)}
           className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none text-sm" />
       </div>
+      {error && (
+        <div className="flex items-center gap-3 bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700">
+          <AlertCircle size={16} />
+          <span className="flex-1">{error}</span>
+          <button onClick={fetch} className="text-red-600 font-semibold hover:text-red-800">Retry</button>
+        </div>
+      )}
       <Card className="p-0 overflow-hidden">
         <div className="overflow-x-auto -mx-6">
         <table className="w-full min-w-[600px] text-sm">
