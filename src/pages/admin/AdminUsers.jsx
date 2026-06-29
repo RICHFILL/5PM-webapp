@@ -16,6 +16,13 @@ export default function AdminUsers() {
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({ total: 0, pages: 0 });
 
+  const filtered = users.filter((u) => {
+    const q = search.toLowerCase();
+    return (u.firstName || "").toLowerCase().includes(q)
+      || (u.lastName || "").toLowerCase().includes(q)
+      || (u.email || "").toLowerCase().includes(q);
+  });
+
   const fetch = async () => {
     setLoading(true);
     setError("");

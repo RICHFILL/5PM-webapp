@@ -15,6 +15,13 @@ export default function AdminWallets() {
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({ total: 0, pages: 0 });
 
+  const filtered = wallets.filter((w) => {
+    const q = search.toLowerCase();
+    return (w.user?.firstName || "").toLowerCase().includes(q)
+      || (w.user?.lastName || "").toLowerCase().includes(q)
+      || (w.user?.email || "").toLowerCase().includes(q);
+  });
+
   const fetch = async () => {
     setLoading(true);
     setError("");
