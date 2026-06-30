@@ -66,7 +66,7 @@ export default function InvestDetail() {
 
   return (
     <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-6">
-      <Link to="/investments" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-brand-500 transition-colors">
+      <Link to="/investments" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-neon-tangerine transition-colors">
         <ArrowLeft size={16} /> Back to Investments
       </Link>
 

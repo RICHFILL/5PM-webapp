@@ -14,7 +14,7 @@ function StepIndicator({ currentStep }) {
       {stepLabels.map((label, i) => (
         <div key={label} className="flex items-center gap-2">
           <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-            i === currentStep ? "bg-brand-500 text-white" :
+            i === currentStep ? "bg-neon-tangerine text-white" :
             i < currentStep ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"
           }`}>
             {i < currentStep ? <Check size={12} /> : <span>{i + 1}</span>}
@@ -52,7 +52,7 @@ function Step1PersonalInfo({ data, onChange, onNext }) {
           {["Male", "Female", "Other"].map((g) => (
             <label key={g} className="flex items-center gap-2 cursor-pointer">
               <input type="radio" name="gender" value={g.toLowerCase()} checked={data.gender === g.toLowerCase()} onChange={(e) => onChange({...data, gender: e.target.value})}
-                className="text-brand-500 focus:ring-brand-500" />
+                className="text-neon-tangerine focus:ring-neon-tangerine" />
               <span className="text-sm text-gray-700">{g}</span>
             </label>
           ))}
@@ -88,7 +88,7 @@ function Step2Address({ data, onChange, onNext, onPrev }) {
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1.5">Address</label>
         <textarea value={data.address} onChange={(e) => onChange({...data, address: e.target.value})} rows={3} required
-          className="block w-full rounded-xl border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500" />
+          className="block w-full rounded-xl border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-neon-tangerine focus:border-neon-tangerine" />
         {errors.address && <p className="text-xs text-red-600 mt-1">{errors.address}</p>}
       </div>
       <div className="flex justify-between pt-4">
@@ -139,7 +139,7 @@ function Step4Documents({ data, onChange, onNext, onPrev }) {
     <div className="space-y-4">
       <p className="text-sm text-gray-600 mb-4">Upload clear, legible copies of the following documents. Accepted formats: JPG, PNG, PDF.</p>
       {documentFields.map(({ key, label, accept }) => (
-        <div key={key} className="border-2 border-dashed border-gray-300 rounded-xl p-4 md:p-6 text-center hover:border-brand-400 transition-colors">
+        <div key={key} className="border-2 border-dashed border-gray-300 rounded-xl p-4 md:p-6 text-center hover:border-neon-tangerine/60 transition-colors">
           {data[key] ? (
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -246,12 +246,12 @@ function Step6Review({ store, onPrev, onSubmit, submitting }) {
   const allComplete = store.personalInfo.firstName && store.personalInfo.lastName && store.addressInfo.country && store.addressInfo.address && store.identityInfo.bvn && store.identityInfo.nin && store.documents.passport && store.selfie;
   return (
     <div className="space-y-6">
-      <div className="bg-brand-50 border border-brand-200 rounded-xl p-4">
+      <div className="bg-neon-tangerine/10 border border-neon-tangerine/30 rounded-xl p-4">
         <div className="flex items-start gap-3">
-          <Shield className="text-brand-500 mt-0.5 shrink-0" size={20} />
+          <Shield className="text-neon-tangerine mt-0.5 shrink-0" size={20} />
           <div>
-            <p className="font-semibold text-brand-900">Review Your Information</p>
-            <p className="text-sm text-brand-700">Please confirm all details before submitting. You will not be able to edit most fields after submission.</p>
+            <p className="font-semibold text-neon-tangerine">Review Your Information</p>
+            <p className="text-sm text-neon-tangerine">Please confirm all details before submitting. You will not be able to edit most fields after submission.</p>
           </div>
         </div>
       </div>

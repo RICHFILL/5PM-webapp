@@ -29,7 +29,7 @@ export default function LoanDetail() {
 
   return (
     <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
-      <Link to="/loans" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-brand-500 transition-colors">
+      <Link to="/loans" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-neon-tangerine transition-colors">
         <ArrowLeft size={16} /> Back to Loans
       </Link>
 

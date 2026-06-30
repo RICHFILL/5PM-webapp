@@ -98,7 +98,7 @@ function Profile() {
 
   return (
     <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
-      <div className="bg-gradient-to-r from-brand-500 to-brand-600 rounded-2xl text-white p-4 md:p-8 relative">
+      <div className="bg-neon-tangerine rounded-2xl text-white p-4 md:p-8 relative">
         <div className="flex items-end gap-4 md:gap-6">
           <div className="w-16 h-16 md:w-24 md:h-24 rounded-full bg-white bg-opacity-20 flex items-center justify-center shrink-0">
             <span className="text-2xl md:text-4xl font-bold">{initials}</span>
@@ -127,23 +127,23 @@ function Profile() {
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Personal Details</h3>
           <div className="space-y-4">
             <div className="flex items-start gap-3">
-              <Mail className="text-brand-500 mt-1 shrink-0" size={20} />
+              <Mail className="text-neon-tangerine mt-1 shrink-0" size={20} />
               <div><p className="text-gray-600 text-sm">Email</p><p className="font-medium text-gray-900">{user?.email}</p></div>
             </div>
             <div className="flex items-start gap-3">
-              <Phone className="text-brand-500 mt-1 shrink-0" size={20} />
+              <Phone className="text-neon-tangerine mt-1 shrink-0" size={20} />
               <div><p className="text-gray-600 text-sm">Phone</p><p className="font-medium text-gray-900">{user?.phone || "Not provided"}</p></div>
             </div>
             <div className="flex items-start gap-3">
-              <MapPin className="text-brand-500 mt-1 shrink-0" size={20} />
+              <MapPin className="text-neon-tangerine mt-1 shrink-0" size={20} />
               <div><p className="text-gray-600 text-sm">Location</p><p className="font-medium text-gray-900">{user?.location || "Not provided"}</p></div>
             </div>
             <div className="flex items-start gap-3">
-              <Building className="text-brand-500 mt-1 shrink-0" size={20} />
+              <Building className="text-neon-tangerine mt-1 shrink-0" size={20} />
               <div><p className="text-gray-600 text-sm">Investor Type</p><p className="font-medium text-gray-900">Individual Investor</p></div>
             </div>
             <div className="flex items-start gap-3">
-              <Calendar className="text-brand-500 mt-1 shrink-0" size={20} />
+              <Calendar className="text-neon-tangerine mt-1 shrink-0" size={20} />
               <div><p className="text-gray-600 text-sm">Joined</p><p className="font-medium text-gray-900">{user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : "N/A"}</p></div>
             </div>
           </div>

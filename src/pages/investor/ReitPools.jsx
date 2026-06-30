@@ -42,7 +42,7 @@ export default function ReitPools() {
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
-      <div className="bg-gradient-to-br from-purple-600 to-purple-800 rounded-2xl p-4 md:p-8 text-white">
+      <div className="bg-dark-lavender rounded-2xl p-4 md:p-8 text-white">
         <h1 className="text-2xl md:text-3xl font-bold mb-2">Digital REIT Pools</h1>
         <p className="text-purple-200">Invest in professionally managed real estate investment trusts</p>
       </div>
@@ -97,7 +97,7 @@ export default function ReitPools() {
         title={step === "form" ? "Buy REIT Shares" : "Purchase Confirmed"} size="md">
         {step === "form" && investPool ? (
           <div className="space-y-4">
-            <div className="bg-navy-50 rounded-xl p-4 space-y-2">
+            <div className="bg-dark-lavender/10 rounded-xl p-4 space-y-2">
               <div className="flex justify-between text-sm"><span className="text-gray-600">Pool</span><span className="font-semibold">{investPool.name}</span></div>
               <div className="flex justify-between text-sm"><span className="text-gray-600">Share Price</span><span className="font-semibold">{formatNaira(investPool.sharePrice)}</span></div>
               <div className="flex justify-between text-sm"><span className="text-gray-600">Available</span><span className="font-semibold">{investPool.availableShares} shares</span></div>

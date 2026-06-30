@@ -62,7 +62,7 @@ export default function AdminReports() {
               <span className="font-bold text-gray-900">{data?.activeInvestments || 0}</span>
             </div>
             <div className="flex justify-between items-center pb-3 border-b border-gray-100">
-              <div className="flex items-center gap-2"><DollarSign size={16} className="text-brand-500" /><span className="text-gray-600">Total Invested</span></div>
+              <div className="flex items-center gap-2"><DollarSign size={16} className="text-neon-tangerine" /><span className="text-gray-600">Total Invested</span></div>
               <span className="font-bold text-gray-900">{formatNaira(data?.totalInvested)}</span>
             </div>
             <div className="flex justify-between items-center pb-3 border-b border-gray-100">

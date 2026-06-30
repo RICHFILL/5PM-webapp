@@ -87,7 +87,7 @@ export default function AdminUserDetail() {
         <ArrowLeft className="w-4 h-4" /><span className="text-sm font-medium">Back to Users</span>
       </button>
 
-      <section className="rounded-3xl bg-gradient-to-r from-slate-900 via-slate-800 to-cyan-700 text-white overflow-hidden">
+      <section className="rounded-3xl bg-dark-lavender text-white overflow-hidden">
           <div className="p-4 md:p-8">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
             <div className="flex items-center gap-5">
@@ -116,7 +116,7 @@ export default function AdminUserDetail() {
           {[
             { label: "Active Investments", value: stats.activeInvestments || stats.totalInvestments || 0, icon: TrendingUp, color: "bg-blue-500" },
             { label: "Total Invested", value: formatNaira(stats.totalInvested || stats.totalAmount || 0), icon: DollarSign, color: "bg-green-500" },
-            { label: "Total Interest", value: formatNaira(stats.totalInterest || stats.interestEarned || 0), icon: Activity, color: "bg-brand-500" },
+            { label: "Total Interest", value: formatNaira(stats.totalInterest || stats.interestEarned || 0), icon: Activity, color: "bg-neon-tangerine" },
             { label: "Payments Recorded", value: formatNaira(stats.totalPayments || 0), icon: CalendarDays, color: "bg-yellow-500" },
           ].map((s) => (
             <div key={s.label} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
@@ -173,7 +173,7 @@ export default function AdminUserDetail() {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
             <select value={editForm.role} onChange={(e) => setEditForm({ ...editForm, role: e.target.value })}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none">
+              className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:border-neon-tangerine focus:ring-2 focus:ring-neon-tangerine/30 outline-none">
               <option value="investor">Investor</option>
               <option value="compliance_officer">Compliance Officer</option>
               <option value="finance_officer">Finance Officer</option>

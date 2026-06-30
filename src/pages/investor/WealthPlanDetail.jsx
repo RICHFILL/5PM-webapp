@@ -49,7 +49,7 @@ export default function WealthPlanDetail() {
         <ArrowLeft className="w-4 h-4" /><span className="text-sm font-medium">Back</span>
       </button>
 
-      <section className="rounded-3xl bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 text-white overflow-hidden">
+      <section className="rounded-3xl bg-dark-lavender text-white overflow-hidden">
         <div className="px-4 py-4 md:px-10 md:py-10">
           <div className="flex flex-col gap-4 md:gap-6 lg:flex-row lg:items-start lg:justify-between">
             <div className="space-y-3">

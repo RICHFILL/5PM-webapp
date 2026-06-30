@@ -137,7 +137,7 @@ function Dashboard() {
         <p className="text-gray-600 text-sm md:text-base">Welcome back to your investment dashboard</p>
       </div>
 
-      <div className="bg-gradient-to-r from-brand-500 to-navy-500 rounded-2xl text-white px-4 py-6 md:px-7 md:py-8 mb-6 md:mb-8 shadow-lg">
+      <div className="bg-dark-lavender rounded-2xl text-white px-4 py-6 md:px-7 md:py-8 mb-6 md:mb-8 shadow-lg">
         <div className="flex flex-col gap-2">
           <p className="text-white/70 text-sm md:text-base font-medium tracking-wide">Total Amount Invested</p>
           <h2 className="text-xl md:text-2xl font-bold tracking-tight">{formatCurrency(totalInvested)}</h2>
@@ -207,7 +207,7 @@ function Dashboard() {
         <Card>
           <div className="flex items-center justify-between mb-6">
             <Card.Title>Recent Payments</Card.Title>
-            <Link to="/wallet" className="text-brand-500 hover:text-brand-600 text-sm font-medium flex items-center gap-1">
+            <Link to="/wallet" className="text-neon-tangerine hover:text-neon-tangerine/80 text-sm font-medium flex items-center gap-1">
               View Wallet <ChevronRight size={16} />
             </Link>
           </div>
@@ -236,20 +236,20 @@ function Dashboard() {
       {/* Charts Section */}
       <div className="mb-6 md:mb-8">
         <div className="flex items-center gap-2 mb-4 md:mb-6">
-          <BarChart3 className="text-brand-500 shrink-0" size={20} />
+          <BarChart3 className="text-neon-tangerine shrink-0" size={20} />
           <h2 className="text-lg md:text-2xl font-bold text-gray-900">Portfolio Analytics</h2>
         </div>
         <div className="grid sm:grid-cols-2 gap-4 md:gap-6 mb-4 md:mb-6">
           <Card>
             <div className="flex items-center gap-2 mb-4">
-              <TrendingUp className="text-brand-500" size={20} />
+              <TrendingUp className="text-neon-tangerine" size={20} />
               <Card.Title>Portfolio Growth</Card.Title>
             </div>
             <PortfolioGrowthChart data={portfolioGrowthData} />
           </Card>
           <Card>
             <div className="flex items-center gap-2 mb-4">
-              <Activity className="text-brand-500" size={20} />
+              <Activity className="text-neon-tangerine" size={20} />
               <Card.Title>Return History</Card.Title>
             </div>
             <ReturnHistoryChart data={returnHistoryData} />
@@ -257,7 +257,7 @@ function Dashboard() {
         </div>
         <Card>
           <div className="flex items-center gap-2 mb-4">
-            <BarChart3 className="text-brand-500" size={20} />
+            <BarChart3 className="text-neon-tangerine" size={20} />
             <Card.Title>Investment Performance</Card.Title>
           </div>
           <InvestmentPerformanceChart data={performanceData} />
@@ -267,7 +267,7 @@ function Dashboard() {
       {withdrawalConfirmation && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 px-4 backdrop-blur-sm">
           <div className="relative w-full max-w-md overflow-hidden rounded-[28px] bg-white shadow-[0_24px_80px_rgba(15,23,42,0.28)]">
-            <div className="bg-gradient-to-r from-brand-500 via-brand-600 to-navy-500 px-6 pb-14 pt-6 text-white">
+            <div className="bg-dark-lavender px-6 pb-14 pt-6 text-white">
               <div className="flex items-center gap-3">
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/18 ring-1 ring-white/30">
                   <CheckCircle2 size={24} />
@@ -287,7 +287,7 @@ function Dashboard() {
                 <p className="text-sm leading-6 text-slate-600">Your request is now pending review. You will be notified once it has been processed.</p>
               </div>
               <div className="mt-6 flex justify-end">
-                <button onClick={() => setWithdrawalConfirmation("")} className="rounded-xl bg-navy-500 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-navy-600">
+                <button onClick={() => setWithdrawalConfirmation("")} className="rounded-xl bg-dark-lavender px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-dark-lavender/80">
                   Continue
                 </button>
               </div>

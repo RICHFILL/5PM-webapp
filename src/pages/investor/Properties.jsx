@@ -44,7 +44,7 @@ export default function Properties() {
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
-      <div className="bg-gradient-to-br from-navy-500 to-navy-700 rounded-2xl p-4 md:p-8 text-white">
+      <div className="bg-dark-lavender rounded-2xl p-4 md:p-8 text-white">
         <h1 className="text-2xl md:text-3xl font-bold mb-2">Fractional Real Estate</h1>
         <p className="text-blue-200">Own prime properties with fractional ownership starting from low amounts</p>
       </div>
@@ -52,14 +52,14 @@ export default function Properties() {
       <div className="relative">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
         <input type="text" placeholder="Search by name or location..." value={search} onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none transition-all" />
+          className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:border-neon-tangerine focus:ring-2 focus:ring-neon-tangerine/30 outline-none transition-all" />
       </div>
 
       {filtered.length > 0 ? (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.map((property) => (
             <Card key={property._id} className="flex flex-col overflow-hidden p-0 hover:shadow-lg transition-shadow">
-              <div className="h-48 bg-gradient-to-br from-navy-300 to-navy-500 flex items-center justify-center">
+              <div className="h-48 bg-dark-lavender flex items-center justify-center">
                 {property.images?.[0] ? (
                   <img src={property.images[0]} alt={property.name} className="w-full h-full object-cover" />
                 ) : (
@@ -82,7 +82,7 @@ export default function Properties() {
                   </div>
                   <div>
                     <p className="text-xs text-gray-500">ROI</p>
-                    <p className="text-sm font-bold text-brand-500">"3.5%" </p>
+                    <p className="text-sm font-bold text-neon-tangerine">"3.5%" </p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-500">Units Left</p>

@@ -10,20 +10,20 @@ function PublicLayout({ children }) {
             <img src="/assets/logo.png" alt="Logo" className="h-20 w-auto" />
           </Link>
           <nav className="hidden md:flex items-center gap-6">
-            <Link to={ROUTES.ABOUT} className="text-sm text-gray-600 hover:text-brand-500 transition-colors">About</Link>
-            <Link to={ROUTES.INVESTMENT_OPPORTUNITIES} className="text-sm text-gray-600 hover:text-brand-500 transition-colors">Investments</Link>
-            <Link to={ROUTES.HOW_IT_WORKS} className="text-sm text-gray-600 hover:text-brand-500 transition-colors">How It Works</Link>
-            <Link to={ROUTES.FAQ} className="text-sm text-gray-600 hover:text-brand-500 transition-colors">FAQ</Link>
-            <Link to={ROUTES.CONTACT} className="text-sm text-gray-600 hover:text-brand-500 transition-colors">Contact</Link>
+            <Link to={ROUTES.ABOUT} className="text-sm text-gray-600 hover:text-neon-tangerine transition-colors">About</Link>
+            <Link to={ROUTES.INVESTMENT_OPPORTUNITIES} className="text-sm text-gray-600 hover:text-neon-tangerine transition-colors">Investments</Link>
+            <Link to={ROUTES.HOW_IT_WORKS} className="text-sm text-gray-600 hover:text-neon-tangerine transition-colors">How It Works</Link>
+            <Link to={ROUTES.FAQ} className="text-sm text-gray-600 hover:text-neon-tangerine transition-colors">FAQ</Link>
+            <Link to={ROUTES.CONTACT} className="text-sm text-gray-600 hover:text-neon-tangerine transition-colors">Contact</Link>
           </nav>
           <div className="flex items-center gap-3">
-            <Link to={ROUTES.LOGIN} className="text-sm font-semibold text-gray-700 hover:text-brand-500 transition-colors">Sign In</Link>
-            <Link to={ROUTES.REGISTER} className="text-sm font-semibold text-white bg-brand-500 hover:bg-brand-600 px-4 py-2 rounded-xl transition-colors">Get Started</Link>
+            <Link to={ROUTES.LOGIN} className="text-sm font-semibold text-gray-700 hover:text-neon-tangerine transition-colors">Sign In</Link>
+            <Link to={ROUTES.REGISTER} className="text-sm font-semibold text-white bg-neon-tangerine hover:bg-neon-tangerine/80 px-4 py-2 rounded-xl transition-colors">Get Started</Link>
           </div>
         </div>
       </header>
       <main className="flex-1">{children}</main>
-      <footer className="bg-navy-900 text-white py-12">
+      <footer className="bg-dark-lavender text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8">
             <div>

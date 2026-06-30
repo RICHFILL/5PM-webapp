@@ -112,11 +112,11 @@ function AdminLayout({ children }) {
       )}
 
       <aside
-        className={`fixed md:relative w-64 h-full bg-navy-900 text-white transform transition-transform duration-300 z-50 md:z-0 flex flex-col ${
+        className={`fixed md:relative w-64 h-full bg-dark-lavender text-white transform transition-transform duration-300 z-50 md:z-0 flex flex-col ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >
-        <div className="h-16 flex items-center justify-between px-6 border-b border-navy-700">
+        <div className="h-16 flex items-center justify-between px-6 border-b border-dark-lavender/80">
           <Link to="/admin" className="flex items-center gap-2">
             <img src="/assets/logo.png" alt="Logo" className="w-16 lg:w-24 h-auto brightness-0 invert" />
           </Link>
@@ -146,7 +146,7 @@ function AdminLayout({ children }) {
           ))}
         </nav>
 
-        <div className="p-4 border-t border-navy-700 space-y-3">
+        <div className="p-4 border-t border-dark-lavender/80 space-y-3">
           <Link
             to="/"
             className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-white/5 hover:text-white transition-colors text-sm"
@@ -155,7 +155,7 @@ function AdminLayout({ children }) {
             <span>Back to Home</span>
           </Link>
           <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-white/5">
-            <div className="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center text-white font-bold text-xs">
+            <div className="w-8 h-8 rounded-full bg-neon-tangerine flex items-center justify-center text-white font-bold text-xs">
               {initials}
             </div>
             <div className="flex-1 min-w-0">
@@ -199,7 +199,7 @@ function AdminLayout({ children }) {
                   <p className="text-sm font-semibold text-gray-900">Notifications</p>
                 </div>
                 {notifications.length > 0 ? notifications.slice(0, 10).map((n) => (
-                  <div key={n.id} className={`p-3 border-b border-gray-50 hover:bg-gray-50 cursor-pointer ${n.read ? '' : 'bg-brand-50/50'}`} onClick={() => handleMarkRead(n.id)}>
+                  <div key={n.id} className={`p-3 border-b border-gray-50 hover:bg-gray-50 cursor-pointer ${n.read ? '' : 'bg-neon-tangerine/10'}`} onClick={() => handleMarkRead(n.id)}>
                     <p className="text-sm font-medium text-gray-900">{n.title}</p>
                     <p className="text-xs text-gray-500 mt-0.5">{n.message}</p>
                   </div>

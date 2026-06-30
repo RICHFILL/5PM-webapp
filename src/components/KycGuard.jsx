@@ -76,8 +76,8 @@ export default function KycGuard({ children }) {
   return (
     <div className="flex items-center justify-center min-h-[60vh] p-4">
       <div className="max-w-md w-full text-center space-y-6">
-        <div className="w-20 h-20 rounded-full bg-brand-100 flex items-center justify-center mx-auto">
-          <Shield size={40} className="text-brand-600" />
+        <div className="w-20 h-20 rounded-full bg-neon-tangerine/20 flex items-center justify-center mx-auto">
+          <Shield size={40} className="text-neon-tangerine/80" />
         </div>
         <h2 className="text-xl font-bold text-gray-900">KYC Verification Required</h2>
         <p className="text-sm text-gray-600">

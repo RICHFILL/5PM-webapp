@@ -92,7 +92,7 @@ export default function Notifications() {
             return (
               <div key={n.id || n._id}
                 className={`flex items-start gap-4 p-4 rounded-xl transition-colors cursor-pointer ${
-                  n.read ? "bg-white border border-gray-100" : "bg-brand-50 border border-brand-100"
+                  n.read ? "bg-white border border-gray-100" : "bg-neon-tangerine/10 border border-neon-tangerine/20"
                 }`}
                 onClick={() => !n.read && handleMarkRead(n.id || n._id)}>
                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${colorMap[n.type] || colorMap.info}`}>
@@ -105,7 +105,7 @@ export default function Notifications() {
                     </p>
                     <div className="flex items-center gap-2 shrink-0">
                       <span className="text-xs text-gray-400">{formatDate(n.createdAt)}</span>
-                      {n.read ? <MailOpen size={14} className="text-gray-300" /> : <Mail size={14} className="text-brand-500" />}
+                      {n.read ? <MailOpen size={14} className="text-gray-300" /> : <Mail size={14} className="text-neon-tangerine" />}
                     </div>
                   </div>
                   {n.message && n.title && (

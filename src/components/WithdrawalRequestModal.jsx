@@ -16,7 +16,7 @@ function WithdrawalRequestModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm">
       <div className="w-full max-w-md overflow-hidden rounded-3xl bg-white shadow-2xl">
-        <div className="bg-gradient-to-br from-[#0F7CFF] via-[#00B8DB] to-[#072B61] px-5 py-5 text-white">
+        <div className="bg-dark-lavender px-5 py-5 text-white">
           <div className="mb-4 inline-flex rounded-xl bg-white/15 p-2.5">
             <Wallet size={20} />
           </div>

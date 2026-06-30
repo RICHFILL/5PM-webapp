@@ -50,7 +50,7 @@ function Register() {
     }
   };
 
-  const inputClass = "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none";
+  const inputClass = "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-neon-tangerine focus:border-transparent outline-none";
 
   return (
     <div>
@@ -104,16 +104,16 @@ function Register() {
         <label className="flex items-start gap-3 cursor-pointer">
           <input type="checkbox" checked={agreeTerms} onChange={(e) => setAgreeTerms(e.target.checked)} className="w-4 h-4 rounded border-gray-300 cursor-pointer mt-1" />
           <span className="text-sm text-gray-600">
-            I agree to the <Link to="/terms" className="text-brand-500 font-medium">Terms & Conditions</Link> and <Link to="/terms" className="text-brand-500 font-medium">Privacy Policy</Link>
+            I agree to the <Link to="/terms" className="text-neon-tangerine font-medium">Terms & Conditions</Link> and <Link to="/terms" className="text-neon-tangerine font-medium">Privacy Policy</Link>
           </span>
         </label>
         <button type="submit" disabled={loading || !agreeTerms || !Object.values(passwordChecks).every(Boolean) || !passwordsMatch}
-          className="w-full bg-brand-500 text-white font-semibold py-2.5 rounded-lg hover:bg-brand-600 transition-all duration-200 disabled:opacity-50">
+          className="w-full bg-neon-tangerine text-white font-semibold py-2.5 rounded-lg hover:bg-neon-tangerine/80 transition-all duration-200 disabled:opacity-50">
           {loading ? "Creating Account..." : "Create Account"}
         </button>
       </form>
       <hr className="my-6" />
-      <p className="text-center text-gray-600 text-sm">Already have an account? <Link to="/login" className="text-brand-500 font-medium">Sign in here</Link></p>
+      <p className="text-center text-gray-600 text-sm">Already have an account? <Link to="/login" className="text-neon-tangerine font-medium">Sign in here</Link></p>
     </div>
   );
 }

@@ -71,11 +71,11 @@ export default function CampaignDetail() {
 
   return (
     <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-6">
-      <Link to="/crowdfunding" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-brand-500 transition-colors">
+      <Link to="/crowdfunding" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-neon-tangerine transition-colors">
         <ArrowLeft size={16} /> Back to Campaigns
       </Link>
 
-      <div className="h-48 md:h-56 rounded-2xl bg-gradient-to-br from-brand-300 to-brand-500 flex items-center justify-center overflow-hidden">
+      <div className="h-48 md:h-56 rounded-2xl bg-neon-tangerine flex items-center justify-center overflow-hidden">
         {campaign.images?.[0] ? (
           <img src={campaign.images[0]} alt={campaign.title} className="w-full h-full object-cover" />
         ) : (
@@ -105,8 +105,8 @@ export default function CampaignDetail() {
                 {campaign.investments.map((inv) => (
                   <div key={inv.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-navy-100 rounded-full flex items-center justify-center">
-                        <Users size={14} className="text-navy-600" />
+                      <div className="w-8 h-8 bg-dark-lavender/20 rounded-full flex items-center justify-center">
+                        <Users size={14} className="text-dark-lavender/80" />
                       </div>
                       <div>
                         <p className="text-sm font-medium text-gray-900">
@@ -129,7 +129,7 @@ export default function CampaignDetail() {
           <Card>
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Funding Progress</h3>
             <div className="w-full bg-gray-100 rounded-full h-3 mb-2">
-              <div className="bg-brand-500 h-3 rounded-full transition-all" style={{ width: `${Math.min(progress, 100)}%` }}></div>
+              <div className="bg-neon-tangerine h-3 rounded-full transition-all" style={{ width: `${Math.min(progress, 100)}%` }}></div>
             </div>
             <p className="text-sm text-gray-600 mb-4">{progress.toFixed(1)}% funded</p>
             <div className="space-y-3">
@@ -143,20 +143,20 @@ export default function CampaignDetail() {
               </div>
               <div>
                 <p className="text-xs text-gray-500 uppercase tracking-wide">Min Investment</p>
-                <p className="text-lg font-semibold text-brand-500">{formatNaira(campaign.minInvestment)}</p>
+                <p className="text-lg font-semibold text-neon-tangerine">{formatNaira(campaign.minInvestment)}</p>
               </div>
             </div>
           </Card>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="bg-slate-50 rounded-xl p-4 text-center">
-              <TrendingUp size={20} className="text-brand-500 mx-auto mb-1" />
+              <TrendingUp size={20} className="text-neon-tangerine mx-auto mb-1" />
               <p className="text-xs text-gray-500">Investors</p>
               <p className="text-sm font-bold text-gray-900">{campaign.investments?.length || 0}</p>
             </div>
             {daysLeft !== null && (
               <div className="bg-slate-50 rounded-xl p-4 text-center">
-                <Clock size={20} className="text-brand-500 mx-auto mb-1" />
+                <Clock size={20} className="text-neon-tangerine mx-auto mb-1" />
                 <p className="text-xs text-gray-500">Days Left</p>
                 <p className="text-sm font-bold text-gray-900">{daysLeft}</p>
               </div>
@@ -175,7 +175,7 @@ export default function CampaignDetail() {
         title={investStep === "form" ? "Invest in Campaign" : "Investment Confirmed"} size="md">
         {investStep === "form" ? (
           <div className="space-y-4">
-            <div className="bg-navy-50 rounded-xl p-4 space-y-2">
+            <div className="bg-dark-lavender/10 rounded-xl p-4 space-y-2">
               <div className="flex justify-between text-sm"><span className="text-gray-600">Campaign</span><span className="font-semibold">{campaign.title}</span></div>
               <div className="flex justify-between text-sm"><span className="text-gray-600">Min Investment</span><span className="font-semibold">{formatNaira(campaign.minInvestment)}</span></div>
             </div>

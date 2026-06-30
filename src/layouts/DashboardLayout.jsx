@@ -115,7 +115,7 @@ function DashboardLayout({ children }) {
               onClick={() => setSidebarOpen(false)}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                 isActive(item.path)
-                  ? 'bg-brand-50 text-brand-500 font-medium'
+                  ? 'bg-neon-tangerine/10 text-neon-tangerine font-medium'
                   : 'text-gray-700 hover:bg-gray-100'
               }`}
             >
@@ -135,7 +135,7 @@ function DashboardLayout({ children }) {
             onClick={() => setSidebarOpen(false)}
             className="flex items-center gap-3 px-4 py-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
           >
-            <div className="w-10 h-10 rounded-full bg-brand-500 flex items-center justify-center text-white font-bold text-sm">
+            <div className="w-10 h-10 rounded-full bg-neon-tangerine flex items-center justify-center text-white font-bold text-sm">
               {initials}
             </div>
             <div className="flex-1 min-w-0">
@@ -173,7 +173,7 @@ function DashboardLayout({ children }) {
             </Link>
             <Link
               to="/profile"
-              className="w-10 h-10 rounded-full bg-brand-500 flex items-center justify-center text-white font-bold text-sm hover:bg-brand-600 transition-colors"
+              className="w-10 h-10 rounded-full bg-neon-tangerine flex items-center justify-center text-white font-bold text-sm hover:bg-neon-tangerine/80 transition-colors"
             >
               {initials}
             </Link>
@@ -184,7 +184,7 @@ function DashboardLayout({ children }) {
 
       {needsVerification && (
         <div className="fixed bottom-4 right-4 z-40">
-          <button onClick={() => setVerifyModalOpen(true)} className="flex items-center gap-2 bg-brand-500 text-white px-4 py-3 rounded-xl shadow-lg hover:bg-brand-600 transition-colors text-sm font-medium">
+          <button onClick={() => setVerifyModalOpen(true)} className="flex items-center gap-2 bg-neon-tangerine text-white px-4 py-3 rounded-xl shadow-lg hover:bg-neon-tangerine/80 transition-colors text-sm font-medium">
             <Mail size={18} />
             Verify Email
           </button>

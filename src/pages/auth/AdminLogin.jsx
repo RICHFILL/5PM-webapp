@@ -34,7 +34,7 @@ function AdminLogin() {
 
   return (
     <div>
-      <h2 className="text-xl md:text-2xl font-bold text-navy-900 mb-2 text-center">
+      <h2 className="text-xl md:text-2xl font-bold text-dark-lavender mb-2 text-center">
         Admin Portal
       </h2>
       <p className="text-gray-600 mb-6 text-center">
@@ -56,7 +56,7 @@ function AdminLogin() {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="admin@5pmnexus.com"
             required
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-transparent outline-none"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-lavender focus:border-transparent outline-none"
           />
         </div>
         <div>
@@ -68,7 +68,7 @@ function AdminLogin() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-transparent outline-none"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-lavender focus:border-transparent outline-none"
             />
             <button
               type="button"
@@ -82,7 +82,7 @@ function AdminLogin() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-navy-600 text-white font-semibold py-2.5 rounded-lg hover:bg-navy-700 transition-all duration-200 disabled:opacity-50"
+          className="w-full bg-dark-lavender/80 text-white font-semibold py-2.5 rounded-lg hover:bg-dark-lavender/80 transition-all duration-200 disabled:opacity-50"
         >
           {loading ? "Signing in..." : "Sign In"}
         </button>

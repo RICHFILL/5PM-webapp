@@ -65,7 +65,7 @@ function DepositModal({ isOpen, onClose, onDepositComplete }) {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Currency</label>
             <select value={currency} onChange={(e) => setCurrency(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none">
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-neon-tangerine focus:border-transparent outline-none">
               {CURRENCIES.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
             </select>
           </div>
@@ -73,22 +73,22 @@ function DepositModal({ isOpen, onClose, onDepositComplete }) {
             placeholder="e.g., 100000" required min="1000" />
 
           {currency === "NGN" && (
-            <div className="bg-brand-50 border border-brand-200 rounded-xl p-4 text-sm text-brand-800 space-y-2">
+            <div className="bg-neon-tangerine/10 border border-neon-tangerine/30 rounded-xl p-4 text-sm text-neon-tangerine space-y-2">
               <p className="font-semibold mb-1">Bank Transfer Details</p>
               <div className="flex items-center justify-between">
                 <span>Bank: {addr.bank}</span>
                 <button type="button" onClick={() => copyToClipboard(addr.bank, "bank")}
-                  className="text-brand-600 hover:text-brand-800 p-1">{copied === "bank" ? <CheckCircle2 size={14} /> : <Copy size={14} />}</button>
+                  className="text-neon-tangerine/80 hover:text-neon-tangerine p-1">{copied === "bank" ? <CheckCircle2 size={14} /> : <Copy size={14} />}</button>
               </div>
               <div className="flex items-center justify-between">
                 <span>Account: {addr.account}</span>
                 <button type="button" onClick={() => copyToClipboard(addr.account, "account")}
-                  className="text-brand-600 hover:text-brand-800 p-1">{copied === "account" ? <CheckCircle2 size={14} /> : <Copy size={14} />}</button>
+                  className="text-neon-tangerine/80 hover:text-neon-tangerine p-1">{copied === "account" ? <CheckCircle2 size={14} /> : <Copy size={14} />}</button>
               </div>
               <div className="flex items-center justify-between">
                 <span>Name: {addr.name}</span>
                 <button type="button" onClick={() => copyToClipboard(addr.name, "name")}
-                  className="text-brand-600 hover:text-brand-800 p-1">{copied === "name" ? <CheckCircle2 size={14} /> : <Copy size={14} />}</button>
+                  className="text-neon-tangerine/80 hover:text-neon-tangerine p-1">{copied === "name" ? <CheckCircle2 size={14} /> : <Copy size={14} />}</button>
               </div>
             </div>
           )}
@@ -188,7 +188,7 @@ function WithdrawalModal({ isOpen, onClose, balances, onWithdrawComplete }) {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Currency</label>
             <select value={currency} onChange={(e) => setCurrency(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none">
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-neon-tangerine focus:border-transparent outline-none">
               {CURRENCIES.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
             </select>
           </div>
@@ -223,9 +223,9 @@ function WithdrawalModal({ isOpen, onClose, balances, onWithdrawComplete }) {
 }
 
 const walletGradients = {
-  NGN: "from-brand-500 to-brand-700",
-  USD: "from-navy-500 to-navy-700",
-  USDT: "from-emerald-500 to-emerald-700",
+  NGN: "bg-neon-tangerine",
+  USD: "bg-dark-lavender",
+  USDT: "bg-dark-lavender",
 };
 
 const walletAccent = {
@@ -237,7 +237,7 @@ const walletAccent = {
 function WalletCard({ currency, balance, onDeposit, onWithdraw }) {
   const cur = CURRENCIES.find((c) => c.value === currency);
   return (
-    <div className={`rounded-2xl overflow-hidden bg-gradient-to-br ${walletGradients[currency]} text-white shadow-lg`}>
+    <div className={`rounded-2xl overflow-hidden ${walletGradients[currency]} text-white shadow-lg`}>
       <div className="p-4 md:p-6">
         <p className={`text-xs md:text-sm uppercase tracking-[0.18em] ${walletAccent[currency]} mb-1`}>{currency} Wallet</p>
         <p className="text-2xl md:text-4xl font-bold break-all">{cur?.format(balance)}</p>
@@ -381,7 +381,7 @@ export default function Wallet() {
               {FILTERS.map((f) => (
                 <button key={f.value} onClick={() => setActiveFilter(f.value)}
                   className={`px-2.5 md:px-3 py-1.5 text-xs font-medium rounded-lg transition-colors whitespace-nowrap ${
-                    activeFilter === f.value ? "bg-brand-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    activeFilter === f.value ? "bg-neon-tangerine text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                   }`}>
                   {f.label}
                 </button>

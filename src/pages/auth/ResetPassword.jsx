@@ -48,8 +48,8 @@ function ResetPassword() {
         <ArrowLeft size={20} /><span className="text-sm font-medium">Back to Login</span>
       </Link>
       <div className="text-center mb-8">
-        <div className="w-14 h-14 mx-auto mb-4 bg-brand-50 rounded-2xl flex items-center justify-center">
-          <Lock className="text-brand-500" size={28} />
+        <div className="w-14 h-14 mx-auto mb-4 bg-neon-tangerine/10 rounded-2xl flex items-center justify-center">
+          <Lock className="text-neon-tangerine" size={28} />
         </div>
         <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">Set New Password</h2>
         <p className="text-gray-600">Enter your new password below</p>
@@ -63,7 +63,7 @@ function ResetPassword() {
         <Input label="Confirm Password" type="password" value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm new password" required />
         <button type="submit" disabled={loading}
-          className="w-full bg-brand-500 text-white font-semibold py-2.5 rounded-lg hover:bg-brand-600 transition-all disabled:opacity-50">
+          className="w-full bg-neon-tangerine text-white font-semibold py-2.5 rounded-lg hover:bg-neon-tangerine/80 transition-all disabled:opacity-50">
           {loading ? "Resetting..." : "Reset Password"}
         </button>
       </form>

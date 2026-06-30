@@ -39,7 +39,7 @@ function ForgotPassword() {
     } finally { setLoading(false); }
   };
 
-  const inputClass = "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none";
+  const inputClass = "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-neon-tangerine focus:border-transparent outline-none";
 
   return (
     <div>
@@ -61,7 +61,7 @@ function ForgotPassword() {
             <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="investor@example.com" required className={inputClass} />
           </div>
-          <button type="submit" disabled={loading} className="w-full bg-brand-500 text-white font-semibold py-2.5 rounded-lg hover:bg-brand-600 transition-all disabled:opacity-50">
+          <button type="submit" disabled={loading} className="w-full bg-neon-tangerine text-white font-semibold py-2.5 rounded-lg hover:bg-neon-tangerine/80 transition-all disabled:opacity-50">
             {loading ? "Sending..." : "Send Reset Email"}
           </button>
         </form>
@@ -79,7 +79,7 @@ function ForgotPassword() {
             <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
             <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm new password" required className={inputClass} />
           </div>
-          <button type="submit" disabled={loading} className="w-full bg-brand-500 text-white font-semibold py-2.5 rounded-lg hover:bg-brand-600 transition-all disabled:opacity-50">
+          <button type="submit" disabled={loading} className="w-full bg-neon-tangerine text-white font-semibold py-2.5 rounded-lg hover:bg-neon-tangerine/80 transition-all disabled:opacity-50">
             {loading ? "Resetting..." : "Reset Password"}
           </button>
         </form>

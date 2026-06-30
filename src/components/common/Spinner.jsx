@@ -7,7 +7,7 @@ function Spinner({ size = 'md', className = '' }) {
   return (
     <div className={`flex items-center justify-center ${className}`}>
       <div
-        className={`animate-spin rounded-full border-brand-500 border-t-transparent ${sizes[size]}`}
+        className={`animate-spin rounded-full border-neon-tangerine border-t-transparent ${sizes[size]}`}
       />
     </div>
   );

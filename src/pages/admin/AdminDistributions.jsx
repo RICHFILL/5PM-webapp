@@ -108,7 +108,7 @@ export default function AdminDistributions() {
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
         <input type="text" placeholder="Search by reference or user..." value={search} onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none text-sm" />
+          className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:border-neon-tangerine focus:ring-2 focus:ring-neon-tangerine/30 outline-none text-sm" />
       </div>
       <div className="overflow-x-auto -mx-6">
         <Card className="p-0">
@@ -159,7 +159,7 @@ export default function AdminDistributions() {
           <div className="relative">
             <label className="block text-sm font-medium text-gray-700 mb-1">Investment</label>
             <button type="button" onClick={() => { fetchInvestments(); setShowDropdown(!showDropdown); setInvestSearch(""); }}
-              className="w-full flex items-center justify-between rounded-xl border border-gray-300 px-4 py-2.5 text-sm text-left focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
+              className="w-full flex items-center justify-between rounded-xl border border-gray-300 px-4 py-2.5 text-sm text-left focus:outline-none focus:ring-2 focus:ring-neon-tangerine focus:border-neon-tangerine">
               <span className={selectedInvest ? "text-gray-900" : "text-gray-400"}>
                 {selectedInvest ? `${selectedInvest.refNumber || "--"} - ${selectedInvest.investor?.firstName || selectedInvest.user?.firstName || ""} ${selectedInvest.investor?.lastName || selectedInvest.user?.lastName || ""}` : "Select an investment..."}
               </span>
@@ -169,7 +169,7 @@ export default function AdminDistributions() {
               <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
                 <div className="p-2 border-b border-gray-100">
                   <input type="text" value={investSearch} onChange={(e) => setInvestSearch(e.target.value)} placeholder="Search by ref or name..."
-                    className="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-brand-500" autoFocus />
+                    className="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-neon-tangerine" autoFocus />
                 </div>
                 {investments.filter((i) => {
                   const q = investSearch.toLowerCase();
@@ -178,7 +178,7 @@ export default function AdminDistributions() {
                     || (i.investor?.lastName || i.user?.lastName || "").toLowerCase().includes(q);
                 }).map((i) => (
                   <button key={i.id || i._id} type="button" onClick={() => { setForm({ ...form, investmentId: i.id || i._id }); setShowDropdown(false); }}
-                    className={`w-full text-left px-4 py-2.5 text-sm hover:bg-brand-50 transition-colors ${form.investmentId === (i.id || i._id) ? "bg-brand-50 font-semibold" : ""}`}>
+                    className={`w-full text-left px-4 py-2.5 text-sm hover:bg-neon-tangerine/10 transition-colors ${form.investmentId === (i.id || i._id) ? "bg-neon-tangerine/10 font-semibold" : ""}`}>
                     <span className="text-gray-900">{i.refNumber || "--"}</span>
                     <span className="text-gray-500 ml-2">{(i.investor?.firstName || i.user?.firstName || "")} {(i.investor?.lastName || i.user?.lastName || "")}</span>
                   </button>
@@ -190,7 +190,7 @@ export default function AdminDistributions() {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
             <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none">
+              className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:border-neon-tangerine focus:ring-2 focus:ring-neon-tangerine/30 outline-none">
               <option value="monthly">Monthly</option>
               <option value="quarterly">Quarterly</option>
             </select>

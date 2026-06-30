@@ -81,7 +81,7 @@ export default function CreateWealthPlan() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Cooperative (Optional)</label>
                   <select value={form.cooperative} onChange={(e) => setForm({ ...form, cooperative: e.target.value })}
-                    className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none">
+                    className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:border-neon-tangerine focus:ring-2 focus:ring-neon-tangerine/30 outline-none">
                     <option value="">Select cooperative</option>
                     {cooperatives.filter((c) => c.status === "active").map((c) => (
                       <option key={c.id} value={c.id}>{c.name}</option>

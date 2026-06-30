@@ -121,7 +121,7 @@ export default function InvestmentDetail() {
         <ArrowLeft className="w-4 h-4" /><span className="text-sm font-medium">Back to Investments</span>
       </button>
 
-      <section className="rounded-3xl bg-gradient-to-r from-slate-900 via-slate-800 to-cyan-700 text-white overflow-hidden">
+      <section className="rounded-3xl bg-dark-lavender text-white overflow-hidden">
           <div className="p-4 md:p-8">
           <div className="flex flex-col gap-4 md:gap-8 lg:flex-row lg:items-start lg:justify-between">
             <div className="space-y-5">

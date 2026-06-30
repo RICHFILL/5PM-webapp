@@ -1,9 +1,9 @@
 function Button({ children, variant = 'primary', size = 'md', className = '', ...props }) {
   const base = 'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
   const variants = {
-    primary: 'bg-brand-500 text-white hover:bg-brand-600 focus:ring-brand-500',
-    secondary: 'bg-navy-500 text-white hover:bg-navy-600 focus:ring-navy-500',
-    outline: 'border-2 border-brand-500 text-brand-500 hover:bg-brand-50 focus:ring-brand-500',
+    primary: 'bg-neon-tangerine text-white hover:bg-neon-tangerine/80 focus:ring-neon-tangerine',
+    secondary: 'bg-dark-lavender text-white hover:bg-dark-lavender/80 focus:ring-dark-lavender',
+    outline: 'border-2 border-neon-tangerine text-neon-tangerine hover:bg-neon-tangerine/10 focus:ring-neon-tangerine',
     ghost: 'text-gray-700 hover:bg-gray-100 focus:ring-gray-500',
     danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
   };

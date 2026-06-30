@@ -73,7 +73,7 @@ export default function Portfolio() {
       </div>
 
       <div className="grid md:grid-cols-4 gap-4">
-        <div className="bg-gradient-to-br from-brand-500 to-brand-700 rounded-xl p-5 text-white">
+        <div className="bg-neon-tangerine rounded-xl p-5 text-white">
           <p className="text-sm text-cyan-100 mb-1">Total Portfolio Value</p>
           <p className="text-xl md:text-2xl font-bold">{formatNaira(stats?.totalInvested)}</p>
         </div>
@@ -82,11 +82,11 @@ export default function Portfolio() {
           <p className="text-xl md:text-2xl font-bold text-gray-900">{formatNaira(stats?.totalInterestEarned)}</p>
         </div>
         <div className="bg-white rounded-xl border border-gray-100 p-5">
-          <div className="flex items-center gap-2 text-xs text-gray-500 mb-1"><Percent size={14} className="text-brand-500" />Avg. ROI</div>
+          <div className="flex items-center gap-2 text-xs text-gray-500 mb-1"><Percent size={14} className="text-neon-tangerine" />Avg. ROI</div>
           <p className="text-xl md:text-2xl font-bold text-gray-900">3.5%</p>
         </div>
         <div className="bg-white rounded-xl border border-gray-100 p-5">
-          <div className="flex items-center gap-2 text-xs text-gray-500 mb-1"><Shield size={14} className="text-navy-500" />Risk Score</div>
+          <div className="flex items-center gap-2 text-xs text-gray-500 mb-1"><Shield size={14} className="text-dark-lavender" />Risk Score</div>
           <p className="text-xl md:text-2xl font-bold text-gray-900">Moderate</p>
         </div>
       </div>
@@ -140,7 +140,7 @@ export default function Portfolio() {
                     <td className="py-3 text-gray-600">{inv.interestRatePerAnnum}%</td>
                     <td className="py-3 text-gray-600">{inv.tenure} months</td>
                     <td className="py-3 text-right">
-                      <span className="text-sm font-medium text-brand-500">{inv.amount / (stats?.totalInvested || 1) * 100}%</span>
+                      <span className="text-sm font-medium text-neon-tangerine">{inv.amount / (stats?.totalInvested || 1) * 100}%</span>
                     </td>
                   </tr>
                 ))}

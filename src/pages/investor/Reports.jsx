@@ -91,7 +91,7 @@ export default function Reports() {
         {periods.map((p) => (
           <button key={p} onClick={() => setPeriod(p)}
             className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
-              period === p ? "bg-brand-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              period === p ? "bg-neon-tangerine text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
             }`}>
             {p}
           </button>
@@ -99,7 +99,7 @@ export default function Reports() {
       </div>
 
       <div className="grid md:grid-cols-3 gap-4">
-        <div className="bg-gradient-to-br from-brand-500 to-brand-700 rounded-xl p-5 text-white">
+        <div className="bg-neon-tangerine rounded-xl p-5 text-white">
           <p className="text-sm text-cyan-100 mb-1">Total Invested</p>
           <p className="text-xl md:text-2xl font-bold">{formatNaira(totalInvested)}</p>
         </div>
@@ -108,7 +108,7 @@ export default function Reports() {
           <p className="text-xl md:text-2xl font-bold text-gray-900">{formatNaira(totalReturns)}</p>
         </div>
         <div className="bg-white rounded-xl border border-gray-100 p-5">
-          <div className="flex items-center gap-2 text-xs text-gray-500 mb-1"><PiggyBank size={14} className="text-brand-500" />Active Investments</div>
+          <div className="flex items-center gap-2 text-xs text-gray-500 mb-1"><PiggyBank size={14} className="text-neon-tangerine" />Active Investments</div>
           <p className="text-xl md:text-2xl font-bold text-gray-900">{activeCount}</p>
         </div>
       </div>

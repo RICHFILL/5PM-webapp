@@ -56,8 +56,8 @@ function VerifyPhone() {
         <ArrowLeft size={20} /><span className="text-sm font-medium">Back</span>
       </Link>
       <div className="text-center mb-8">
-        <div className="w-14 h-14 mx-auto mb-4 bg-brand-50 rounded-2xl flex items-center justify-center">
-          <Phone className="text-brand-500" size={28} />
+        <div className="w-14 h-14 mx-auto mb-4 bg-neon-tangerine/10 rounded-2xl flex items-center justify-center">
+          <Phone className="text-neon-tangerine" size={28} />
         </div>
         <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">Verify Your Phone</h2>
         <p className="text-gray-600">Enter the 6-digit code sent to your phone number</p>
@@ -70,18 +70,18 @@ function VerifyPhone() {
           {code.map((digit, i) => (
             <input key={i} id={`phone-code-${i}`} type="text" inputMode="numeric" maxLength={1}
               value={digit} onChange={(e) => handleChange(i, e.target.value)} onKeyDown={(e) => handleKeyDown(i, e)}
-              className="w-12 h-14 text-center text-xl font-bold border border-gray-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required />
+              className="w-12 h-14 text-center text-xl font-bold border border-gray-300 rounded-xl focus:ring-2 focus:ring-neon-tangerine focus:border-neon-tangerine outline-none" required />
           ))}
         </div>
         <button type="submit" disabled={loading}
-          className="w-full bg-brand-500 text-white font-semibold py-2.5 rounded-lg hover:bg-brand-600 transition-all disabled:opacity-50">
+          className="w-full bg-neon-tangerine text-white font-semibold py-2.5 rounded-lg hover:bg-neon-tangerine/80 transition-all disabled:opacity-50">
           {loading ? "Verifying..." : "Verify Phone"}
         </button>
       </form>
 
       <p className="text-center text-sm text-gray-600 mt-6">
         Did not receive the code?{" "}
-        <button className="text-brand-500 font-medium hover:text-brand-600">Resend Code</button>
+        <button className="text-neon-tangerine font-medium hover:text-neon-tangerine/80">Resend Code</button>
       </p>
     </div>
   );

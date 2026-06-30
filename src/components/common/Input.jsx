@@ -7,7 +7,7 @@ const Input = forwardRef(({ label, error, className = '', ...props }, ref) => (
     )}
     <input
       ref={ref}
-      className={`block w-full rounded-xl border px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 ${
+      className={`block w-full rounded-xl border px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-neon-tangerine focus:border-neon-tangerine ${
         error ? 'border-red-500 focus:ring-red-500' : 'border-gray-300'
       } ${className}`}
       {...props}

@@ -37,7 +37,7 @@ const faqs = [
 function FAQ() {
   return (
     <div>
-      <section className="bg-gradient-to-br from-navy-900 via-navy-800 to-brand-700 text-white py-20">
+      <section className="bg-dark-lavender text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-2xl md:text-5xl font-bold mb-6">Frequently Asked Questions</h1>
           <p className="text-xl text-gray-300 max-w-3xl">
@@ -53,7 +53,7 @@ function FAQ() {
               <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-6">{group.category}</h2>
               <div className="space-y-4">
                 {group.items.map((faq) => (
-                  <details key={faq.q} className="group bg-gray-50 rounded-xl p-5 open:ring-1 open:ring-brand-200 transition-all">
+                  <details key={faq.q} className="group bg-gray-50 rounded-xl p-5 open:ring-1 open:ring-neon-tangerine/30 transition-all">
                     <summary className="flex items-center justify-between cursor-pointer font-semibold text-gray-900">
                       {faq.q}
                       <ArrowRight size={16} className="group-open:rotate-90 transition-transform shrink-0" />

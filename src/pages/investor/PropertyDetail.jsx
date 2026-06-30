@@ -70,11 +70,11 @@ export default function PropertyDetail() {
 
   return (
     <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-6">
-      <Link to="/properties" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-brand-500 transition-colors">
+      <Link to="/properties" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-neon-tangerine transition-colors">
         <ArrowLeft size={16} /> Back to Properties
       </Link>
 
-      <div className="h-64 md:h-80 rounded-2xl bg-gradient-to-br from-navy-300 to-navy-500 flex items-center justify-center overflow-hidden">
+      <div className="h-64 md:h-80 rounded-2xl bg-dark-lavender flex items-center justify-center overflow-hidden">
         {property.images?.[0] ? (
           <img src={property.images[0]} alt={property.name} className="w-full h-full object-cover" />
         ) : (
@@ -123,8 +123,8 @@ export default function PropertyDetail() {
                     : FileText;
                   return (
                     <div key={u.id} className="flex items-start gap-3 pb-4 border-b border-gray-100 last:border-0 last:pb-0">
-                      <div className="w-10 h-10 bg-navy-100 rounded-xl flex items-center justify-center shrink-0">
-                        <TypeIcon size={18} className="text-navy-600" />
+                      <div className="w-10 h-10 bg-dark-lavender/20 rounded-xl flex items-center justify-center shrink-0">
+                        <TypeIcon size={18} className="text-dark-lavender/80" />
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-gray-900">{u.title}</p>
@@ -149,7 +149,7 @@ export default function PropertyDetail() {
               </div>
               <div>
                 <p className="text-xs text-gray-500 uppercase tracking-wide">Expected ROI</p>
-                <p className="text-lg md:text-xl font-semibold text-brand-500">"3.5%" </p>
+                <p className="text-lg md:text-xl font-semibold text-neon-tangerine">"3.5%" </p>
               </div>
               <div>
                 <p className="text-xs text-gray-500 uppercase tracking-wide">Available Units</p>
@@ -164,12 +164,12 @@ export default function PropertyDetail() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="bg-slate-50 rounded-xl p-4 text-center">
-              <TrendingUp size={20} className="text-brand-500 mx-auto mb-1" />
+              <TrendingUp size={20} className="text-neon-tangerine mx-auto mb-1" />
               <p className="text-xs text-gray-500">Total Value</p>
               <p className="text-sm font-bold text-gray-900">{formatNaira(property.totalValue)}</p>
             </div>
             <div className="bg-slate-50 rounded-xl p-4 text-center">
-              <Users size={20} className="text-brand-500 mx-auto mb-1" />
+              <Users size={20} className="text-neon-tangerine mx-auto mb-1" />
               <p className="text-xs text-gray-500">Investors</p>
               <p className="text-sm font-bold text-gray-900">{property.investorCount || 0}</p>
             </div>
@@ -181,7 +181,7 @@ export default function PropertyDetail() {
         title={purchaseStep === "form" ? "Purchase Units" : "Purchase Confirmed"} size="md">
         {purchaseStep === "form" ? (
           <div className="space-y-4">
-            <div className="bg-navy-50 rounded-xl p-4 space-y-2">
+            <div className="bg-dark-lavender/10 rounded-xl p-4 space-y-2">
               <div className="flex justify-between text-sm"><span className="text-gray-600">Property</span><span className="font-semibold">{property.name}</span></div>
               <div className="flex justify-between text-sm"><span className="text-gray-600">Price per Unit</span><span className="font-semibold">{formatNaira(pricePerUnit)}</span></div>
               <div className="flex justify-between text-sm"><span className="text-gray-600">Available</span><span className="font-semibold">{maxUnits} units</span></div>
@@ -196,7 +196,7 @@ export default function PropertyDetail() {
                 </button>
                 <input type="number" value={units} onChange={(e) => setUnits(Math.min(maxUnits, Math.max(1, Number(e.target.value) || 1)))}
                   min={1} max={maxUnits}
-                  className="w-20 text-center text-lg font-bold border border-gray-200 rounded-lg py-2 focus:border-brand-500 outline-none" />
+                  className="w-20 text-center text-lg font-bold border border-gray-200 rounded-lg py-2 focus:border-neon-tangerine outline-none" />
                 <button type="button" onClick={() => setUnits(Math.min(maxUnits, units + 1))}
                   className="w-10 h-10 rounded-lg border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors">
                   <Plus size={16} />
@@ -204,8 +204,8 @@ export default function PropertyDetail() {
               </div>
             </div>
 
-            <div className="bg-brand-50 rounded-xl p-4">
-              <div className="flex justify-between text-sm"><span className="text-gray-600">Total Cost</span><span className="text-lg md:text-xl font-bold text-brand-600">{formatNaira(totalCost)}</span></div>
+            <div className="bg-neon-tangerine/10 rounded-xl p-4">
+              <div className="flex justify-between text-sm"><span className="text-gray-600">Total Cost</span><span className="text-lg md:text-xl font-bold text-neon-tangerine/80">{formatNaira(totalCost)}</span></div>
             </div>
 
             {purchaseError && <p className="text-sm text-red-600 flex items-center gap-1"><AlertCircle size={14} />{purchaseError}</p>}

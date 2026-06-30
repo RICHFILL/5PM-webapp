@@ -40,7 +40,7 @@ export default function Crowdfunding() {
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
-      <div className="bg-gradient-to-br from-brand-500 to-brand-700 rounded-2xl p-4 md:p-8 text-white">
+      <div className="bg-neon-tangerine rounded-2xl p-4 md:p-8 text-white">
         <h1 className="text-2xl md:text-3xl font-bold mb-2">Crowdfunding Campaigns</h1>
         <p className="text-blue-200">Pool funds with other investors to back promising real estate and projects</p>
       </div>
@@ -48,7 +48,7 @@ export default function Crowdfunding() {
       <div className="relative">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
         <input type="text" placeholder="Search campaigns..." value={search} onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none transition-all" />
+          className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:border-neon-tangerine focus:ring-2 focus:ring-neon-tangerine/30 outline-none transition-all" />
       </div>
 
       {filtered.length > 0 ? (
@@ -58,7 +58,7 @@ export default function Crowdfunding() {
             const daysLeft = c.deadline ? Math.max(0, Math.ceil((new Date(c.deadline) - new Date()) / (1000 * 60 * 60 * 24))) : null;
             return (
               <Card key={c.id} className="flex flex-col overflow-hidden p-0 hover:shadow-lg transition-shadow">
-                <div className="h-40 bg-gradient-to-br from-brand-300 to-brand-500 flex items-center justify-center">
+                <div className="h-40 bg-neon-tangerine flex items-center justify-center">
                   {c.images?.[0] ? (
                     <img src={c.images[0]} alt={c.title} className="w-full h-full object-cover" />
                   ) : (
@@ -72,7 +72,7 @@ export default function Crowdfunding() {
                   </div>
                   <p className="text-sm text-gray-600 line-clamp-2 mb-4">{c.description || "No description available."}</p>
                   <div className="w-full bg-gray-100 rounded-full h-2 mb-3">
-                    <div className="bg-brand-500 h-2 rounded-full" style={{ width: `${Math.min(progress, 100)}%` }}></div>
+                    <div className="bg-neon-tangerine h-2 rounded-full" style={{ width: `${Math.min(progress, 100)}%` }}></div>
                   </div>
                   <p className="text-xs text-gray-500 mb-3">{progress.toFixed(1)}% funded</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
@@ -86,7 +86,7 @@ export default function Crowdfunding() {
                     </div>
                     <div>
                       <p className="text-xs text-gray-500">Min Investment</p>
-                      <p className="text-sm font-bold text-brand-500">{formatNaira(c.minInvestment)}</p>
+                      <p className="text-sm font-bold text-neon-tangerine">{formatNaira(c.minInvestment)}</p>
                     </div>
                     <div>
                       <p className="text-xs text-gray-500">Investors</p>

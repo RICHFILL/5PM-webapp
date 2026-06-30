@@ -63,7 +63,7 @@ function Login() {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="investor@example.com"
             required
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-neon-tangerine focus:border-transparent outline-none"
           />
         </div>
         <div>
@@ -75,7 +75,7 @@ function Login() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-neon-tangerine focus:border-transparent outline-none"
             />
             <button
               type="button"
@@ -87,14 +87,14 @@ function Login() {
           </div>
         </div>
         <div className="flex items-center justify-end">
-          <Link to="/forgot-password" className="text-sm text-brand-500 hover:text-brand-600 font-medium">
+          <Link to="/forgot-password" className="text-sm text-neon-tangerine hover:text-neon-tangerine/80 font-medium">
             Forgot password?
           </Link>
         </div>
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-brand-500 text-white font-semibold py-2.5 rounded-lg hover:bg-brand-600 transition-all duration-200 disabled:opacity-50"
+          className="w-full bg-neon-tangerine text-white font-semibold py-2.5 rounded-lg hover:bg-neon-tangerine/80 transition-all duration-200 disabled:opacity-50"
         >
           {loading ? "Signing in..." : "Sign In"}
         </button>
@@ -102,7 +102,7 @@ function Login() {
 
       <p className="text-center text-gray-600 text-sm mt-6">
         Don't have an account?{" "}
-        <Link to="/register" className="text-brand-500 hover:text-brand-600 font-medium">
+        <Link to="/register" className="text-neon-tangerine hover:text-neon-tangerine/80 font-medium">
           Sign up here
         </Link>
       </p>

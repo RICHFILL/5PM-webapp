@@ -53,8 +53,8 @@ export default function WealthPlans() {
             <div key={plan.id} className="bg-white rounded-xl border border-gray-100 p-6 hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate(`/wealth-plans/${plan.id}`)}>
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-brand-100 flex items-center justify-center">
-                    <PiggyBank className="text-brand-500" size={24} />
+                  <div className="w-12 h-12 rounded-xl bg-neon-tangerine/20 flex items-center justify-center">
+                    <PiggyBank className="text-neon-tangerine" size={24} />
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">Wealth Plan</h3>

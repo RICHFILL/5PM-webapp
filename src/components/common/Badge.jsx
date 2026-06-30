@@ -5,7 +5,7 @@ function Badge({ children, variant = 'default', className = '' }) {
     warning: 'bg-amber-100 text-amber-700',
     danger: 'bg-rose-100 text-rose-700',
     info: 'bg-blue-100 text-blue-700',
-    brand: 'bg-brand-100 text-brand-700',
+    brand: 'bg-neon-tangerine/20 text-neon-tangerine',
   };
   return (
     <span

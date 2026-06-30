@@ -31,7 +31,7 @@ export default function AIAnalytics() {
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
-      <div className="bg-gradient-to-br from-indigo-600 to-indigo-800 rounded-2xl p-4 md:p-8 text-white">
+      <div className="bg-dark-lavender rounded-2xl p-4 md:p-8 text-white">
         <div className="flex items-center gap-3 mb-3">
           <Brain size={32} />
           <h1 className="text-2xl md:text-3xl font-bold">AI Analytics Engine</h1>
@@ -40,28 +40,28 @@ export default function AIAnalytics() {
       </div>
 
       <div className="grid md:grid-cols-4 gap-4">
-        <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+        <Card className="bg-dark-lavender/10 border-dark-lavender/20">
           <div className="flex items-center gap-3 mb-2">
             <TrendingUp size={20} className="text-green-600" />
             <h3 className="text-sm font-semibold text-gray-900">Total Invested</h3>
           </div>
           <p className="text-lg md:text-2xl font-bold text-gray-900">{formatNaira(insights.totalInvested)}</p>
         </Card>
-        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+        <Card className="bg-dark-lavender/10 border-dark-lavender/20">
           <div className="flex items-center gap-3 mb-2">
             <PieChart size={20} className="text-blue-600" />
             <h3 className="text-sm font-semibold text-gray-900">Diversification</h3>
           </div>
           <p className="text-lg md:text-2xl font-bold text-gray-900">{insights.diversificationScore?.toFixed(0) || 0}%</p>
         </Card>
-        <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
+        <Card className="bg-neon-tangerine/10 border-neon-tangerine/20">
           <div className="flex items-center gap-3 mb-2">
             <Shield size={20} className="text-orange-600" />
             <h3 className="text-sm font-semibold text-gray-900">Risk Score</h3>
           </div>
           <p className="text-lg md:text-2xl font-bold text-gray-900">{insights.riskScore?.toFixed(0) || 0}%</p>
         </Card>
-        <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+        <Card className="bg-dark-lavender/10 border-dark-lavender/20">
           <div className="flex items-center gap-3 mb-2">
             <BarChart3 size={20} className="text-purple-600" />
             <h3 className="text-sm font-semibold text-gray-900">Products</h3>

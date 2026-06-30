@@ -90,7 +90,7 @@ export default function MyInvestments() {
         <p className="text-gray-600 text-sm md:text-base">Welcome back to your investment dashboard</p>
       </div>
 
-      <div className="bg-gradient-to-r from-slate-700 via-cyan-600 to-cyan-500 rounded-2xl p-4 md:p-8 text-white">
+      <div className="bg-dark-lavender rounded-2xl p-4 md:p-8 text-white">
         <div className="flex flex-col sm:flex-row items-start gap-4 md:gap-6">
           <div className="flex items-center gap-3 md:gap-6">
             <div className="w-12 h-12 md:w-20 md:h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center shrink-0">

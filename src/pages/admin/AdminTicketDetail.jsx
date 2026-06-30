@@ -113,14 +113,14 @@ export default function AdminTicketDetail() {
       <div className="space-y-4">
         {replies.map((r) => (
           <div key={r.id} className={`flex gap-3 ${r.adminId ? "justify-end" : "justify-start"}`}>
-            <div className={`rounded-xl p-4 max-w-[80%] ${r.adminId ? "bg-brand-50 border border-brand-100" : "bg-gray-50 border border-gray-100"}`}>
+            <div className={`rounded-xl p-4 max-w-[80%] ${r.adminId ? "bg-neon-tangerine/10 border border-neon-tangerine/20" : "bg-gray-50 border border-gray-100"}`}>
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-xs font-semibold text-gray-700">{r.adminId ? "You (Support)" : ticket.ticketUser?.firstName || "User"}</span>
                 <span className="text-xs text-gray-400">{formatDate(r.createdAt)}</span>
               </div>
               <p className="text-sm text-gray-700 whitespace-pre-wrap">{r.message}</p>
             </div>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0 ${r.adminId ? "bg-brand-500" : "bg-gray-400"}`}>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0 ${r.adminId ? "bg-neon-tangerine" : "bg-gray-400"}`}>
               {r.adminId ? <Shield size={14} /> : <User size={14} />}
             </div>
           </div>
@@ -131,7 +131,7 @@ export default function AdminTicketDetail() {
         <Card>
           <h3 className="text-sm font-semibold text-gray-700 mb-3">Reply as Support</h3>
           <textarea value={reply} onChange={(e) => setReply(e.target.value)} rows={3} placeholder="Type your response..."
-            className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none resize-none" />
+            className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:border-neon-tangerine focus:ring-2 focus:ring-neon-tangerine/30 outline-none resize-none" />
           <div className="flex justify-end mt-3">
             <Button onClick={handleReply} disabled={sending || !reply.trim()} size="sm">
               <Send size={14} /> {sending ? "Sending..." : "Send Reply"}

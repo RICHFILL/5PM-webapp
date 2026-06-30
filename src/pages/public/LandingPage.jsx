@@ -16,8 +16,8 @@ const products = [
     min: "₦10,000,000",
     duration: "12 months",
     tag: "Income Vault",
-    tagClass: "bg-brand-100 text-brand-700",
-    headerBg: "bg-brand-500",
+    tagClass: "bg-neon-tangerine/20 text-neon-tangerine",
+    headerBg: "bg-neon-tangerine",
   },
   {
     name: "Fractional Real Estate",
@@ -28,7 +28,7 @@ const products = [
     duration: "18 months",
     tag: "Real Estate",
     tagClass: "bg-blue-100 text-blue-700",
-    headerBg: "bg-navy-500",
+    headerBg: "bg-dark-lavender",
   },
   {
     name: "Wealth Plans",
@@ -44,10 +44,10 @@ const products = [
 ];
 
 const stats = [
-  { value: "100+", label: "Active Investors", icon: Users, color: "text-brand-500" },
+  { value: "100+", label: "Active Investors", icon: Users, color: "text-neon-tangerine" },
   { value: "₦2.4B+", label: "Assets Under Management", icon: BarChart3, color: "text-blue-500" },
   { value: "3.5%", label: "Monthly Returns", icon: TrendingUp, color: "text-green-500" },
-  { value: "100%", label: "Asset-Backed", icon: Shield, color: "text-brand-500" },
+  { value: "100%", label: "Asset-Backed", icon: Shield, color: "text-neon-tangerine" },
 ];
 
 const testimonials = [
@@ -63,7 +63,7 @@ const testimonials = [
     location: "Ibadan · Civil Servant",
     text: "As a civil servant, I invest monthly through salary deductions. The dashboard helps me track every kobo. I've earned more in 2 years here than 6 years of bank savings.",
     initials: "BM",
-    avatarBg: "bg-brand-500",
+    avatarBg: "bg-neon-tangerine",
   },
   {
     name: "Chidinma Eze",
@@ -123,18 +123,18 @@ function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
-              <div className="inline-flex items-center gap-2 bg-brand-100 border border-brand-200 rounded-full px-4 py-1.5 mb-6">
-                <div className="w-2 h-2 rounded-full bg-brand-500 animate-pulse" />
-                <span className="text-brand-700 text-xs font-semibold tracking-wide uppercase">ASSEST BACKED INVESTMENT PLATFORM</span>
+              <div className="inline-flex items-center gap-2 bg-neon-tangerine/20 border border-neon-tangerine/30 rounded-full px-4 py-1.5 mb-6">
+                <div className="w-2 h-2 rounded-full bg-neon-tangerine animate-pulse" />
+                <span className="text-neon-tangerine text-xs font-semibold tracking-wide uppercase">ASSEST BACKED INVESTMENT PLATFORM</span>
               </div>
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black leading-[1.05] mb-6">
                 Build Wealth.<br />
-                <span className="text-brand-500">Own Your</span><br />
+                <span className="text-neon-tangerine">Own Your</span><br />
                 Future.
               </h1>
 
-              <div className="w-20 h-1 bg-brand-500 rounded-full mb-6" />
+              <div className="w-20 h-1 bg-neon-tangerine rounded-full mb-6" />
 
               <p className="text-gray-600 text-lg leading-relaxed mb-8 max-w-lg">
                 Invest in professionally managed, asset-backed real estate and structured financial products  from anywhere in the world. Transparent returns. Zero guesswork.
@@ -142,11 +142,11 @@ function LandingPage() {
 
               <div className="flex flex-wrap gap-4 mb-12">
                 <Link to={ROUTES.REGISTER}>
-                  <Button size="lg" className="bg-brand-500 hover:bg-brand-600 text-white font-bold px-8 py-4 rounded-xl text-base shadow-lg shadow-brand-500/25">
+                  <Button size="lg" className="bg-neon-tangerine hover:bg-neon-tangerine/80 text-white font-bold px-8 py-4 rounded-xl text-base shadow-lg shadow-neon-tangerine/25">
                     Start Investing <ArrowRight size={18} />
                   </Button>
                 </Link>
-                <a href="#how" className="border-2 border-gray-300 hover:border-brand-500 text-gray-700 hover:text-brand-500 font-medium px-8 py-4 rounded-xl transition-all text-base">
+                <a href="#how" className="border-2 border-gray-300 hover:border-neon-tangerine text-gray-700 hover:text-neon-tangerine font-medium px-8 py-4 rounded-xl transition-all text-base">
                   See How It Works
                 </a>
               </div>
@@ -157,7 +157,7 @@ function LandingPage() {
                   Duly Registered
                 </div>
                 <div className="flex items-center gap-2">
-                  <Shield size={14} className="text-brand-500" />
+                  <Shield size={14} className="text-neon-tangerine" />
                   Asset-Backed
                 </div>
                 <div className="flex items-center gap-2">
@@ -186,7 +186,7 @@ function LandingPage() {
                     <p className="text-gray-500 text-[10px] mt-0.5">Returns Earned</p>
                   </div>
                   <div className="bg-gray-50 rounded-xl p-3 text-center">
-                    <p className="text-brand-500 text-lg font-black">3</p>
+                    <p className="text-neon-tangerine text-lg font-black">3</p>
                     <p className="text-gray-500 text-[10px] mt-0.5">Active Deals</p>
                   </div>
                   <div className="bg-gray-50 rounded-xl p-3 text-center">
@@ -198,8 +198,8 @@ function LandingPage() {
                 <div className="space-y-3">
                   <div className="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-brand-100">
-                        <Home size={16} className="text-brand-500" />
+                      <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-neon-tangerine/20">
+                        <Home size={16} className="text-neon-tangerine" />
                       </div>
                       <div>
                         <p className="text-gray-900 text-xs font-semibold">Lekki Phase 1 Residences</p>
@@ -228,7 +228,7 @@ function LandingPage() {
                   </div>
                 </div>
 
-                <div className="mt-5 h-1 bg-brand-500 rounded-full" />
+                <div className="mt-5 h-1 bg-neon-tangerine rounded-full" />
               </div>
 
               <div className="absolute -top-4 -right-4 bg-white border border-gray-200 rounded-xl px-4 py-2.5 shadow-lg flex items-center gap-3">
@@ -261,7 +261,7 @@ function LandingPage() {
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal className="text-center mb-16">
-            <span className="text-brand-500 text-xs font-bold uppercase tracking-[0.2em]">Why Investors Choose Us</span>
+            <span className="text-neon-tangerine text-xs font-bold uppercase tracking-[0.2em]">Why Investors Choose Us</span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black mt-3 mb-4">The Smarter Way<br />to Invest in Nigeria</h2>
             <p className="text-gray-600 max-w-xl mx-auto">From diaspora investors to salary earners, 5PM Nexus Invest makes real wealth creation accessible, transparent, and profitable.</p>
           </ScrollReveal>
@@ -271,14 +271,14 @@ function LandingPage() {
               {
                 icon: Shield, title: "Asset-Backed Security",
                 text: "Every investment is tied to real, tangible assets  real estate, structured products  so your capital is always backed by something real.",
-                iconBg: "bg-brand-100", iconColor: "text-brand-500",
-                borderHover: "hover:border-brand-300",
+                iconBg: "bg-neon-tangerine/20", iconColor: "text-neon-tangerine",
+                borderHover: "hover:border-neon-tangerine/40",
               },
               {
                 icon: TrendingUp, title: "3.5% Monthly Returns",
                 text: "Our carefully selected real estate and income vault products consistently deliver monthly returns that outperform traditional savings by 3×.",
-                iconBg: "bg-navy-100", iconColor: "text-navy-600",
-                borderHover: "hover:border-navy-300",
+                iconBg: "bg-dark-lavender/20", iconColor: "text-dark-lavender/80",
+                borderHover: "hover:border-dark-lavender/40",
                 tags: ["Real Estate: 3.5% p.m.", "Vault: 3-3.50% p.m."],
                 featured: true,
               },
@@ -290,7 +290,7 @@ function LandingPage() {
               },
             ].map((card, i) => (
               <ScrollReveal key={i}>
-                <div className={`bg-white border-2 rounded-2xl p-8 transition-all duration-300 h-full ${card.featured ? "border-brand-300 shadow-lg shadow-brand-100" : "border-gray-200 hover:shadow-lg"} ${card.borderHover}`}>
+                <div className={`bg-white border-2 rounded-2xl p-8 transition-all duration-300 h-full ${card.featured ? "border-neon-tangerine/40 shadow-lg shadow-neon-tangerine/20" : "border-gray-200 hover:shadow-lg"} ${card.borderHover}`}>
                   <div className={`w-14 h-14 rounded-xl ${card.iconBg} flex items-center justify-center mb-5`}>
                     <card.icon size={28} className={card.iconColor} />
                   </div>
@@ -299,7 +299,7 @@ function LandingPage() {
                   {card.tags && (
                     <div className="mt-6 flex flex-wrap items-center gap-3">
                       {card.tags.map((t) => (
-                        <span key={t} className={`text-xs font-semibold px-3 py-1.5 rounded-lg border ${t.includes("Vault") ? "bg-brand-50 text-brand-700 border-brand-200" : "bg-navy-50 text-navy-700 border-navy-200"}`}>
+                        <span key={t} className={`text-xs font-semibold px-3 py-1.5 rounded-lg border ${t.includes("Vault") ? "bg-neon-tangerine/10 text-neon-tangerine border-neon-tangerine/30" : "bg-dark-lavender/10 text-dark-lavender/80 border-dark-lavender/30"}`}>
                           {t}
                         </span>
                       ))}
@@ -317,10 +317,10 @@ function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-14">
             <div>
-              <span className="text-brand-500 text-xs font-bold uppercase tracking-[0.2em]">Investment Products</span>
+              <span className="text-neon-tangerine text-xs font-bold uppercase tracking-[0.2em]">Investment Products</span>
               <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mt-2">Current Investment Deals</h2>
             </div>
-            <Link to={ROUTES.INVESTMENT_OPPORTUNITIES} className="border-2 border-brand-500 hover:bg-brand-50 text-brand-500 text-sm font-semibold px-5 py-2.5 rounded-lg transition-all">
+            <Link to={ROUTES.INVESTMENT_OPPORTUNITIES} className="border-2 border-neon-tangerine hover:bg-neon-tangerine/10 text-neon-tangerine text-sm font-semibold px-5 py-2.5 rounded-lg transition-all">
               View All Deals →
             </Link>
           </ScrollReveal>
@@ -345,7 +345,7 @@ function LandingPage() {
                     <p className="text-gray-500 text-sm mb-5">{product.description}</p>
                     <div className="grid grid-cols-3 gap-4 mb-6 py-4 border-t border-b border-gray-100">
                       <div>
-                        <p className="text-brand-500 text-base font-black">{product.roi}</p>
+                        <p className="text-neon-tangerine text-base font-black">{product.roi}</p>
                         <p className="text-gray-400 text-xs">Monthly</p>
                       </div>
                       <div className="text-center">
@@ -358,7 +358,7 @@ function LandingPage() {
                       </div>
                     </div>
                     <Link to={ROUTES.REGISTER}>
-                      <Button className="w-full bg-brand-500 hover:bg-brand-600 text-white text-sm font-bold py-3 rounded-xl shadow-md shadow-brand-500/20">
+                      <Button className="w-full bg-neon-tangerine hover:bg-neon-tangerine/80 text-white text-sm font-bold py-3 rounded-xl shadow-md shadow-neon-tangerine/20">
                         Invest Now
                       </Button>
                     </Link>
@@ -374,16 +374,16 @@ function LandingPage() {
       <section className="py-24 bg-white" id="how">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal className="text-center mb-16">
-            <span className="text-brand-500 text-xs font-bold uppercase tracking-[0.2em]">The Process</span>
+            <span className="text-neon-tangerine text-xs font-bold uppercase tracking-[0.2em]">The Process</span>
             <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mt-3">From Sign-Up to Returns<br />in 4 Simple Steps</h2>
           </ScrollReveal>
 
           <div className="space-y-16">
             {[
-              { step: "01", title: "Create Your Account", desc: "Sign up in minutes with your email, complete BVN/NIN verification, and upload your ID. Our KYC process is simple, secure, and fully digital.", checks: ["Email & Phone Verification", "BVN / NIN Check", "ID + Selfie Upload"], color: "bg-brand-500" },
-              { step: "02", title: "Fund Your Wallet", desc: "Deposit funds via bank transfer, card, or mobile money. Your wallet balance is displayed in real-time. Diaspora investors can send in USD, GBP, or EUR.", checks: ["Bank Transfer · Card Payment", "USD · GBP · EUR accepted", "Instant wallet top-up"], color: "bg-navy-500" },
-              { step: "03", title: "Pick an Investment", desc: "Browse the marketplace, review project documents, and invest in real estate or structured products that match your goals and risk appetite.", checks: ["Fractional Real Estate", "Income Vault Products", "Full document access"], color: "bg-brand-500" },
-              { step: "04", title: "Earn & Withdraw", desc: "Track your returns live on your dashboard. When distributions are paid, they land in your wallet instantly  withdraw anytime or reinvest to compound.", checks: ["Live ROI tracker", "Monthly statements", "Instant withdrawals"], color: "bg-navy-500" },
+              { step: "01", title: "Create Your Account", desc: "Sign up in minutes with your email, complete BVN/NIN verification, and upload your ID. Our KYC process is simple, secure, and fully digital.", checks: ["Email & Phone Verification", "BVN / NIN Check", "ID + Selfie Upload"], color: "bg-neon-tangerine" },
+              { step: "02", title: "Fund Your Wallet", desc: "Deposit funds via bank transfer, card, or mobile money. Your wallet balance is displayed in real-time. Diaspora investors can send in USD, GBP, or EUR.", checks: ["Bank Transfer · Card Payment", "USD · GBP · EUR accepted", "Instant wallet top-up"], color: "bg-dark-lavender" },
+              { step: "03", title: "Pick an Investment", desc: "Browse the marketplace, review project documents, and invest in real estate or structured products that match your goals and risk appetite.", checks: ["Fractional Real Estate", "Income Vault Products", "Full document access"], color: "bg-neon-tangerine" },
+              { step: "04", title: "Earn & Withdraw", desc: "Track your returns live on your dashboard. When distributions are paid, they land in your wallet instantly  withdraw anytime or reinvest to compound.", checks: ["Live ROI tracker", "Monthly statements", "Instant withdrawals"], color: "bg-dark-lavender" },
             ].map((item, i) => (
               <ScrollReveal key={i}>
                 <div className="flex items-start gap-6">
@@ -391,7 +391,7 @@ function LandingPage() {
                     {i + 1}
                   </div>
                   <div className="flex-1">
-                    <span className="text-brand-500 text-xs font-bold uppercase tracking-widest">Step {item.step}</span>
+                    <span className="text-neon-tangerine text-xs font-bold uppercase tracking-widest">Step {item.step}</span>
                     <h3 className="text-xl md:text-2xl font-bold text-gray-900 mt-1 mb-3">{item.title}</h3>
                     <p className="text-gray-600 text-sm leading-relaxed mb-4">{item.desc}</p>
                     <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-sm text-gray-600">
@@ -413,7 +413,7 @@ function LandingPage() {
       <section className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal className="text-center mb-14">
-            <span className="text-brand-500 text-xs font-bold uppercase tracking-[0.2em]">Investor Stories</span>
+            <span className="text-neon-tangerine text-xs font-bold uppercase tracking-[0.2em]">Investor Stories</span>
             <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mt-3">Real People. Real Returns.</h2>
           </ScrollReveal>
           <div className="grid md:grid-cols-3 gap-8">
@@ -442,7 +442,7 @@ function LandingPage() {
       <section className="py-24 bg-white" id="faq">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal className="text-center mb-14">
-            <span className="text-brand-500 text-xs font-bold uppercase tracking-[0.2em]">FAQ</span>
+            <span className="text-neon-tangerine text-xs font-bold uppercase tracking-[0.2em]">FAQ</span>
             <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mt-3">Common Questions</h2>
           </ScrollReveal>
 
@@ -452,7 +452,7 @@ function LandingPage() {
                 <details className="group bg-gray-50 border border-gray-200 rounded-xl overflow-hidden cursor-pointer">
                   <summary className="flex items-center justify-between p-5 text-sm font-semibold text-gray-900 list-none">
                     {faq.q}
-                    <ChevronDown size={16} className="text-brand-500 group-open:rotate-180 transition-transform shrink-0" />
+                    <ChevronDown size={16} className="text-neon-tangerine group-open:rotate-180 transition-transform shrink-0" />
                   </summary>
                   <p className="px-5 pb-5 text-gray-600 text-sm leading-relaxed">{faq.a}</p>
                 </details>
@@ -463,14 +463,14 @@ function LandingPage() {
       </section>
 
       {/* ───── CTA ───── */}
-      <section className="py-20 bg-brand-500">
+      <section className="py-20 bg-neon-tangerine">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <ScrollReveal>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-5">Your Wealth Journey<br />Starts Today</h2>
             <p className="text-white/80 text-lg mb-10 max-w-xl mx-auto">Join over 8,400 investors already building wealth through transparent, asset-backed investments in Nigeria's fastest-growing markets.</p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link to={ROUTES.REGISTER}>
-                <Button size="lg" className="border-2 border-gray-300 hover:border-brand-500 text-gray-700 hover:text-brand-500 font-medium px-8 py-4 rounded-xl transition-all text-base">
+                <Button size="lg" className="border-2 border-gray-300 hover:border-neon-tangerine text-gray-700 hover:text-neon-tangerine font-medium px-8 py-4 rounded-xl transition-all text-base">
                   Create Free Account <ArrowRight size={18} />
                 </Button>
               </Link>

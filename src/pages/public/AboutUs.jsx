@@ -10,7 +10,7 @@ const values = [
 function AboutUs() {
   return (
     <div>
-      <section className="bg-gradient-to-br from-navy-900 via-navy-800 to-brand-700 text-white py-20">
+      <section className="bg-dark-lavender text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-2xl md:text-5xl font-bold mb-6">About 5PM Nexus Invest</h1>
           <p className="text-xl text-gray-300 max-w-3xl">
@@ -59,8 +59,8 @@ function AboutUs() {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {values.map((v) => (
               <div key={v.title} className="bg-white rounded-2xl p-8 text-center border border-gray-100">
-                <div className="w-14 h-14 mx-auto mb-5 bg-brand-50 rounded-2xl flex items-center justify-center">
-                  <v.icon className="text-brand-500" size={28} />
+                <div className="w-14 h-14 mx-auto mb-5 bg-neon-tangerine/10 rounded-2xl flex items-center justify-center">
+                  <v.icon className="text-neon-tangerine" size={28} />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">{v.title}</h3>
                 <p className="text-gray-600 text-sm">{v.description}</p>

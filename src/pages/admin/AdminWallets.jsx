@@ -50,14 +50,14 @@ export default function AdminWallets() {
   return (
     <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-4 md:space-y-6">
       <h1 className="text-xl md:text-2xl font-bold text-gray-900">Wallet Management</h1>
-      <div className="bg-gradient-to-r from-brand-500 to-brand-700 rounded-xl p-6 text-white">
+      <div className="bg-neon-tangerine rounded-xl p-6 text-white">
         <p className="text-sm text-cyan-100 mb-1">Total Wallet Balance</p>
         <p className="text-2xl md:text-3xl font-bold">{formatNaira(totalBalance)}</p>
       </div>
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
         <input type="text" placeholder="Search by user..." value={search} onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none text-sm" />
+          className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:border-neon-tangerine focus:ring-2 focus:ring-neon-tangerine/30 outline-none text-sm" />
       </div>
       {error && (
         <div className="flex items-center gap-3 bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700">

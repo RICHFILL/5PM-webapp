@@ -42,7 +42,7 @@ export default function AdminDashboard() {
   const statCards = [
     { label: "Total Users", value: stats.totalInvestors || 0, icon: Users, color: "bg-blue-500" },
     { label: "Active Investments", value: stats.activeInvestments || 0, icon: TrendingUp, color: "bg-green-500" },
-    { label: "Total Invested", value: formatNaira(stats.totalInvestmentValue || 0), icon: DollarSign, color: "bg-brand-500" },
+    { label: "Total Invested", value: formatNaira(stats.totalInvestmentValue || 0), icon: DollarSign, color: "bg-neon-tangerine" },
     { label: "Pending KYC", value: stats.pendingKYCReviews || 0, icon: ShieldCheck, color: "bg-yellow-500" },
     { label: "Active Projects", value: stats.activeProjects || 0, icon: Building2, color: "bg-purple-500" },
     { label: "Approved This Month", value: stats.approvedThisMonth || 0, icon: CalendarDays, color: "bg-cyan-500" },
@@ -79,7 +79,7 @@ export default function AdminDashboard() {
                 <div key={m.month} className="flex items-center gap-3">
                   <span className="text-xs font-medium text-gray-500 w-8">{m.month}</span>
                   <div className="flex-1 h-5 bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-brand-500 rounded-full transition-all" style={{ width: `${(m.value / maxMonthly) * 100}%` }} />
+                    <div className="h-full bg-neon-tangerine rounded-full transition-all" style={{ width: `${(m.value / maxMonthly) * 100}%` }} />
                   </div>
                   <span className="text-xs font-semibold text-gray-700 w-20 text-right">{formatNaira(m.value)}</span>
                 </div>

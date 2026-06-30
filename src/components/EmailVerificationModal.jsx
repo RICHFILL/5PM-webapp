@@ -62,7 +62,7 @@ function EmailVerificationModal({ isOpen, onClose }) {
               otpRefs.current[i - 1]?.focus();
             }
           }}
-          className="w-11 h-12 text-center text-lg font-bold border border-gray-300 rounded-lg focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition-colors"
+          className="w-11 h-12 text-center text-lg font-bold border border-gray-300 rounded-lg focus:border-neon-tangerine focus:ring-2 focus:ring-neon-tangerine/20 outline-none transition-colors"
         />
       ))}
     </div>
@@ -84,8 +84,8 @@ function EmailVerificationModal({ isOpen, onClose }) {
 
           {step === 'prompt' && (
             <div className="text-center space-y-4">
-              <div className="w-16 h-16 mx-auto bg-brand-100 rounded-2xl flex items-center justify-center">
-                <Mail className="text-brand-600" size={32} />
+              <div className="w-16 h-16 mx-auto bg-neon-tangerine/20 rounded-2xl flex items-center justify-center">
+                <Mail className="text-neon-tangerine/80" size={32} />
               </div>
               <p className="text-gray-600 text-sm">
                 We sent a verification code to <strong className="text-gray-900">{user?.email}</strong>. Please verify your email to access all features.
@@ -115,7 +115,7 @@ function EmailVerificationModal({ isOpen, onClose }) {
                 </Button>
               </div>
               <div className="text-center pt-2">
-                <button onClick={handleResend} disabled={loading} className="text-sm text-brand-500 hover:text-brand-600 transition-colors">
+                <button onClick={handleResend} disabled={loading} className="text-sm text-neon-tangerine hover:text-neon-tangerine/80 transition-colors">
                   Resend Code
                 </button>
               </div>

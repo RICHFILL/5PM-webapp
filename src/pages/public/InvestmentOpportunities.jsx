@@ -42,7 +42,7 @@ const benefits = [
 function InvestmentOpportunities() {
   return (
     <div>
-      <section className="bg-gradient-to-br from-navy-900 via-navy-800 to-brand-700 text-white py-20">
+      <section className="bg-dark-lavender text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-2xl md:text-5xl font-bold mb-6">Investment Opportunities</h1>
           <p className="text-xl text-gray-300 max-w-3xl">
@@ -58,8 +58,8 @@ function InvestmentOpportunities() {
               <div className="grid md:grid-cols-3">
                 <div className="p-8 md:col-span-2">
                   <div className="flex items-center gap-4 mb-4">
-                    <div className="w-12 h-12 bg-brand-50 rounded-xl flex items-center justify-center">
-                      <product.icon className="text-brand-500" size={24} />
+                    <div className="w-12 h-12 bg-neon-tangerine/10 rounded-xl flex items-center justify-center">
+                      <product.icon className="text-neon-tangerine" size={24} />
                     </div>
                     <h2 className="text-xl md:text-2xl font-bold text-gray-900">{product.name}</h2>
                   </div>
@@ -67,7 +67,7 @@ function InvestmentOpportunities() {
                   <ul className="space-y-2 mb-6">
                     {product.features.map((f) => (
                       <li key={f} className="flex items-center gap-2 text-sm text-gray-700">
-                        <div className="w-1.5 h-1.5 rounded-full bg-brand-500" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-neon-tangerine" />
                         {f}
                       </li>
                     ))}
@@ -77,7 +77,7 @@ function InvestmentOpportunities() {
                   <div className="space-y-4">
                     <div>
                       <p className="text-sm text-gray-500">Target ROI</p>
-                      <p className="text-xl md:text-2xl font-bold text-brand-500">{product.roi}</p>
+                      <p className="text-xl md:text-2xl font-bold text-neon-tangerine">{product.roi}</p>
                     </div>
                     <div>
                       <p className="text-sm text-gray-500">Minimum Investment</p>
@@ -104,8 +104,8 @@ function InvestmentOpportunities() {
           <div className="grid md:grid-cols-3 gap-8">
             {benefits.map((b) => (
               <div key={b.title} className="bg-white rounded-2xl p-8 border border-gray-100">
-                <div className="w-12 h-12 bg-brand-50 rounded-xl flex items-center justify-center mb-4">
-                  <b.icon className="text-brand-500" size={24} />
+                <div className="w-12 h-12 bg-neon-tangerine/10 rounded-xl flex items-center justify-center mb-4">
+                  <b.icon className="text-neon-tangerine" size={24} />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">{b.title}</h3>
                 <p className="text-gray-600 text-sm">{b.description}</p>

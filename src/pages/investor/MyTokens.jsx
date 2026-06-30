@@ -36,7 +36,7 @@ export default function MyTokens() {
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
-      <div className="bg-gradient-to-br from-amber-600 to-amber-800 rounded-2xl p-4 md:p-8 text-white">
+      <div className="bg-dark-lavender rounded-2xl p-4 md:p-8 text-white">
         <h1 className="text-2xl md:text-3xl font-bold mb-2">Digital Asset Tokens</h1>
         <p className="text-amber-200">Your tokenized real estate holdings with digital ownership certificates</p>
       </div>
@@ -89,7 +89,7 @@ export default function MyTokens() {
 
       <Modal isOpen={!!listToken} onClose={() => setListToken(null)} title="List Token for Sale" size="md">
         <div className="space-y-4">
-          <div className="bg-navy-50 rounded-xl p-3">
+          <div className="bg-dark-lavender/10 rounded-xl p-3">
             <p className="text-sm font-semibold">{listToken?.tokenId} — {listToken?.units} units available</p>
           </div>
           <Input label="Units to Sell" type="number" value={listUnits} onChange={(e) => setListUnits(e.target.value)} placeholder="e.g. 5" max={listToken?.units} />

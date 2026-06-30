@@ -72,8 +72,8 @@ export default function AdminSettings() {
 
       <Card>
         <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-xl bg-brand-100 flex items-center justify-center shrink-0">
-            <Shield size={24} className="text-brand-600" />
+          <div className="w-12 h-12 rounded-xl bg-neon-tangerine/20 flex items-center justify-center shrink-0">
+            <Shield size={24} className="text-neon-tangerine/80" />
           </div>
           <div className="flex-1">
             <h2 className="text-lg font-semibold text-gray-900">KYC Verification Mode</h2>
@@ -90,7 +90,7 @@ export default function AdminSettings() {
             </div>
             <div className="mt-4 flex items-center gap-2">
               {mode === "automatic" ? (
-                <span className="inline-flex items-center gap-1 text-xs font-medium text-brand-700 bg-brand-50 px-2.5 py-1 rounded-full">
+                <span className="inline-flex items-center gap-1 text-xs font-medium text-neon-tangerine bg-neon-tangerine/10 px-2.5 py-1 rounded-full">
                   <CheckCircle size={12} />
                   Automatic
                 </span>

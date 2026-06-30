@@ -110,7 +110,7 @@ export default function AdminPropertyDetail() {
 
   return (
     <div className="p-4 md:p-6 max-w-5xl mx-auto space-y-4 md:space-y-6">
-      <Link to="/admin/properties" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-brand-500 transition-colors">
+      <Link to="/admin/properties" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-neon-tangerine transition-colors">
         <ArrowLeft size={16} /> Back to Properties
       </Link>
 
@@ -133,7 +133,7 @@ export default function AdminPropertyDetail() {
           </div>
           <div className="bg-slate-50 rounded-xl p-4">
             <p className="text-xs text-gray-500">Raised</p>
-            <p className="text-lg font-bold text-brand-500">{formatNaira(property.amountRaised)}</p>
+            <p className="text-lg font-bold text-neon-tangerine">{formatNaira(property.amountRaised)}</p>
           </div>
           <div className="bg-slate-50 rounded-xl p-4">
             <p className="text-xs text-gray-500">Target</p>
@@ -155,8 +155,8 @@ export default function AdminPropertyDetail() {
               <Card key={u.id}>
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-navy-100 rounded-xl flex items-center justify-center shrink-0">
-                      <TypeIcon size={18} className="text-navy-600" />
+                    <div className="w-10 h-10 bg-dark-lavender/20 rounded-xl flex items-center justify-center shrink-0">
+                      <TypeIcon size={18} className="text-dark-lavender/80" />
                     </div>
                     <div>
                       <h3 className="text-sm font-semibold text-gray-900">{u.title}</h3>
@@ -166,7 +166,7 @@ export default function AdminPropertyDetail() {
                   </div>
                   <div className="flex items-center gap-2">
                     <Badge variant={u.updateType === "construction" ? "info" : "default"} size="sm">{u.updateType}</Badge>
-                    <button onClick={() => handleEdit(u)} className="p-1.5 text-gray-400 hover:text-brand-500 transition-colors">
+                    <button onClick={() => handleEdit(u)} className="p-1.5 text-gray-400 hover:text-neon-tangerine transition-colors">
                       <Pencil size={14} />
                     </button>
                     <button onClick={() => handleDelete(u.id)} className="p-1.5 text-gray-400 hover:text-red-500 transition-colors">
@@ -188,7 +188,7 @@ export default function AdminPropertyDetail() {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
             <select value={form.updateType} onChange={(e) => setForm({ ...form, updateType: e.target.value })}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none">
+              className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:border-neon-tangerine focus:ring-2 focus:ring-neon-tangerine/30 outline-none">
               <option value="general">General</option>
               <option value="construction">Construction</option>
               <option value="milestone">Milestone</option>
@@ -199,7 +199,7 @@ export default function AdminPropertyDetail() {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
             <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none resize-none" placeholder="Update details..." />
+              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-neon-tangerine focus:ring-2 focus:ring-neon-tangerine/30 outline-none resize-none" placeholder="Update details..." />
           </div>
           <div className="flex gap-3 justify-end pt-2">
             <Button variant="outline" onClick={() => { setShowModal(false); setForm(defaultForm); setEditingUpdate(null); }}>Cancel</Button>

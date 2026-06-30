@@ -38,32 +38,32 @@ function Calculator() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">Principal Amount (NGN)</label>
               <input type="range" min="10000000" max="100000000" step="1000000" value={principal} onChange={(e) => setPrincipal(parseInt(e.target.value))}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand-500" />
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-neon-tangerine" />
               <div className="mt-3 p-4 bg-gray-50 rounded-lg">
                 <input type="number" value={principal} onChange={(e) => setPrincipal(parseInt(e.target.value) || 0)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none font-semibold text-lg text-gray-900" />
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-neon-tangerine focus:border-transparent outline-none font-semibold text-lg text-gray-900" />
               </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">Expected Annual Return Rate (%)</label>
               <input type="range" min="1" max="10" step="0.1" value={rate} onChange={(e) => setRate(parseFloat(e.target.value))}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand-500" />
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-neon-tangerine" />
               <div className="mt-3 p-4 bg-gray-50 rounded-lg">
                 <input type="number" value={rate} onChange={(e) => setRate(parseFloat(e.target.value) || 0)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none font-semibold text-lg text-gray-900" step="0.5" />
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-neon-tangerine focus:border-transparent outline-none font-semibold text-lg text-gray-900" step="0.5" />
               </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">Investment Duration (Months)</label>
               <input type="range" min="3" max="60" step="1" value={duration} onChange={(e) => setDuration(parseInt(e.target.value))}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand-500" />
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-neon-tangerine" />
               <div className="mt-3 p-4 bg-gray-50 rounded-lg">
                 <input type="number" value={duration} onChange={(e) => setDuration(parseInt(e.target.value) || 0)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none font-semibold text-lg text-gray-900" />
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-neon-tangerine focus:border-transparent outline-none font-semibold text-lg text-gray-900" />
               </div>
             </div>
             <button onClick={calculateReturns}
-              className="w-full bg-brand-500 text-white font-semibold py-3 rounded-lg hover:bg-brand-600 transition-all duration-200">
+              className="w-full bg-neon-tangerine text-white font-semibold py-3 rounded-lg hover:bg-neon-tangerine/80 transition-all duration-200">
               Calculate Returns
             </button>
           </div>
@@ -73,9 +73,9 @@ function Calculator() {
           <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-6">Calculation Results</h3>
           {result ? (
             <div className="space-y-4">
-              <div className="bg-gradient-to-br from-teal-50 to-blue-50 rounded-lg p-6 border border-brand-500">
+              <div className="bg-dark-lavender/10 rounded-lg p-6 border border-neon-tangerine">
                 <p className="text-gray-600 text-sm mb-2">Total Return</p>
-                <p className="text-2xl md:text-4xl font-bold text-brand-500">{formatCurrency(result.totalReturn)}</p>
+                <p className="text-2xl md:text-4xl font-bold text-neon-tangerine">{formatCurrency(result.totalReturn)}</p>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="bg-gray-50 rounded-lg p-4"><p className="text-gray-600 text-xs mb-1 uppercase tracking-wider">Investment</p><p className="font-bold text-lg text-gray-900">{formatCurrency(result.totalInvestment)}</p></div>

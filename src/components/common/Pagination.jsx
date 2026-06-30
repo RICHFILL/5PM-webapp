@@ -33,7 +33,7 @@ export default function Pagination({ page, pages, total, onPageChange }) {
             <span key={`ellipsis-${i}`} className="px-2 text-gray-400 text-sm">...</span>
           ) : (
             <button key={p} onClick={() => onPageChange(p)}
-              className={`min-w-[32px] h-8 text-sm font-medium rounded-lg transition-colors ${p === page ? "bg-brand-500 text-white" : "text-gray-600 hover:bg-gray-100"}`}>
+              className={`min-w-[32px] h-8 text-sm font-medium rounded-lg transition-colors ${p === page ? "bg-neon-tangerine text-white" : "text-gray-600 hover:bg-gray-100"}`}>
               {p}
             </button>
           )

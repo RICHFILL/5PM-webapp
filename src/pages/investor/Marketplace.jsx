@@ -44,7 +44,7 @@ function InvestModal({ isOpen, onClose, product }) {
     <Modal isOpen={isOpen} onClose={onClose} title={step === "form" ? `Invest in ${product?.name || product?.projectName}` : "Investment Confirmed"} size="md">
       {step === "form" ? (
         <form onSubmit={handleInvest} className="space-y-4">
-          <div className="bg-brand-50 rounded-xl p-4 space-y-2">
+          <div className="bg-neon-tangerine/10 rounded-xl p-4 space-y-2">
             <div className="flex justify-between text-sm"><span className="text-gray-600">Expected ROI</span><span className="font-semibold">{formatROI(product?.roi)}</span></div>
             <div className="flex justify-between text-sm"><span className="text-gray-600">Minimum Investment</span><span className="font-semibold">{formatNaira(minAmount)}</span></div>
             <div className="flex justify-between text-sm"><span className="text-gray-600">Duration</span><span className="font-semibold">{product?.tenure || product?.duration || "--"} months</span></div>
@@ -109,7 +109,7 @@ export default function Marketplace() {
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
-      <div className="bg-gradient-to-br from-brand-500 to-brand-700 rounded-2xl p-4 md:p-8 text-white">
+      <div className="bg-neon-tangerine rounded-2xl p-4 md:p-8 text-white">
         <h1 className="text-2xl md:text-3xl font-bold mb-2">Investment Marketplace</h1>
         <p className="text-cyan-100">Discover and invest in curated opportunities</p>
       </div>
@@ -117,7 +117,7 @@ export default function Marketplace() {
       <div className="relative">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
         <input type="text" placeholder="Search opportunities..." value={search} onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none transition-all" />
+          className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:border-neon-tangerine focus:ring-2 focus:ring-neon-tangerine/30 outline-none transition-all" />
       </div>
 
       {filtered.length > 0 ? (
@@ -132,15 +132,15 @@ export default function Marketplace() {
                 <p className="text-sm text-gray-600 line-clamp-2">{product.description || "No description available."}</p>
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <TrendingUp size={16} className="text-brand-500" />
+                    <TrendingUp size={16} className="text-neon-tangerine" />
                     <span>ROI: <strong className="text-gray-900">{formatROI(product.roi)}</strong></span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <DollarSign size={16} className="text-brand-500" />
+                    <DollarSign size={16} className="text-neon-tangerine" />
                     <span>Min: <strong className="text-gray-900">{formatNaira(product.minInvestment || product.minimumInvestment)}</strong></span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Clock size={16} className="text-brand-500" />
+                    <Clock size={16} className="text-neon-tangerine" />
                     <span>Duration: <strong className="text-gray-900">{product.tenure || product.duration || "--"} months</strong></span>
                   </div>
                 </div>
