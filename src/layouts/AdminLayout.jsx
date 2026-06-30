@@ -25,6 +25,7 @@ import {
   Landmark,
   ArrowUpDown,
   ClipboardList,
+  Settings,
 } from 'lucide-react';
 import useAuthStore from '../store/authStore';
 import { notificationApi } from '../services/api';
@@ -49,6 +50,7 @@ const adminMenuItems = [
   { label: 'Audit Logs', icon: ClipboardList, path: '/admin/audit-logs' },
   { label: 'Support', icon: MessageSquare, path: '/admin/support' },
   { label: 'Reports', icon: FileBarChart, path: '/admin/reports' },
+  { label: 'Settings', icon: Settings, path: '/admin/settings' },
 ];
 
 function AdminLayout({ children }) {

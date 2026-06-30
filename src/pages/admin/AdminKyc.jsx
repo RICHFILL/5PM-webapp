@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { Shield, CheckCircle, XCircle, Clock, Search, ExternalLink, AlertCircle } from "lucide-react";
-import { adminApi } from "../../services/api";
+import { Shield, CheckCircle, XCircle, Clock, Search, ExternalLink, AlertCircle, Settings } from "lucide-react";
+import { adminApi, adminKycSettingsApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Modal, Pagination } from "../../components/common";
 import toast from "react-hot-toast";
 
@@ -25,19 +25,32 @@ export default function AdminKyc() {
   const [confirmReject, setConfirmReject] = useState(false);
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({ total: 0, pages: 0 });
+  const [verificationMode, setVerificationMode] = useState("manual");
 
   const fetchData = async () => {
     setLoading(true);
     setError("");
     try {
-      const data = await adminApi.getKycRequests({ page, limit: 20 });
-      setRequests(Array.isArray(data) ? data : data?.data ?? data?.kyc ?? []);
-      const pg = data?.pagination;
-      if (pg) setPagination({ total: pg.total, pages: pg.pages });
+      const [kycData, settingsData] = await Promise.allSettled([
+        adminApi.getKycRequests({ page, limit: 20 }),
+        adminKycSettingsApi.getMode(),
+      ]);
+      if (kycData.status === 'fulfilled') {
+        const data = kycData.value;
+        setRequests(Array.isArray(data) ? data : data?.data ?? data?.kyc ?? []);
+        const pg = data?.pagination;
+        if (pg) setPagination({ total: pg.total, pages: pg.pages });
+      } else {
+        setRequests([]);
+        setError(kycData.reason?.response?.data?.message || kycData.reason?.message || "Failed to load KYC requests");
+        toast.error("Failed to load KYC requests");
+      }
+      if (settingsData.status === 'fulfilled') {
+        setVerificationMode(settingsData.value?.mode || "manual");
+      }
     } catch (err) {
       setRequests([]);
-      setError(err?.response?.data?.message || err.message || "Failed to load KYC requests");
-      toast.error("Failed to load KYC requests");
+      setError("An unexpected error occurred");
     } finally { setLoading(false); }
   };
 
@@ -71,6 +84,13 @@ export default function AdminKyc() {
   return (
     <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-4 md:space-y-6">
       <h1 className="text-xl md:text-2xl font-bold text-gray-900">KYC Management ({requests.length})</h1>
+      <div className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm ${verificationMode === 'automatic' ? 'bg-brand-50 text-brand-700 border border-brand-200' : 'bg-amber-50 text-amber-700 border border-amber-200'}`}>
+        <Settings size={16} />
+        <span className="font-medium">{verificationMode === 'automatic' ? 'Auto-verification is enabled' : 'Manual review mode'}</span>
+        <span className="text-xs ml-1 opacity-75">
+          {verificationMode === 'automatic' ? 'Submissions are verified automatically on submit' : 'Submissions require admin approval'}
+        </span>
+      </div>
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
         <input type="text" placeholder="Search by name or email..." value={search} onChange={(e) => setSearch(e.target.value)}

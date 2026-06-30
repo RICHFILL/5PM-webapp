@@ -301,6 +301,12 @@ export const tokenApi = {
   buyToken: (listingId) => api.post(`/tokens/buy/${listingId}`).then(r => r.data),
 };
 
+// --- Admin Settings ---
+export const adminKycSettingsApi = {
+  getMode: () => api.get('/admin/settings/kyc').then(r => r.data),
+  updateMode: (mode) => api.put('/admin/settings/kyc', { mode }).then(r => r.data),
+};
+
 // --- Analytics ---
 export const analyticsApi = {
   getInsights: () => api.get('/analytics/insights').then(r => r.data),
