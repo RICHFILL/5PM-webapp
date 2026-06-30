@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Check, Upload, Camera, ChevronLeft, ChevronRight, Shield, CheckCircle2, Clock, XCircle, AlertCircle } from "lucide-react";
 import { Button, Input, Card, Badge } from "../../components/common";
@@ -167,13 +167,25 @@ function Step4Documents({ data, onChange, onNext, onPrev }) {
 function Step5Selfie({ data, onChange, onNext, onPrev }) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
+  const fileInputRef = useRef(null);
   const [stream, setStream] = useState(null);
+
+  useEffect(() => {
+    if (stream && videoRef.current) {
+      videoRef.current.srcObject = stream;
+    }
+    return () => {
+      if (videoRef.current?.srcObject) {
+        videoRef.current.srcObject.getTracks().forEach((t) => t.stop());
+      }
+    };
+  }, [stream]);
 
   const startCamera = async () => {
     try {
       const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
-      setStream(s);
       if (videoRef.current) videoRef.current.srcObject = s;
+      setStream(s);
     } catch { alert("Camera access denied. Please allow camera access or upload a photo."); }
   };
 
@@ -196,7 +208,7 @@ function Step5Selfie({ data, onChange, onNext, onPrev }) {
         <div className="text-center">
           <img src={URL.createObjectURL(data)} alt="Selfie" className="w-48 h-48 object-cover rounded-2xl mx-auto border-2 border-green-500" />
           <p className="text-sm text-green-600 mt-2 flex items-center justify-center gap-1"><Check size={16} /> Selfie captured</p>
-          <button type="button" onClick={() => onChange(null)} className="text-sm text-red-600 mt-2">Retake</button>
+          <button type="button" onClick={() => { URL.revokeObjectURL(data); onChange(null); }} className="text-sm text-red-600 mt-2">Retake</button>
         </div>
       ) : (
         <div className="text-center">
@@ -215,10 +227,8 @@ function Step5Selfie({ data, onChange, onNext, onPrev }) {
               </div>
               <div className="flex gap-4 justify-center mt-4">
                 <Button type="button" onClick={startCamera}><Camera size={16} /> Open Camera</Button>
-                <label className="cursor-pointer">
-                  <Button type="button" variant="outline"><Upload size={16} /> Upload Photo</Button>
-                  <input type="file" accept="image/*" onChange={(e) => onChange(e.target.files?.[0])} className="hidden" />
-                </label>
+                <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}><Upload size={16} /> Upload Photo</Button>
+                <input ref={fileInputRef} type="file" accept="image/*" onChange={(e) => onChange(e.target.files?.[0])} className="hidden" />
               </div>
             </div>
           )}

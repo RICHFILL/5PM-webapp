@@ -126,7 +126,7 @@ function DashboardLayout({ children }) {
         </nav>
 
         <div className="mt-auto p-4 border-t space-y-3">
-          <Link to="/" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-white/5 hover:text-white transition-colors text-sm">
+          <Link to="/" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-white/5 hover:text-white transition-colors text-sm">
             <ArrowLeft size={18} />
             <span>Back to Home</span>
           </Link>
