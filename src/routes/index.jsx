@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import useAuthStore from '../store/authStore';
 import { AuthLayout, DashboardLayout, AdminLayout, PublicLayout } from '../layouts';
 import { Spinner } from '../components/common';
+import KycGuard from '../components/KycGuard';
 
 // Public pages
 const LandingPage = lazy(() => import('../pages/public/LandingPage'));
@@ -201,33 +202,35 @@ function AppRoutes() {
         />
 
         {/* Investor routes */}
-        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-        <Route path="/marketplace" element={<ProtectedRoute><Marketplace /></ProtectedRoute>} />
-        <Route path="/investments" element={<ProtectedRoute><MyInvestments /></ProtectedRoute>} />
-        <Route path="/investments/:id" element={<ProtectedRoute><InvestDetail /></ProtectedRoute>} />
-        <Route path="/wallet" element={<ProtectedRoute><Wallet /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="/calculator" element={<ProtectedRoute><Calculator /></ProtectedRoute>} />
         <Route path="/kyc" element={<ProtectedRoute><KycPage /></ProtectedRoute>} />
-        <Route path="/properties" element={<ProtectedRoute><Properties /></ProtectedRoute>} />
-        <Route path="/properties/:id" element={<ProtectedRoute><PropertyDetail /></ProtectedRoute>} />
-        <Route path="/portfolio" element={<ProtectedRoute><Portfolio /></ProtectedRoute>} />
         <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
         <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
-        <Route path="/wealth-plans" element={<ProtectedRoute><WealthPlans /></ProtectedRoute>} />
-        <Route path="/wealth-plans/create" element={<ProtectedRoute><CreateWealthPlan /></ProtectedRoute>} />
-        <Route path="/wealth-plans/:id" element={<ProtectedRoute><WealthPlanDetail /></ProtectedRoute>} />
         <Route path="/support" element={<ProtectedRoute><SupportTickets /></ProtectedRoute>} />
         <Route path="/support/new" element={<ProtectedRoute><CreateTicket /></ProtectedRoute>} />
         <Route path="/support/:id" element={<ProtectedRoute><TicketDetail /></ProtectedRoute>} />
-        <Route path="/crowdfunding" element={<ProtectedRoute><Crowdfunding /></ProtectedRoute>} />
-        <Route path="/crowdfunding/:id" element={<ProtectedRoute><CampaignDetail /></ProtectedRoute>} />
-        <Route path="/loans" element={<ProtectedRoute><Loans /></ProtectedRoute>} />
-        <Route path="/loans/:id" element={<ProtectedRoute><LoanDetail /></ProtectedRoute>} />
-        <Route path="/reit" element={<ProtectedRoute><ReitPools /></ProtectedRoute>} />
-        <Route path="/tokens" element={<ProtectedRoute><MyTokens /></ProtectedRoute>} />
-        <Route path="/tokens/marketplace" element={<ProtectedRoute><TokenMarketplace /></ProtectedRoute>} />
         <Route path="/analytics" element={<ProtectedRoute><AIAnalytics /></ProtectedRoute>} />
+
+        {/* KYC-gated routes */}
+        <Route path="/dashboard" element={<ProtectedRoute><KycGuard><Dashboard /></KycGuard></ProtectedRoute>} />
+        <Route path="/marketplace" element={<ProtectedRoute><KycGuard><Marketplace /></KycGuard></ProtectedRoute>} />
+        <Route path="/investments" element={<ProtectedRoute><KycGuard><MyInvestments /></KycGuard></ProtectedRoute>} />
+        <Route path="/investments/:id" element={<ProtectedRoute><KycGuard><InvestDetail /></KycGuard></ProtectedRoute>} />
+        <Route path="/wallet" element={<ProtectedRoute><KycGuard><Wallet /></KycGuard></ProtectedRoute>} />
+        <Route path="/properties" element={<ProtectedRoute><KycGuard><Properties /></KycGuard></ProtectedRoute>} />
+        <Route path="/properties/:id" element={<ProtectedRoute><KycGuard><PropertyDetail /></KycGuard></ProtectedRoute>} />
+        <Route path="/portfolio" element={<ProtectedRoute><KycGuard><Portfolio /></KycGuard></ProtectedRoute>} />
+        <Route path="/wealth-plans" element={<ProtectedRoute><KycGuard><WealthPlans /></KycGuard></ProtectedRoute>} />
+        <Route path="/wealth-plans/create" element={<ProtectedRoute><KycGuard><CreateWealthPlan /></KycGuard></ProtectedRoute>} />
+        <Route path="/wealth-plans/:id" element={<ProtectedRoute><KycGuard><WealthPlanDetail /></KycGuard></ProtectedRoute>} />
+        <Route path="/crowdfunding" element={<ProtectedRoute><KycGuard><Crowdfunding /></KycGuard></ProtectedRoute>} />
+        <Route path="/crowdfunding/:id" element={<ProtectedRoute><KycGuard><CampaignDetail /></KycGuard></ProtectedRoute>} />
+        <Route path="/loans" element={<ProtectedRoute><KycGuard><Loans /></KycGuard></ProtectedRoute>} />
+        <Route path="/loans/:id" element={<ProtectedRoute><KycGuard><LoanDetail /></KycGuard></ProtectedRoute>} />
+        <Route path="/reit" element={<ProtectedRoute><KycGuard><ReitPools /></KycGuard></ProtectedRoute>} />
+        <Route path="/tokens" element={<ProtectedRoute><KycGuard><MyTokens /></KycGuard></ProtectedRoute>} />
+        <Route path="/tokens/marketplace" element={<ProtectedRoute><KycGuard><TokenMarketplace /></KycGuard></ProtectedRoute>} />
 
         {/* Admin routes */}
         <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
