@@ -31,17 +31,17 @@ function TermsConditions() {
       items: [
         "Provide accurate, up-to-date, and complete information during registration and whenever required.",
         "Safeguard your account credentials and notify us immediately if you suspect unauthorized access.",
-        "Use the platform solely for lawful and intended purposes, refraining from any actions that could harm 5PercentDailyFX Limited, its users, or its operations.",
+        "Use the platform solely for lawful and intended purposes, refraining from any actions that could harm 5PM Nexus Limited, its users, or its operations.",
       ],
     },
     {
       title: "Investment Disclaimer",
       content:
-        "Investing involves inherent risks, and while 5PercentDailyFX Limited strives to offer reliable and secure investment opportunities, we cannot guarantee specific outcomes. By using our services, you acknowledge and agree that:",
+        "Investing involves inherent risks, and while 5PM Nexus Limited strives to offer reliable and secure investment opportunities, we cannot guarantee specific outcomes. By using our services, you acknowledge and agree that:",
       items: [
         "Past performance is not indicative of future results.",
         "You are solely responsible for evaluating and understanding the risks of any investment decisions you make.",
-        "5PercentDailyFX Limited is not liable for any loss or damages resulting from your investments.",
+        "5PM Nexus Limited is not liable for any loss or damages resulting from your investments.",
       ],
       footer:
         "We recommend consulting with a financial advisor if you are uncertain about your investment choices.",
@@ -62,7 +62,7 @@ function TermsConditions() {
     {
       title: "Termination of Services",
       content:
-        "5PercentDailyFX Limited reserves the right to suspend or terminate your access to our platform, with or without notice, for the following reasons:",
+        "5PM Nexus Limited reserves the right to suspend or terminate your access to our platform, with or without notice, for the following reasons:",
       items: [
         "Violation of these Terms or any applicable laws.",
         "Engagement in fraudulent or unlawful activities.",
@@ -74,12 +74,12 @@ function TermsConditions() {
     {
       title: "Intellectual Property",
       content:
-        "All content, trademarks, logos, and other intellectual property displayed on our platform are the property of 5PercentDailyFX Limited or its licensors. You may not copy, reproduce, modify, or distribute any content without prior written permission.",
+        "All content, trademarks, logos, and other intellectual property displayed on our platform are the property of 5PM Nexus Limited or its licensors. You may not copy, reproduce, modify, or distribute any content without prior written permission.",
     },
     {
       title: "Limitation of Liability",
       content:
-        "To the fullest extent permitted by law, 5PercentDailyFX Limited and its affiliates shall not be liable for:",
+        "To the fullest extent permitted by law, 5PM Nexus Limited and its affiliates shall not be liable for:",
       items: [
         "Indirect, incidental, special, or consequential damages arising from your use of the platform.",
         "Any loss or damage resulting from unauthorized access to your account or data breaches beyond our reasonable control.",
@@ -93,7 +93,7 @@ function TermsConditions() {
     {
       title: "Changes to the Terms of Service",
       content:
-        "5PercentDailyFX Limited reserves the right to modify or update these Terms at any time. Changes will be posted on our website or app, and your continued use of the platform constitutes acceptance of the updated Terms.",
+        "5PM Nexus Limited reserves the right to modify or update these Terms at any time. Changes will be posted on our website or app, and your continued use of the platform constitutes acceptance of the updated Terms.",
     },
     {
       title: "Contact Information",
@@ -107,7 +107,7 @@ function TermsConditions() {
     {
       title: "Entire Agreement",
       content:
-        "These Terms, along with our Privacy Policy and other applicable policies, constitute the entire agreement between you and 5PercentDailyFX Limited, superseding any prior agreements or understandings.",
+        "These Terms, along with our Privacy Policy and other applicable policies, constitute the entire agreement between you and 5PM Nexus Limited, superseding any prior agreements or understandings.",
     },
   ];
 
@@ -119,8 +119,8 @@ function TermsConditions() {
 
         {/* Welcome */}
         <p className="text-gray-600 mb-8 leading-relaxed">
-          Thank you for choosing <strong>5PercentDailyFX Limited</strong>. These Terms of Service
-          ("Terms") govern your use of the 5PercentDailyFX mobile app, website, and related
+          Thank you for choosing <strong>5PM Nexus Limited</strong>. These Terms of Service
+          ("Terms") govern your use of the 5PM Nexus mobile app, website, and related
           services. By accessing or using our services, you agree to these Terms, our Privacy
           Policy, and any other applicable policies. Please read them carefully.
         </p>

@@ -176,7 +176,7 @@ function PrivacyPolicy() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
           {/* Intro */}
           <p className="text-gray-600 text-lg leading-relaxed">
-            Welcome to <strong>5PercentDailyFX Limited</strong>. Your privacy is our priority. This
+            Welcome to <strong>5PM Nexus Limited</strong>. Your privacy is our priority. This
             Privacy Policy outlines how we collect, use, and protect your information. By using our
             app or website, you agree to the terms outlined below.
           </p>
