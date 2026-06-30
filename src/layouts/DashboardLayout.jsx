@@ -34,7 +34,7 @@ const menuItems = [
   { label: 'Wealth Plans', icon: PiggyBank, path: '/wealth-plans' },
   { label: 'My Investments', icon: TrendingUp, path: '/investments' },
   { label: 'Real Estate', icon: Building2, path: '/properties' },
-  { label: 'Portfolio', icon: PieChart, path: '/portfolio' },
+  // { label: 'Portfolio', icon: PieChart, path: '/portfolio' },
   { label: 'Reports', icon: BarChart3, path: '/reports' },
   { label: 'Wallet', icon: Wallet, path: '/wallet' },
   { label: 'Crowdfunding', icon: Target, path: '/crowdfunding' },

@@ -15,7 +15,7 @@ const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-NG", {
 
 const FILTERS = [
   { label: "All", value: "all" },
-  { label: "Deposits", value: "deposit" },
+  { label: "Deposits", value: "funding" },
   { label: "Withdrawals", value: "withdrawal" },
   { label: "Investments", value: "investment" },
   { label: "Returns", value: "return" },
@@ -270,6 +270,17 @@ export default function Wallet() {
   const [depositCurrency, setDepositCurrency] = useState("NGN");
   const [showWithdraw, setShowWithdraw] = useState(false);
   const [withdrawCurrency, setWithdrawCurrency] = useState("NGN");
+  const [transactions, setTransactions] = useState([]);
+  const [txnLoading, setTxnLoading] = useState(false);
+
+  const fetchTransactions = useCallback(async () => {
+    setTxnLoading(true);
+    try {
+      const res = await walletApi.getTransactionHistory(50, 0);
+      setTransactions(Array.isArray(res) ? res : res?.transactions ?? []);
+    } catch { setTransactions([]); }
+    finally { setTxnLoading(false); }
+  }, []);
 
   const fetchUserPayments = useCallback(async (userId) => {
     if (!userId) { setPayments([]); setPaymentsLoading(false); return; }
@@ -299,20 +310,21 @@ export default function Wallet() {
       } else {
         setBalances(dashboardData?.walletBalance || dashboardData?.totalInvested || 0, 0, 0);
       }
-      await fetchUserPayments(user?.id || user?._id);
+      await Promise.all([
+        fetchUserPayments(user?.id || user?._id),
+        fetchTransactions(),
+      ]);
     } catch {
     } finally { setLoading(false); }
-  }, [user, setBalances, fetchUserPayments]);
+  }, [user, setBalances, fetchUserPayments, fetchTransactions]);
 
   useEffect(() => {
     if (user) fetchData();
   }, [user?.id, user?._id]);
 
-  const filteredPayments = payments.filter((p) => {
-    if (activeFilter === "all") return true;
-    const type = p.type || (p.investment ? "investment" : p.amount > 0 ? "deposit" : "withdrawal");
-    return type === activeFilter;
-  });
+  const filteredTransactions = activeFilter === "all"
+    ? transactions
+    : transactions.filter((t) => t.type === activeFilter);
 
   if (loading) {
     return (
@@ -377,9 +389,9 @@ export default function Wallet() {
             </div>
           </div>
         </div>
-        {paymentsLoading ? (
+        {txnLoading ? (
           <Skeleton.Table rows={5} />
-        ) : filteredPayments.length > 0 ? (
+        ) : filteredTransactions.length > 0 ? (
           <div className="overflow-x-auto -mx-6">
             <table className="w-full text-sm min-w-[500px] px-6">
               <thead>
@@ -391,33 +403,40 @@ export default function Wallet() {
                 </tr>
               </thead>
               <tbody>
-                {filteredPayments.map((txn, i) => (
-                  <tr key={txn.id || txn._id || i} className="border-b border-gray-100 last:border-0">
-                    <td className="py-3 text-gray-500 whitespace-nowrap px-6">{formatDate(txn.paymentDate || txn.createdAt)}</td>
-                    <td className="py-3 px-6">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-7 h-7 rounded-md flex items-center justify-center shrink-0 ${
-                          txn.type === "withdrawal" || txn.amount < 0 ? "bg-red-50" : "bg-green-50"
-                        }`}>
-                          {txn.type === "withdrawal" || txn.amount < 0 ? (
-                            <ArrowUpRight size={14} className="text-red-500" />
-                          ) : (
-                            <ArrowDownLeft size={14} className="text-green-500" />
-                          )}
+                {filteredTransactions.map((txn, i) => {
+                  const isDebit = txn.type === "withdrawal";
+                  const cur = CURRENCIES.find((c) => c.value === (txn.currency || "NGN")) || CURRENCIES[0];
+                  return (
+                    <tr key={txn.id || i} className="border-b border-gray-100 last:border-0">
+                      <td className="py-3 text-gray-500 whitespace-nowrap px-6">{formatDate(txn.date || txn.createdAt)}</td>
+                      <td className="py-3 px-6">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-7 h-7 rounded-md flex items-center justify-center shrink-0 ${
+                            isDebit ? "bg-red-50" : "bg-green-50"
+                          }`}>
+                            {isDebit ? (
+                              <ArrowUpRight size={14} className="text-red-500" />
+                            ) : (
+                              <ArrowDownLeft size={14} className="text-green-500" />
+                            )}
+                          </div>
+                          <div>
+                            <span className="text-gray-700">{txn.description || txn.type || "Transaction"}</span>
+                            {txn.currency && <span className="text-xs text-gray-400 ml-2">({txn.currency})</span>}
+                          </div>
                         </div>
-                        <span className="text-gray-700">{txn.description || txn.investment?.project?.projectName || "Transaction"}</span>
-                      </div>
-                    </td>
-                    <td className={`py-3 text-right font-semibold whitespace-nowrap px-6 ${Math.abs(txn.amount) < 0 ? "text-red-600" : "text-gray-900"}`}>
-                      {CURRENCIES[0].format(txn.amount)}
-                    </td>
-                    <td className="py-3 text-right whitespace-nowrap px-6">
-                      <Badge variant={txn.status === "verified" ? "success" : txn.status === "pending" ? "warning" : txn.status === "failed" ? "danger" : "default"}>
-                        {txn.status || "Unknown"}
-                      </Badge>
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                      <td className={`py-3 text-right font-semibold whitespace-nowrap px-6 ${isDebit ? "text-red-600" : "text-gray-900"}`}>
+                        {cur.format(txn.amount)}
+                      </td>
+                      <td className="py-3 text-right whitespace-nowrap px-6">
+                        <Badge variant={txn.status === "Success" ? "success" : txn.status === "Pending" ? "warning" : txn.status === "Failed" ? "danger" : "default"}>
+                          {txn.status || "Unknown"}
+                        </Badge>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

@@ -195,7 +195,7 @@ export default function AdminKyc() {
             {/* Uploaded Documents */}
             <div>
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1.5"><FileText size={14} /> Uploaded Documents</p>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {selected.passportPhoto?.url ? (
                   <DocumentLink doc={selected.passportPhoto} label={docLabel(selected.passportPhoto.fieldname)} />
                 ) : (
@@ -242,7 +242,7 @@ export default function AdminKyc() {
                       <textarea value={rejectionNote} onChange={(e) => setRejectionNote(e.target.value)} rows={3} placeholder="Explain why this KYC is being rejected..."
                         className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none resize-none" />
                     </div>
-                    <div className="flex gap-3">
+                    <div className="flex flex-col sm:flex-row gap-3">
                       <Button variant="outline" className="flex-1" onClick={() => setConfirmReject(false)}>Back</Button>
                       <Button variant="danger" className="flex-1" onClick={() => handleReview("rejected")} disabled={!rejectionNote.trim()}>
                         <XCircle size={16} /> Confirm Reject
@@ -250,7 +250,7 @@ export default function AdminKyc() {
                     </div>
                   </div>
                 ) : (
-                  <div className="flex gap-3 pt-2">
+                  <div className="flex flex-col sm:flex-row gap-3 pt-2">
                     <Button variant="danger" className="flex-1" onClick={() => setConfirmReject(true)}>
                       <XCircle size={16} /> Reject
                     </Button>
