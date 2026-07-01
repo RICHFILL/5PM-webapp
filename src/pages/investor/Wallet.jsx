@@ -320,7 +320,7 @@ export default function Wallet() {
 
   useEffect(() => {
     if (user) fetchData();
-  }, [user?.id, user?._id]);
+  }, [user?.id, user?._id, fetchData]);
 
   const filteredTransactions = activeFilter === "all"
     ? transactions

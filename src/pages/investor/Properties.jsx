@@ -69,7 +69,7 @@ export default function Properties() {
                 <div className="p-5 flex-1 flex flex-col">
                   <div className="flex items-start justify-between mb-2">
                     <h3 className="text-lg font-semibold text-gray-900">{property.title || property.name}</h3>
-                    <div className="flex items-center gap-1.5 shrink-0">
+                    <div className="flex items-center flex flex-col gap-1.5 shrink-0">
                       {property.investmentType === "request" && <Badge variant="warning" size="sm">By Request</Badge>}
                       <Badge variant={property.status === "active" ? "success" : "default"}>{property.status || "active"}</Badge>
                     </div>
@@ -79,10 +79,12 @@ export default function Properties() {
                   </div>
                   <div className="text-sm text-gray-600 line-clamp-2 mb-4"  dangerouslySetInnerHTML={{ __html: property.description || "Premium real estate investment opportunity." }} />
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
-                    <div>
-                      <p className="text-xs text-gray-500">Price/Unit</p>
-                      <p className="text-sm font-bold text-gray-900">{formatNaira(property.unitPrice || property.pricePerUnit || property.price)}</p>
-                    </div>
+                    {property.investmentType !== "request" && (
+                      <div>
+                        <p className="text-xs text-gray-500">Price/Unit</p>
+                        <p className="text-sm font-bold text-gray-900">{formatNaira(property.unitPrice || property.pricePerUnit || property.price)}</p>
+                      </div>
+                    )}
                     <div>
                       <p className="text-xs text-gray-500">ROI</p>
                       <p className="text-sm font-bold text-neon-tangerine">{property.expectedROI ? `${property.expectedROI}%` : "--"}</p>

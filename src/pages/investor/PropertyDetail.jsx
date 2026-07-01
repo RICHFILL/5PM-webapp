@@ -179,7 +179,7 @@ export default function PropertyDetail() {
             <div className="space-y-4">
               <div>
                 <p className="text-xs text-gray-500 uppercase tracking-wide">Price Per Unit</p>
-                <p className="text-xl md:text-2xl font-bold text-gray-900">{formatNaira(pricePerUnit)}</p>
+                <p className="text-xl md:text-2xl font-bold text-gray-900">{property.investmentType !== "request" ? formatNaira(property.unitPrice || property.pricePerUnit || property.price) : "--" }</p>
               </div>
               <div>
                 <p className="text-xs text-gray-500 uppercase tracking-wide">Expected ROI</p>

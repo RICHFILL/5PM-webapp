@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { TrendingUp, Globe, Wallet, ChevronRight, CheckCircle2, BarChart3, Activity } from "lucide-react";
 import { dashboardApi, userApi, investmentApi } from "../../services/api";
@@ -20,7 +20,7 @@ function Dashboard() {
   const [isSubmittingWithdrawal, setIsSubmittingWithdrawal] = useState(false);
   const [withdrawalConfirmation, setWithdrawalConfirmation] = useState("");
 
-  const fetchUserPayments = async (userId) => {
+  const fetchUserPayments = useCallback(async (userId) => {
     if (!userId) { setPayments([]); setPaymentsLoading(false); return; }
     try {
       setPaymentsLoading(true);
@@ -34,7 +34,7 @@ function Dashboard() {
     } catch (err) {
       setPayments([]);
     } finally { setPaymentsLoading(false); }
-  };
+  }, [user?.id, user?._id]);
 
   const [investments, setInvestments] = useState([]);
 
@@ -54,7 +54,7 @@ function Dashboard() {
       } finally { setLoading(false); }
     };
     if (user) fetchData();
-  }, [user?.id, user?._id]);
+  }, [user?.id, user?._id, fetchUserPayments]);
 
   const portfolioGrowthData = useMemo(() => {
     const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -98,6 +98,7 @@ function Dashboard() {
   };
 
   const totalInvested = dashboardData?.totalInvested ?? 0;
+  const walletBalance = dashboardData?.walletBalance ?? 0;
   const totalInterestEarned = dashboardData?.totalInterestEarned ?? 0;
 
   if (loading) {
@@ -139,12 +140,16 @@ function Dashboard() {
 
       <div className="bg-dark-lavender rounded-2xl text-white px-4 py-6 md:px-7 md:py-8 mb-6 md:mb-8 shadow-lg">
         <div className="flex flex-col gap-2">
-          <p className="text-white/70 text-sm md:text-base font-medium tracking-wide">Total Amount Invested</p>
-          <h2 className="text-xl md:text-2xl font-bold tracking-tight">{formatCurrency(totalInvested)}</h2>
+          <p className="text-white/70 text-sm md:text-base font-medium tracking-wide">Total NGN Wallet Balance</p>
+          <h2 className="text-xl md:text-2xl font-bold tracking-tight">{formatCurrency(walletBalance)}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-3 mt-1 md:mt-3">
             <div className="bg-white/10 rounded-lg px-3 py-2 md:px-4 md:py-2.5 backdrop-blur-sm">
               <p className="text-white/60 text-xs md:text-sm font-medium mb-1">Total Interest Earned</p>
               <p className="text-sm md:text-base font-bold">{formatCurrency(totalInterestEarned)}</p>
+            </div>
+            <div className="bg-white/10 rounded-lg px-3 py-2 md:px-4 md:py-2.5 backdrop-blur-sm">
+              <p className="text-white/60 text-xs md:text-sm font-medium mb-1">Total Amount Invested</p>
+              <p className="text-sm md:text-base font-bold">{formatCurrency(totalInvested)}</p>
             </div>
             <div className="bg-white/10 rounded-lg px-3 py-2 md:px-4 md:py-2.5 backdrop-blur-sm">
               <p className="text-white/60 text-xs md:text-sm font-medium mb-1">Total Repayment Recorded</p>

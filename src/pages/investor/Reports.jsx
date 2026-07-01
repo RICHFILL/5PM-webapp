@@ -44,7 +44,7 @@ export default function Reports() {
       } finally { setLoading(false); }
     };
     if (user) fetch();
-  }, [user]);
+  }, [user?.id]);
 
   const totalInvested = investments.reduce((sum, inv) => sum + (inv.amount || 0), 0);
   const totalReturns = investments.reduce((sum, inv) => sum + (inv.interestEarned || 0), 0);
