@@ -80,7 +80,7 @@ function DashboardLayout({ children }) {
       >
         <div className="h-16 flex items-center justify-between px-6 border-b">
           <Link to="/dashboard" className="flex items-center gap-2">
-            <img src="/assets/logo.png" alt="Logo" className="w-16 lg:w-32 h-auto" />
+            <img src="/assets/newlogo.png" alt="Logo" className="w-auto h-16" />
           </Link>
           <button
             onClick={() => setSidebarOpen(false)}

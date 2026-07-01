@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Building2, Plus, AlertCircle } from "lucide-react";
+import { Search, Building2, Plus, AlertCircle, Upload, X, FileText, Image as ImageIcon } from "lucide-react";
 import { adminApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
 import toast from "react-hot-toast";
@@ -28,6 +28,10 @@ export default function AdminProperties() {
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState(defaultForm);
   const [saving, setSaving] = useState(false);
+  const [images, setImages] = useState([]);
+  const [documents, setDocuments] = useState([]);
+  const imageInputRef = useRef(null);
+  const docInputRef = useRef(null);
 
   const [error, setError] = useState("");
 
@@ -50,18 +54,23 @@ export default function AdminProperties() {
     if (!form.title || !form.targetAmount || !form.totalUnits || !form.unitPrice) return;
     setSaving(true);
     try {
-      await adminApi.createProperty({
-        title: form.title,
-        description: form.description,
-        location: form.location,
-        targetAmount: parseFloat(form.targetAmount),
-        totalUnits: parseInt(form.totalUnits),
-        unitPrice: parseFloat(form.unitPrice),
-        expectedROI: form.expectedROI ? parseFloat(form.expectedROI) : null,
-        duration: form.duration ? parseInt(form.duration) : null,
-      });
+      const formData = new FormData();
+      formData.append("title", form.title);
+      formData.append("description", form.description);
+      formData.append("location", form.location);
+      formData.append("targetAmount", parseFloat(form.targetAmount));
+      formData.append("totalUnits", parseInt(form.totalUnits));
+      formData.append("unitPrice", parseFloat(form.unitPrice));
+      if (form.expectedROI) formData.append("expectedROI", parseFloat(form.expectedROI));
+      if (form.duration) formData.append("duration", parseInt(form.duration));
+      images.forEach((file) => formData.append("images", file));
+      documents.forEach((file) => formData.append("documents", file));
+
+      await adminApi.createProperty(formData);
       setShowModal(false);
       setForm(defaultForm);
+      setImages([]);
+      setDocuments([]);
       toast.success("Property created");
       fetch();
     } catch (err) {
@@ -129,7 +138,7 @@ export default function AdminProperties() {
       </Card>
       </div>
 
-      <Modal isOpen={showModal} onClose={() => { setShowModal(false); setForm(defaultForm); }} title="Add New Property" size="lg">
+      <Modal isOpen={showModal} onClose={() => { setShowModal(false); setForm(defaultForm); setImages([]); setDocuments([]); }} title="Add New Property" size="lg">
         <div className="space-y-4">
           <Input label="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Property name" />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -147,8 +156,55 @@ export default function AdminProperties() {
             <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3}
               className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-neon-tangerine focus:ring-2 focus:ring-neon-tangerine/30 outline-none resize-none" placeholder="Property description" />
           </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Property Images <span className="text-gray-400 font-normal">(optional)</span></label>
+            <div className="flex items-center gap-3">
+              <input type="file" accept="image/jpeg,image/png" multiple ref={imageInputRef} onChange={(e) => setImages([...images, ...Array.from(e.target.files)])} className="hidden" />
+              <button type="button" onClick={() => imageInputRef.current?.click()}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-dashed border-gray-300 text-sm text-gray-600 hover:border-neon-tangerine hover:text-neon-tangerine transition-colors">
+                <Upload size={16} /> Choose Images
+              </button>
+              {images.length > 0 && <span className="text-sm text-gray-500">{images.length} file(s) selected</span>}
+            </div>
+            {images.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                {images.map((file, i) => (
+                  <div key={i} className="flex items-center gap-1.5 bg-gray-100 rounded-lg px-2.5 py-1.5 text-xs text-gray-700">
+                    <ImageIcon size={12} />
+                    <span className="max-w-[120px] truncate">{file.name}</span>
+                    <button onClick={() => setImages(images.filter((_, j) => j !== i))} className="text-gray-400 hover:text-red-500"><X size={12} /></button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Documents (PDF) <span className="text-gray-400 font-normal">(optional)</span></label>
+            <div className="flex items-center gap-3">
+              <input type="file" accept="application/pdf" multiple ref={docInputRef} onChange={(e) => setDocuments([...documents, ...Array.from(e.target.files)])} className="hidden" />
+              <button type="button" onClick={() => docInputRef.current?.click()}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-dashed border-gray-300 text-sm text-gray-600 hover:border-neon-tangerine hover:text-neon-tangerine transition-colors">
+                <Upload size={16} /> Choose Documents
+              </button>
+              {documents.length > 0 && <span className="text-sm text-gray-500">{documents.length} file(s) selected</span>}
+            </div>
+            {documents.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                {documents.map((file, i) => (
+                  <div key={i} className="flex items-center gap-1.5 bg-gray-100 rounded-lg px-2.5 py-1.5 text-xs text-gray-700">
+                    <FileText size={12} />
+                    <span className="max-w-[120px] truncate">{file.name}</span>
+                    <button onClick={() => setDocuments(documents.filter((_, j) => j !== i))} className="text-gray-400 hover:text-red-500"><X size={12} /></button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
           <div className="flex gap-3 justify-end pt-2">
-            <Button variant="outline" onClick={() => { setShowModal(false); setForm(defaultForm); }}>Cancel</Button>
+            <Button variant="outline" onClick={() => { setShowModal(false); setForm(defaultForm); setImages([]); setDocuments([]); }}>Cancel</Button>
             <Button onClick={handleSave} disabled={saving || !form.title || !form.targetAmount || !form.totalUnits || !form.unitPrice}>
               {saving ? "Creating..." : "Create Property"}
             </Button>

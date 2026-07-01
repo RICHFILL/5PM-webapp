@@ -12,7 +12,7 @@ function AuthLayout({ children }) {
       </a>
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <img src="/assets/logo.png" alt="Logo" className="h-12 mx-auto mb-4" />
+          <img src="/assets/newlogo.png" alt="Logo" className="h-12 mx-auto mb-4" />
         </div>
         <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
           {children}

@@ -141,8 +141,12 @@ export const adminApi = {
     return api.get(`/admin/wallets?${q}`).then(r => r.data);
   },
   getProperties: () => api.get('/admin/properties').then(r => r.data),
-  createProperty: (data) => api.post('/admin/properties', data).then(r => r.data),
-  updateProperty: (id, data) => api.patch(`/admin/properties/${id}`, data).then(r => r.data),
+  createProperty: (formData) => api.post('/admin/properties', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }).then(r => r.data),
+  updateProperty: (id, formData) => api.patch(`/admin/properties/${id}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }).then(r => r.data),
   getDistributions: (params) => {
     const q = new URLSearchParams(params).toString();
     return api.get(`/admin/distributions?${q}`).then(r => r.data);

@@ -170,10 +170,10 @@ npx cap open android
 
 ## Step 9: App Icon
 
-1. Generate icon assets from `public/assets/logo.png` using [Android Asset Studio](https://romannurik.github.io/AndroidAssetStudio/) or a tool like `@capacitor/assets`
+1. Generate icon assets from `public/assets/newlogo.png` using [Android Asset Studio](https://romannurik.github.io/AndroidAssetStudio/) or a tool like `@capacitor/assets`
 2. Or manually:
    ```bash
-   npx @capacitor/assets generate --icon public/assets/logo.png
+   npx @capacitor/assets generate --icon public/assets/newlogo.png
    ```
 3. Place generated icons in `android/app/src/main/res/`
 

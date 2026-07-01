@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, MapPin, Home, TrendingUp, Users, CheckCircle2, AlertCircle, Minus, Plus, FileText, Image, Construction, Calendar } from "lucide-react";
+import { ArrowLeft, MapPin, Home, TrendingUp, Users, CheckCircle2, AlertCircle, Minus, Plus, FileText, Image, Construction, Calendar, ExternalLink } from "lucide-react";
 import { propertyApi, propertyUpdateApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
 
@@ -111,6 +111,22 @@ export default function PropertyDetail() {
             </Card>
           )}
 
+          {property.documents?.length > 0 && (
+            <Card>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Property Documents</h3>
+              <div className="space-y-3">
+                {property.documents.map((doc, i) => (
+                  <a key={i} href={doc.url} target="_blank" rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:border-neon-tangerine transition-colors group">
+                    <FileText size={20} className="text-neon-tangerine shrink-0" />
+                    <span className="text-sm text-gray-700 flex-1 truncate">{doc.name || `Document ${i + 1}`}</span>
+                    <ExternalLink size={16} className="text-gray-400 group-hover:text-neon-tangerine" />
+                  </a>
+                ))}
+              </div>
+            </Card>
+          )}
+
           {updates.length > 0 && (
             <Card>
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Property Updates</h3>
@@ -149,7 +165,7 @@ export default function PropertyDetail() {
               </div>
               <div>
                 <p className="text-xs text-gray-500 uppercase tracking-wide">Expected ROI</p>
-                <p className="text-lg md:text-xl font-semibold text-neon-tangerine">"3.5%" </p>
+                <p className="text-lg md:text-xl font-semibold text-neon-tangerine">{property.expectedROI ? `${property.expectedROI}%` : "--"}</p>
               </div>
               <div>
                 <p className="text-xs text-gray-500 uppercase tracking-wide">Available Units</p>

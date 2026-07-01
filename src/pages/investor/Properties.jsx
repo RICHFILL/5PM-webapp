@@ -58,42 +58,42 @@ export default function Properties() {
       {filtered.length > 0 ? (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.map((property) => (
-            <Card key={property._id} className="flex flex-col overflow-hidden p-0 hover:shadow-lg transition-shadow">
-              <div className="h-48 bg-dark-lavender flex items-center justify-center">
-                {property.images?.[0] ? (
-                  <img src={property.images[0]} alt={property.name} className="w-full h-full object-cover" />
-                ) : (
-                  <Home size={48} className="text-white/60" />
-                )}
-              </div>
-              <div className="p-5 flex-1 flex flex-col">
-                <div className="flex items-start justify-between mb-2">
-                  <h3 className="text-lg font-semibold text-gray-900">{property.name || property.title}</h3>
-                  <Badge variant={property.status === "available" ? "success" : "default"}>{property.status || "Available"}</Badge>
+              <Card key={property.id || property._id} className="flex flex-col overflow-hidden p-0 hover:shadow-lg transition-shadow">
+                <div className="h-48 bg-dark-lavender flex items-center justify-center">
+                  {property.images?.[0] ? (
+                    <img src={property.images[0]} alt={property.title} className="w-full h-full object-cover" />
+                  ) : (
+                    <Home size={48} className="text-white/60" />
+                  )}
                 </div>
-                <div className="flex items-center gap-1 text-sm text-gray-500 mb-3">
-                  <MapPin size={14} /><span>{property.location || property.city || "Nigeria"}</span>
+                <div className="p-5 flex-1 flex flex-col">
+                  <div className="flex items-start justify-between mb-2">
+                    <h3 className="text-lg font-semibold text-gray-900">{property.title || property.name}</h3>
+                    <Badge variant={property.status === "active" ? "success" : "default"}>{property.status || "active"}</Badge>
+                  </div>
+                  <div className="flex items-center gap-1 text-sm text-gray-500 mb-3">
+                    <MapPin size={14} /><span>{property.location || property.city || "Nigeria"}</span>
+                  </div>
+                  <p className="text-sm text-gray-600 line-clamp-2 mb-4">{property.description || "Premium real estate investment opportunity."}</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+                    <div>
+                      <p className="text-xs text-gray-500">Price/Unit</p>
+                      <p className="text-sm font-bold text-gray-900">{formatNaira(property.unitPrice || property.pricePerUnit || property.price)}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">ROI</p>
+                      <p className="text-sm font-bold text-neon-tangerine">{property.expectedROI ? `${property.expectedROI}%` : "--"}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Units Left</p>
+                      <p className="text-sm font-bold text-gray-900">{property.availableUnits || property.units || 0}</p>
+                    </div>
+                  </div>
+                  <Button onClick={() => navigate(`/properties/${property.id || property._id}`)} className="w-full mt-auto">
+                    View Details
+                  </Button>
                 </div>
-                <p className="text-sm text-gray-600 line-clamp-2 mb-4">{property.description || "Premium real estate investment opportunity."}</p>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
-                  <div>
-                    <p className="text-xs text-gray-500">Price/Unit</p>
-                    <p className="text-sm font-bold text-gray-900">{formatNaira(property.pricePerUnit || property.price)}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500">ROI</p>
-                    <p className="text-sm font-bold text-neon-tangerine">"3.5%" </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500">Units Left</p>
-                    <p className="text-sm font-bold text-gray-900">{property.availableUnits || property.units || 0}</p>
-                  </div>
-                </div>
-                <Button onClick={() => navigate(`/properties/${property._id}`)} className="w-full mt-auto">
-                  View Details
-                </Button>
-              </div>
-            </Card>
+              </Card>
           ))}
         </div>
       ) : (

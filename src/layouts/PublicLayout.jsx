@@ -5,9 +5,9 @@ function PublicLayout({ children }) {
   return (
     <div className="min-h-screen flex flex-col">
       <header className="bg-white border-b border-gray-100 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <Link to={ROUTES.HOME} className="flex items-center gap-2">
-            <img src="/assets/logo.png" alt="Logo" className="h-20 w-auto" />
+        <div className="max-w-7xl mx-auto px-4 py-2 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <Link to={ROUTES.HOME} className="flex items-center py-2 gap-2">
+            <img src="/assets/newlogo.png" alt="Logo" className="h-16 w-auto" />
           </Link>
           <nav className="hidden md:flex items-center gap-6">
             <Link to={ROUTES.ABOUT} className="text-sm text-gray-600 hover:text-neon-tangerine transition-colors">About</Link>
@@ -27,7 +27,7 @@ function PublicLayout({ children }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
-              <img src="/assets/logo.png" alt="Logo" className="h-20 mb-2 object-contain" style={{ filter: 'grayscale(1) brightness(200%)' }} />
+              <img src="/assets/newlogo.png" alt="Logo" className="h-20 mb-2 object-contain" style={{ filter: 'grayscale(1) brightness(200%)' }} />
               <p className="text-sm text-gray-400">Premium digital wealth and investment platform.</p>
               <div className="flex flex-col gap-2 mt-6">
                 <a href="#" target="_blank" rel="noopener noreferrer">

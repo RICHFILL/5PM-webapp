@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Home, Plus, Trash2, Pencil, FileText, Image, Construction, Calendar } from "lucide-react";
+import { ArrowLeft, Home, Plus, Trash2, Pencil, FileText, Image, Construction, Calendar, Upload, X, ExternalLink, Download } from "lucide-react";
 import { adminApi, propertyUpdateApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
 import toast from "react-hot-toast";
@@ -29,6 +29,11 @@ export default function AdminPropertyDetail() {
   const [form, setForm] = useState(defaultForm);
   const [editingUpdate, setEditingUpdate] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [uploadingFiles, setUploadingFiles] = useState(false);
+  const [newImages, setNewImages] = useState([]);
+  const [newDocuments, setNewDocuments] = useState([]);
+  const imageInputRef = useRef(null);
+  const docInputRef = useRef(null);
 
   const fetch = async () => {
     try {
@@ -56,6 +61,23 @@ export default function AdminPropertyDetail() {
       fetchUpdates();
     }
   }, [id]);
+
+  const handleUploadFiles = async () => {
+    if (newImages.length === 0 && newDocuments.length === 0) return;
+    setUploadingFiles(true);
+    try {
+      const formData = new FormData();
+      newImages.forEach((f) => formData.append("images", f));
+      newDocuments.forEach((f) => formData.append("documents", f));
+      await adminApi.updateProperty(id, formData);
+      setNewImages([]);
+      setNewDocuments([]);
+      toast.success("Files uploaded");
+      fetch();
+    } catch {
+      toast.error("Failed to upload files");
+    } finally { setUploadingFiles(false); }
+  };
 
   const handleSave = async () => {
     if (!form.title) return;
@@ -139,6 +161,85 @@ export default function AdminPropertyDetail() {
             <p className="text-xs text-gray-500">Target</p>
             <p className="text-lg font-bold text-gray-900">{formatNaira(property.targetAmount)}</p>
           </div>
+        </div>
+      </Card>
+
+      <Card>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Media & Documents</h2>
+
+        {property.images?.length > 0 && (
+          <div className="mb-4">
+            <p className="text-sm font-medium text-gray-700 mb-2">Images ({property.images.length})</p>
+            <div className="flex flex-wrap gap-3">
+              {property.images.map((url, i) => (
+                <a key={i} href={url} target="_blank" rel="noopener noreferrer"
+                  className="w-24 h-24 rounded-xl overflow-hidden border border-gray-200 hover:border-neon-tangerine transition-colors">
+                  <img src={url} alt="" className="w-full h-full object-cover" />
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {property.documents?.length > 0 && (
+          <div className="mb-4">
+            <p className="text-sm font-medium text-gray-700 mb-2">Documents ({property.documents.length})</p>
+            <div className="space-y-2">
+              {property.documents.map((doc, i) => (
+                <a key={i} href={doc.url} target="_blank" rel="noopener noreferrer"
+                  className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:border-neon-tangerine transition-colors group">
+                  <FileText size={18} className="text-neon-tangerine shrink-0" />
+                  <span className="text-sm text-gray-700 flex-1 truncate">{doc.name || `Document ${i + 1}`}</span>
+                  <ExternalLink size={14} className="text-gray-400 group-hover:text-neon-tangerine" />
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="border-t border-gray-100 pt-4">
+          <p className="text-sm font-medium text-gray-700 mb-3">Upload Additional Files</p>
+          <div className="flex flex-wrap gap-3 mb-3">
+            <div>
+              <input type="file" accept="image/jpeg,image/png" multiple ref={imageInputRef} onChange={(e) => setNewImages([...newImages, ...Array.from(e.target.files)])} className="hidden" />
+              <button type="button" onClick={() => imageInputRef.current?.click()}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg border border-dashed border-gray-300 text-sm text-gray-600 hover:border-neon-tangerine hover:text-neon-tangerine transition-colors">
+                <Upload size={14} /> Add Images
+              </button>
+            </div>
+            <div>
+              <input type="file" accept="application/pdf" multiple ref={docInputRef} onChange={(e) => setNewDocuments([...newDocuments, ...Array.from(e.target.files)])} className="hidden" />
+              <button type="button" onClick={() => docInputRef.current?.click()}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg border border-dashed border-gray-300 text-sm text-gray-600 hover:border-neon-tangerine hover:text-neon-tangerine transition-colors">
+                <Upload size={14} /> Add Documents
+              </button>
+            </div>
+          </div>
+          {newImages.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-2">
+              {newImages.map((f, i) => (
+                <div key={i} className="flex items-center gap-1.5 bg-gray-100 rounded-lg px-2.5 py-1.5 text-xs text-gray-700">
+                  <Image size={12} /><span className="max-w-[100px] truncate">{f.name}</span>
+                  <button onClick={() => setNewImages(newImages.filter((_, j) => j !== i))} className="text-gray-400 hover:text-red-500"><X size={12} /></button>
+                </div>
+              ))}
+            </div>
+          )}
+          {newDocuments.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-2">
+              {newDocuments.map((f, i) => (
+                <div key={i} className="flex items-center gap-1.5 bg-gray-100 rounded-lg px-2.5 py-1.5 text-xs text-gray-700">
+                  <FileText size={12} /><span className="max-w-[100px] truncate">{f.name}</span>
+                  <button onClick={() => setNewDocuments(newDocuments.filter((_, j) => j !== i))} className="text-gray-400 hover:text-red-500"><X size={12} /></button>
+                </div>
+              ))}
+            </div>
+          )}
+          {(newImages.length > 0 || newDocuments.length > 0) && (
+            <Button size="sm" onClick={handleUploadFiles} disabled={uploadingFiles}>
+              {uploadingFiles ? "Uploading..." : "Upload Files"}
+            </Button>
+          )}
         </div>
       </Card>
 
