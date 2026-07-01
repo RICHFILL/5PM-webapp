@@ -29,6 +29,14 @@ function PublicLayout({ children }) {
             <div>
               <img src="/assets/footer-logo.png" alt="Logo" className="h-10 mb-4" />
               <p className="text-sm text-gray-400">Premium digital wealth and investment platform.</p>
+              <div className="flex flex-col gap-2 mt-6">
+                <a href="#" target="_blank" rel="noopener noreferrer">
+                  <img src="/assets/svgs/google-playstore-badge.svg" alt="Get it on Google Play" className="h-12 w-auto" />
+                </a>
+                <a href="#" target="_blank" rel="noopener noreferrer">
+                  <img src="/assets/svgs/app-store-badge.svg" alt="Download on the App Store" className="h-12 w-auto" />
+                </a>
+              </div>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Quick Links</h4>
