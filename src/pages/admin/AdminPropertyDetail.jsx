@@ -2,7 +2,7 @@
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Home, Plus, Trash2, Pencil, FileText, Image, Construction, Calendar, Upload, X, ExternalLink, Download, CheckCircle, XCircle, MessageSquare, AlertTriangle } from "lucide-react";
 import { adminApi, propertyUpdateApi } from "../../services/api";
-import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
+import { Card, Skeleton, Badge, Button, Modal, Input, RichTextEditor } from "../../components/common";
 import toast from "react-hot-toast";
 import { formatNaira } from '../../utils/format';
 
@@ -39,6 +39,47 @@ export default function AdminPropertyDetail() {
   const [actionLoading, setActionLoading] = useState(null);
   const [adminNote, setAdminNote] = useState("");
   const [deleting, setDeleting] = useState(false);
+  const [showEditProperty, setShowEditProperty] = useState(false);
+  const [editPropertyForm, setEditPropertyForm] = useState({ title: "", description: "", location: "", targetAmount: "", totalUnits: "", unitPrice: "", expectedROI: "", duration: "", investmentType: "direct" });
+  const [propertySaving, setPropertySaving] = useState(false);
+
+  const handleOpenEdit = () => {
+    setEditPropertyForm({
+      title: property?.title || "",
+      description: property?.description || "",
+      location: property?.location || "",
+      targetAmount: property?.targetAmount?.toString() || "",
+      totalUnits: property?.totalUnits?.toString() || "",
+      unitPrice: property?.unitPrice?.toString() || "",
+      expectedROI: property?.expectedROI?.toString() || "",
+      duration: property?.duration?.toString() || "",
+      investmentType: property?.investmentType || "direct",
+    });
+    setShowEditProperty(true);
+  };
+
+  const handleSaveProperty = async () => {
+    if (!editPropertyForm.title || !editPropertyForm.targetAmount || !editPropertyForm.totalUnits || !editPropertyForm.unitPrice) return;
+    setPropertySaving(true);
+    try {
+      const formData = new FormData();
+      formData.append("title", editPropertyForm.title);
+      formData.append("description", editPropertyForm.description);
+      formData.append("location", editPropertyForm.location);
+      formData.append("targetAmount", parseFloat(editPropertyForm.targetAmount));
+      formData.append("totalUnits", parseInt(editPropertyForm.totalUnits));
+      formData.append("unitPrice", parseFloat(editPropertyForm.unitPrice));
+      formData.append("investmentType", editPropertyForm.investmentType);
+      if (editPropertyForm.expectedROI) formData.append("expectedROI", parseFloat(editPropertyForm.expectedROI));
+      if (editPropertyForm.duration) formData.append("duration", parseInt(editPropertyForm.duration));
+      await adminApi.updateProperty(id, formData);
+      setShowEditProperty(false);
+      toast.success("Property updated");
+      fetch();
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to update property");
+    } finally { setPropertySaving(false); }
+  };
 
   const fetch = async () => {
     try {
@@ -189,6 +230,10 @@ export default function AdminPropertyDetail() {
           <div className="flex items-center gap-2">
             <Badge variant={property.investmentType === "request" ? "warning" : "success"} size="sm">{property.investmentType === "request" ? "By Request" : "Direct"}</Badge>
             <Badge variant={property.status === "active" ? "success" : "default"} size="lg">{property.status || "active"}</Badge>
+            <button onClick={handleOpenEdit}
+              className="p-1.5 rounded-lg text-gray-400 hover:text-neon-tangerine hover:bg-neon-tangerine/10 transition-colors" title="Edit property">
+              <Pencil size={16} />
+            </button>
             <button onClick={handleDeleteProperty} disabled={deleting}
               className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors" title="Delete property">
               <Trash2 size={16} />
@@ -411,6 +456,43 @@ export default function AdminPropertyDetail() {
             <Button variant="outline" onClick={() => { setShowModal(false); setForm(defaultForm); setEditingUpdate(null); }}>Cancel</Button>
             <Button onClick={handleSave} disabled={saving || !form.title}>
               {saving ? "Saving..." : editingUpdate ? "Save Changes" : "Add Update"}
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal isOpen={showEditProperty} onClose={() => setShowEditProperty(false)}
+        title="Edit Property Details" size="lg">
+        <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
+          <Input label="Title" value={editPropertyForm.title} onChange={(e) => setEditPropertyForm({ ...editPropertyForm, title: e.target.value })} placeholder="Property title" />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <RichTextEditor content={editPropertyForm.description} onChange={(html) => setEditPropertyForm({ ...editPropertyForm, description: html })} />
+          </div>
+          <Input label="Location" value={editPropertyForm.location} onChange={(e) => setEditPropertyForm({ ...editPropertyForm, location: e.target.value })} placeholder="e.g. Lagos, Nigeria" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Input label="Target Amount (₦)" type="number" value={editPropertyForm.targetAmount} onChange={(e) => setEditPropertyForm({ ...editPropertyForm, targetAmount: e.target.value })} placeholder="e.g. 50000000" />
+            <Input label="Unit Price (₦)" type="number" value={editPropertyForm.unitPrice} onChange={(e) => setEditPropertyForm({ ...editPropertyForm, unitPrice: e.target.value })} placeholder="e.g. 500000" />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Input label="Total Units" type="number" value={editPropertyForm.totalUnits} onChange={(e) => setEditPropertyForm({ ...editPropertyForm, totalUnits: e.target.value })} placeholder="e.g. 100" />
+            <Input label="Expected ROI (%)" type="number" value={editPropertyForm.expectedROI} onChange={(e) => setEditPropertyForm({ ...editPropertyForm, expectedROI: e.target.value })} placeholder="e.g. 15" />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Input label="Duration (months)" type="number" value={editPropertyForm.duration} onChange={(e) => setEditPropertyForm({ ...editPropertyForm, duration: e.target.value })} placeholder="e.g. 24" />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Investment Type</label>
+              <select value={editPropertyForm.investmentType} onChange={(e) => setEditPropertyForm({ ...editPropertyForm, investmentType: e.target.value })}
+                className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:border-neon-tangerine focus:ring-2 focus:ring-neon-tangerine/30 outline-none">
+                <option value="direct">Direct (Purchase Units)</option>
+                <option value="request">By Request</option>
+              </select>
+            </div>
+          </div>
+          <div className="flex gap-3 justify-end pt-2 sticky bottom-0 bg-white py-3 border-t border-gray-100">
+            <Button variant="outline" onClick={() => setShowEditProperty(false)}>Cancel</Button>
+            <Button onClick={handleSaveProperty} disabled={propertySaving || !editPropertyForm.title || !editPropertyForm.targetAmount || !editPropertyForm.totalUnits || !editPropertyForm.unitPrice}>
+              {propertySaving ? "Saving..." : "Save Changes"}
             </Button>
           </div>
         </div>

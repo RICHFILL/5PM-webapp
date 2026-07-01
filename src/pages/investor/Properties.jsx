@@ -77,7 +77,7 @@ export default function Properties() {
                   <div className="flex items-center gap-1 text-sm text-gray-500 mb-3">
                     <MapPin size={14} /><span>{property.location || property.city || "Nigeria"}</span>
                   </div>
-                  <p className="text-sm text-gray-600 line-clamp-2 mb-4">{property.description || "Premium real estate investment opportunity."}</p>
+                  <div className="text-sm text-gray-600 line-clamp-2 mb-4"  dangerouslySetInnerHTML={{ __html: property.description || "Premium real estate investment opportunity." }} />
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
                     <div>
                       <p className="text-xs text-gray-500">Price/Unit</p>

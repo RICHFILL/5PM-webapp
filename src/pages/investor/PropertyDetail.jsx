@@ -36,7 +36,7 @@ export default function PropertyDetail() {
     if (id) { fetch(); fetchUpdates(); }
   }, [id]);
 
-  const pricePerUnit = property?.pricePerUnit || property?.price || 0;
+  const pricePerUnit = property?.unitPrice || property?.pricePerUnit || property?.price || 0;
   const totalCost = pricePerUnit * units;
   const maxUnits = property?.availableUnits || property?.units || 1;
 

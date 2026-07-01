@@ -110,6 +110,7 @@ export const propertyApi = {
   getPropertyDetail: (id) => api.get(`/properties/${id}`).then(r => r.data),
   purchaseUnit: (id, data) => api.post('/property-investments', { propertyId: id, units: data.units }).then(r => r.data),
   requestInvestment: (propertyId, data) => api.post('/property-investments/request', { propertyId, ...data }).then(r => r.data),
+  getMyPropertyInvestments: () => api.get('/property-investments').then(r => r.data),
 };
 
 // --- Admin ---
@@ -315,6 +316,11 @@ export const tokenApi = {
 export const adminKycSettingsApi = {
   getMode: () => api.get('/admin/settings/kyc').then(r => r.data),
   updateMode: (mode) => api.put('/admin/settings/kyc', { mode }).then(r => r.data),
+};
+
+export const adminSettingsApi = {
+  getAll: () => api.get('/admin/settings').then(r => r.data),
+  update: (key, value) => api.put(`/admin/settings/${key}`, { value }).then(r => r.data),
 };
 
 // --- Analytics ---

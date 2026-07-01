@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Mail, Phone } from "lucide-react";
-import { userApi } from "../../services/api";
+import { userApi, propertyApi } from "../../services/api";
 import useAuthStore from "../../store/authStore";
 import { Card, Skeleton, Badge } from "../../components/common";
 
@@ -13,6 +13,8 @@ export default function MyInvestments() {
   const [user, setUser] = useState(null);
   const [stats, setStats] = useState(null);
   const [investments, setInvestments] = useState([]);
+  const [propertyInvestments, setPropertyInvestments] = useState([]);
+  const [propertyInvestmentsLoading, setPropertyInvestmentsLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [payments, setPayments] = useState([]);
   const [paymentsLoading, setPaymentsLoading] = useState(true);
@@ -51,7 +53,17 @@ export default function MyInvestments() {
     } finally { setPaymentsLoading(false); }
   }, [id]);
 
-  useEffect(() => { fetchUserData(); fetchUserPayments(); }, [fetchUserData, fetchUserPayments]);
+  const fetchPropertyInvestments = useCallback(async () => {
+    try {
+      setPropertyInvestmentsLoading(true);
+      const data = await propertyApi.getMyPropertyInvestments();
+      setPropertyInvestments(Array.isArray(data) ? data : data?.data ?? []);
+    } catch {
+      setPropertyInvestments([]);
+    } finally { setPropertyInvestmentsLoading(false); }
+  }, []);
+
+  useEffect(() => { fetchUserData(); fetchUserPayments(); fetchPropertyInvestments(); }, [fetchUserData, fetchUserPayments, fetchPropertyInvestments]);
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -166,6 +178,66 @@ export default function MyInvestments() {
             </table>
           </div>
         ) : <p className="text-gray-500 text-center py-12">No investments found</p>}
+      </Card>
+
+      <Card>
+        <div className="flex items-center gap-2 mb-6">
+          <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+            <svg className="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0h4" />
+            </svg>
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900">Real Estate Properties ({propertyInvestments.length})</h3>
+        </div>
+        {propertyInvestmentsLoading ? (
+          <Skeleton.Table rows={4} />
+        ) : propertyInvestments.length > 0 ? (
+          <div className="overflow-x-auto -mx-6">
+            <table className="w-full text-sm min-w-[600px]">
+              <thead className="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Property</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Units</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Amount</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Date</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {propertyInvestments.map((inv) => {
+                  const propStatusVariant = (s) => {
+                    switch (s) {
+                      case "active": return "warning";
+                      case "completed": return "success";
+                      case "cancelled": return "danger";
+                      default: return "default";
+                    }
+                  };
+                  return (
+                    <tr key={inv.id || inv._id} className="hover:bg-gray-50 transition-colors cursor-pointer"
+                      onClick={() => navigate(`/properties/${inv.property}`)}>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="text-sm font-medium text-gray-900 capitalize">{inv.propertyData?.title || inv.propertyData?.name || "Property"}</span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-semibold text-gray-900">{inv.unitsPurchased}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-bold text-gray-900">{formatCurrency(inv.totalAmount)}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <Badge variant={propStatusVariant(inv.status)}>{inv.status?.charAt(0).toUpperCase() + inv.status?.slice(1) || "Active"}</Badge>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <p className="text-sm text-gray-600">{formatDate(inv.createdAt)}</p>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        ) : <p className="text-gray-500 text-center py-12">No real estate investments yet</p>}
       </Card>
 
       <Card>
