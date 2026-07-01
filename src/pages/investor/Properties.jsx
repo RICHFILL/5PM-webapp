@@ -69,7 +69,10 @@ export default function Properties() {
                 <div className="p-5 flex-1 flex flex-col">
                   <div className="flex items-start justify-between mb-2">
                     <h3 className="text-lg font-semibold text-gray-900">{property.title || property.name}</h3>
-                    <Badge variant={property.status === "active" ? "success" : "default"}>{property.status || "active"}</Badge>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      {property.investmentType === "request" && <Badge variant="warning" size="sm">By Request</Badge>}
+                      <Badge variant={property.status === "active" ? "success" : "default"}>{property.status || "active"}</Badge>
+                    </div>
                   </div>
                   <div className="flex items-center gap-1 text-sm text-gray-500 mb-3">
                     <MapPin size={14} /><span>{property.location || property.city || "Nigeria"}</span>

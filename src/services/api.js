@@ -109,6 +109,7 @@ export const propertyApi = {
   getProperties: () => api.get('/properties').then(r => r.data),
   getPropertyDetail: (id) => api.get(`/properties/${id}`).then(r => r.data),
   purchaseUnit: (id, data) => api.post('/property-investments', { propertyId: id, units: data.units }).then(r => r.data),
+  requestInvestment: (propertyId, data) => api.post('/property-investments/request', { propertyId, ...data }).then(r => r.data),
 };
 
 // --- Admin ---
@@ -161,6 +162,9 @@ export const adminApi = {
   getInvestmentDetail: (id) => api.get(`/admin/investments/${id}`).then(r => r.data),
   recordInvestmentPayment: (id, data) => api.post(`/admin/investments/${id}/payments`, data).then(r => r.data),
   getPropertyDetail: (id) => api.get(`/admin/properties/${id}`).then(r => r.data),
+  getPropertyRequests: (propertyId) => api.get(`/admin/properties/${propertyId}/requests`).then(r => r.data),
+  handlePropertyRequest: (propertyId, requestId, action, adminNote) =>
+    api.patch(`/admin/properties/${propertyId}/requests/${requestId}`, { action, adminNote }).then(r => r.data),
   getReports: () => api.get('/admin/reports').then(r => r.data),
 };
 

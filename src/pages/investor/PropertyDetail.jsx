@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, MapPin, Home, TrendingUp, Users, CheckCircle2, AlertCircle, Minus, Plus, FileText, Image, Construction, Calendar, ExternalLink } from "lucide-react";
+import { ArrowLeft, MapPin, Home, TrendingUp, Users, CheckCircle2, AlertCircle, Minus, Plus, FileText, Image, Construction, Calendar, ExternalLink, Send } from "lucide-react";
 import { propertyApi, propertyUpdateApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
 
@@ -16,6 +16,7 @@ export default function PropertyDetail() {
   const [purchaseStep, setPurchaseStep] = useState("form");
   const [purchaseLoading, setPurchaseLoading] = useState(false);
   const [purchaseError, setPurchaseError] = useState("");
+  const [requestMessage, setRequestMessage] = useState("");
 
   useEffect(() => {
     const fetch = async () => {
@@ -39,6 +40,8 @@ export default function PropertyDetail() {
   const totalCost = pricePerUnit * units;
   const maxUnits = property?.availableUnits || property?.units || 1;
 
+  const isRequestMode = property?.investmentType === "request";
+
   const handlePurchase = async () => {
     if (units < 1 || units > maxUnits) return;
     setPurchaseLoading(true); setPurchaseError("");
@@ -47,6 +50,17 @@ export default function PropertyDetail() {
       setPurchaseStep("confirmation");
     } catch (err) {
       setPurchaseError(err?.response?.data?.message || err.message || "Purchase failed");
+    } finally { setPurchaseLoading(false); }
+  };
+
+  const handleRequestInvestment = async () => {
+    if (units < 1) return;
+    setPurchaseLoading(true); setPurchaseError("");
+    try {
+      await propertyApi.requestInvestment(id, { desiredUnits: units, message: requestMessage });
+      setPurchaseStep("requestConfirmation");
+    } catch (err) {
+      setPurchaseError(err?.response?.data?.message || err.message || "Request failed");
     } finally { setPurchaseLoading(false); }
   };
 
@@ -171,10 +185,17 @@ export default function PropertyDetail() {
                 <p className="text-xs text-gray-500 uppercase tracking-wide">Available Units</p>
                 <p className="text-lg md:text-xl font-semibold text-gray-900">{maxUnits}</p>
               </div>
-              <Button className="w-full" onClick={() => { setShowPurchase(true); setPurchaseStep("form"); setUnits(1); }}
-                disabled={maxUnits < 1}>
-                Purchase Units
-              </Button>
+              {isRequestMode ? (
+                <Button className="w-full" onClick={() => { setShowPurchase(true); setPurchaseStep("form"); setUnits(1); setRequestMessage(""); }}
+                  disabled={maxUnits < 1}>
+                  <Send size={16} /> Request to Invest
+                </Button>
+              ) : (
+                <Button className="w-full" onClick={() => { setShowPurchase(true); setPurchaseStep("form"); setUnits(1); }}
+                  disabled={maxUnits < 1}>
+                  Purchase Units
+                </Button>
+              )}
             </div>
           </Card>
 
@@ -194,12 +215,11 @@ export default function PropertyDetail() {
       </div>
 
       <Modal isOpen={showPurchase} onClose={() => setShowPurchase(false)}
-        title={purchaseStep === "form" ? "Purchase Units" : "Purchase Confirmed"} size="md">
+        title={purchaseStep === "form" ? (isRequestMode ? "Request to Invest" : "Purchase Units") : isRequestMode ? "Request Submitted" : "Purchase Confirmed"} size="md">
         {purchaseStep === "form" ? (
           <div className="space-y-4">
             <div className="bg-dark-lavender/10 rounded-xl p-4 space-y-2">
-              <div className="flex justify-between text-sm"><span className="text-gray-600">Property</span><span className="font-semibold">{property.name}</span></div>
-              <div className="flex justify-between text-sm"><span className="text-gray-600">Price per Unit</span><span className="font-semibold">{formatNaira(pricePerUnit)}</span></div>
+              <div className="flex justify-between text-sm"><span className="text-gray-600">Property</span><span className="font-semibold">{property.title || property.name}</span></div>
               <div className="flex justify-between text-sm"><span className="text-gray-600">Available</span><span className="font-semibold">{maxUnits} units</span></div>
             </div>
 
@@ -220,15 +240,35 @@ export default function PropertyDetail() {
               </div>
             </div>
 
-            <div className="bg-neon-tangerine/10 rounded-xl p-4">
-              <div className="flex justify-between text-sm"><span className="text-gray-600">Total Cost</span><span className="text-lg md:text-xl font-bold text-neon-tangerine/80">{formatNaira(totalCost)}</span></div>
-            </div>
+            {isRequestMode && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Message <span className="text-gray-400 font-normal">(optional)</span></label>
+                <textarea value={requestMessage} onChange={(e) => setRequestMessage(e.target.value)} rows={3}
+                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-neon-tangerine focus:ring-2 focus:ring-neon-tangerine/30 outline-none resize-none"
+                  placeholder="Add a note for the admin..." />
+              </div>
+            )}
+
+            {!isRequestMode && (
+              <div className="bg-neon-tangerine/10 rounded-xl p-4">
+                <div className="flex justify-between text-sm"><span className="text-gray-600">Total Cost</span><span className="text-lg md:text-xl font-bold text-neon-tangerine/80">{formatNaira(totalCost)}</span></div>
+              </div>
+            )}
 
             {purchaseError && <p className="text-sm text-red-600 flex items-center gap-1"><AlertCircle size={14} />{purchaseError}</p>}
 
-            <Button className="w-full" onClick={handlePurchase} disabled={purchaseLoading || units < 1 || units > maxUnits}>
-              {purchaseLoading ? "Processing..." : `Purchase ${units} Unit${units > 1 ? "s" : ""}`}
+            <Button className="w-full" onClick={isRequestMode ? handleRequestInvestment : handlePurchase} disabled={purchaseLoading || units < 1 || units > maxUnits}>
+              {purchaseLoading ? (isRequestMode ? "Submitting..." : "Processing...") : isRequestMode ? `Submit Request for ${units} Unit${units > 1 ? "s" : ""}` : `Purchase ${units} Unit${units > 1 ? "s" : ""}`}
             </Button>
+          </div>
+        ) : purchaseStep === "requestConfirmation" ? (
+          <div className="text-center space-y-4 py-4">
+            <div className="w-16 h-16 mx-auto bg-dark-lavender/20 rounded-full flex items-center justify-center">
+              <Send className="text-dark-lavender" size={32} />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900">Request Submitted!</h3>
+            <p className="text-sm text-gray-600">Your request to invest in {property.title || property.name} has been sent. An admin will contact you shortly.</p>
+            <Button onClick={() => setShowPurchase(false)} variant="secondary">Done</Button>
           </div>
         ) : (
           <div className="text-center space-y-4 py-4">
@@ -236,7 +276,7 @@ export default function PropertyDetail() {
               <CheckCircle2 className="text-green-600" size={32} />
             </div>
             <h3 className="text-lg font-semibold text-gray-900">Purchase Successful!</h3>
-            <p className="text-sm text-gray-600">You have purchased {units} unit{units > 1 ? "s" : ""} in {property.name} for {formatNaira(totalCost)}.</p>
+            <p className="text-sm text-gray-600">You have purchased {units} unit{units > 1 ? "s" : ""} in {property.title || property.name} for {formatNaira(totalCost)}.</p>
             <Button onClick={() => setShowPurchase(false)} variant="secondary">Done</Button>
           </div>
         )}

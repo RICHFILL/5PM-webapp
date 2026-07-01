@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Home, Plus, Trash2, Pencil, FileText, Image, Construction, Calendar, Upload, X, ExternalLink, Download } from "lucide-react";
+import { ArrowLeft, Home, Plus, Trash2, Pencil, FileText, Image, Construction, Calendar, Upload, X, ExternalLink, Download, CheckCircle, XCircle, MessageSquare } from "lucide-react";
 import { adminApi, propertyUpdateApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
 import toast from "react-hot-toast";
@@ -34,6 +34,10 @@ export default function AdminPropertyDetail() {
   const [newDocuments, setNewDocuments] = useState([]);
   const imageInputRef = useRef(null);
   const docInputRef = useRef(null);
+  const [requests, setRequests] = useState([]);
+  const [requestsLoading, setRequestsLoading] = useState(false);
+  const [actionLoading, setActionLoading] = useState(null);
+  const [adminNote, setAdminNote] = useState("");
 
   const fetch = async () => {
     try {
@@ -61,6 +65,33 @@ export default function AdminPropertyDetail() {
       fetchUpdates();
     }
   }, [id]);
+
+  const fetchRequests = async () => {
+    if (!property?.investmentType === "request") return;
+    setRequestsLoading(true);
+    try {
+      const res = await adminApi.getPropertyRequests(id);
+      setRequests(Array.isArray(res) ? res : res?.data ?? []);
+    } catch {
+      setRequests([]);
+    } finally { setRequestsLoading(false); }
+  };
+
+  useEffect(() => {
+    if (id && property?.investmentType === "request") fetchRequests();
+  }, [id, property?.investmentType]);
+
+  const handleRequestAction = async (requestId, action) => {
+    setActionLoading(requestId);
+    try {
+      await adminApi.handlePropertyRequest(id, requestId, action, adminNote);
+      toast.success(`Request ${action}`);
+      setAdminNote("");
+      fetchRequests();
+    } catch {
+      toast.error(`Failed to ${action} request`);
+    } finally { setActionLoading(null); }
+  };
 
   const handleUploadFiles = async () => {
     if (newImages.length === 0 && newDocuments.length === 0) return;
@@ -142,7 +173,10 @@ export default function AdminPropertyDetail() {
             <h1 className="text-xl md:text-2xl font-bold text-gray-900">{property.title}</h1>
             <p className="text-sm text-gray-500 mt-1">{property.location || "Nigeria"}</p>
           </div>
-          <Badge variant={property.status === "active" ? "success" : "default"} size="lg">{property.status || "active"}</Badge>
+          <div className="flex items-center gap-2">
+            <Badge variant={property.investmentType === "request" ? "warning" : "success"} size="sm">{property.investmentType === "request" ? "By Request" : "Direct"}</Badge>
+            <Badge variant={property.status === "active" ? "success" : "default"} size="lg">{property.status || "active"}</Badge>
+          </div>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
           <div className="bg-slate-50 rounded-xl p-4">
@@ -242,6 +276,60 @@ export default function AdminPropertyDetail() {
           )}
         </div>
       </Card>
+
+      {property.investmentType === "request" && (
+        <Card>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-900">Investment Requests ({requests.length})</h2>
+            <Badge variant="info">By Request Only</Badge>
+          </div>
+
+          {requestsLoading ? (
+            <div className="space-y-3"><Skeleton className="h-16 w-full" /><Skeleton className="h-16 w-full" /></div>
+          ) : requests.length > 0 ? (
+            <div className="space-y-3">
+              {requests.map((r) => (
+                <div key={r.id} className="border border-gray-200 rounded-xl p-4">
+                  <div className="flex items-start justify-between mb-2">
+                    <div>
+                      <p className="font-semibold text-gray-900 text-sm">{r.user?.firstName} {r.user?.lastName}</p>
+                      <p className="text-xs text-gray-500">{r.user?.email} {r.user?.phone ? `• ${r.user.phone}` : ""}</p>
+                    </div>
+                    <Badge variant={r.status === "pending" ? "warning" : r.status === "approved" ? "success" : "danger"} size="sm">{r.status}</Badge>
+                  </div>
+                  <div className="flex items-center gap-4 text-xs text-gray-600 mb-2">
+                    <span>Desired: <strong>{r.desiredUnits} unit(s)</strong></span>
+                    <span>{new Date(r.createdAt).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}</span>
+                  </div>
+                  {r.message && (
+                    <div className="flex items-start gap-1.5 text-xs text-gray-600 bg-gray-50 rounded-lg p-2.5 mb-2">
+                      <MessageSquare size={12} className="mt-0.5 shrink-0" />
+                      <em>"{r.message}"</em>
+                    </div>
+                  )}
+                  {r.adminNote && <p className="text-xs text-gray-500 mt-1">Admin note: {r.adminNote}</p>}
+                  {r.status === "pending" && (
+                    <div className="flex flex-wrap items-center gap-2 mt-3 pt-3 border-t border-gray-100">
+                      <input type="text" placeholder="Admin note (optional)..." value={adminNote} onChange={(e) => setAdminNote(e.target.value)}
+                        className="flex-1 min-w-[160px] text-xs rounded-lg border border-gray-200 px-3 py-1.5 focus:border-neon-tangerine focus:ring-2 focus:ring-neon-tangerine/30 outline-none" />
+                      <button onClick={() => handleRequestAction(r.id, "approved")} disabled={actionLoading === r.id}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-50 text-green-700 text-xs font-medium hover:bg-green-100 transition-colors disabled:opacity-50">
+                        <CheckCircle size={14} /> Approve
+                      </button>
+                      <button onClick={() => handleRequestAction(r.id, "declined")} disabled={actionLoading === r.id}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-50 text-red-700 text-xs font-medium hover:bg-red-100 transition-colors disabled:opacity-50">
+                        <XCircle size={14} /> Decline
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-center text-gray-500 py-8 text-sm">No investment requests yet.</p>
+          )}
+        </Card>
+      )}
 
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-bold text-gray-900">Property Updates ({updates.length})</h2>
