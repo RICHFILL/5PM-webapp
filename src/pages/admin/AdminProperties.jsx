@@ -1,11 +1,11 @@
-import { useState, useEffect, useRef } from "react";
+﻿import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, Building2, Plus, AlertCircle, Upload, X, FileText, Image as ImageIcon } from "lucide-react";
 import { adminApi } from "../../services/api";
-import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
+import { Card, Skeleton, Badge, Button, Modal, Input, RichTextEditor } from "../../components/common";
 import toast from "react-hot-toast";
+import { formatNaira } from '../../utils/format';
 
-const formatNaira = (amount) => "₦" + (amount || 0).toLocaleString("en-NG");
 const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }) : "--";
 
 const statusVariant = (status) => {
@@ -143,8 +143,8 @@ export default function AdminProperties() {
         <div className="space-y-4">
           <Input label="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Property name" />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Input label="Target Amount (₦)" type="number" value={form.targetAmount} onChange={(e) => setForm({ ...form, targetAmount: e.target.value })} placeholder="e.g. 50000000" />
-            <Input label="Unit Price (₦)" type="number" value={form.unitPrice} onChange={(e) => setForm({ ...form, unitPrice: e.target.value })} placeholder="e.g. 500000" />
+            <Input label="Target Amount (Ã¢â€šÂ¦)" type="number" value={form.targetAmount} onChange={(e) => setForm({ ...form, targetAmount: e.target.value })} placeholder="e.g. 50000000" />
+            <Input label="Unit Price (Ã¢â€šÂ¦)" type="number" value={form.unitPrice} onChange={(e) => setForm({ ...form, unitPrice: e.target.value })} placeholder="e.g. 500000" />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input label="Total Units" type="number" value={form.totalUnits} onChange={(e) => setForm({ ...form, totalUnits: e.target.value })} placeholder="e.g. 100" />
@@ -160,11 +160,11 @@ export default function AdminProperties() {
               <option value="request">Request Investment (users submit request, admin contacts)</option>
             </select>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-            <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-neon-tangerine focus:ring-2 focus:ring-neon-tangerine/30 outline-none resize-none" placeholder="Property description" />
-          </div>
+          <RichTextEditor
+            label="Description"
+            value={form.description}
+            onChange={(val) => setForm({ ...form, description: val })}
+          />
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Property Images <span className="text-gray-400 font-normal">(optional)</span></label>

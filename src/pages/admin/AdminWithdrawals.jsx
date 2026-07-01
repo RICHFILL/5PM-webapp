@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Search, AlertCircle, CheckCircle, XCircle, ArrowRight, Loader } from "lucide-react";
 import { adminWithdrawalApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Modal, Input, Pagination } from "../../components/common";
 import toast from "react-hot-toast";
+import { formatNaira } from '../../utils/format';
 
-const formatNaira = (amount) => "₦" + (amount || 0).toLocaleString("en-NG");
 const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }) : "--";
 
 const statusVariant = (s) => {

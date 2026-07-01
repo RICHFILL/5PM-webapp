@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Search, AlertCircle } from "lucide-react";
 import { adminWealthApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Input, Modal } from "../../components/common";
 import toast from "react-hot-toast";
+import { formatNaira } from '../../utils/format';
 
-const formatNaira = (amount) => "₦" + (amount || 0).toLocaleString("en-NG");
 const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }) : "--";
 
 export default function AdminWealthPlans() {
@@ -122,7 +122,7 @@ export default function AdminWealthPlans() {
               <p className="text-sm text-gray-600">{selectedPlan.planUser?.firstName} {selectedPlan.planUser?.lastName}</p>
               <p className="text-xs text-gray-500">Monthly: {formatNaira(selectedPlan.monthlyContribution)}</p>
             </div>
-            <Input label="Amount (₦)" type="number" value={contributionForm.amount} onChange={(e) => setContributionForm({ ...contributionForm, amount: e.target.value })} placeholder="e.g. 50000" />
+            <Input label="Amount (Ã¢â€šÂ¦)" type="number" value={contributionForm.amount} onChange={(e) => setContributionForm({ ...contributionForm, amount: e.target.value })} placeholder="e.g. 50000" />
             <Input label="Reference (Optional)" value={contributionForm.reference} onChange={(e) => setContributionForm({ ...contributionForm, reference: e.target.value })} placeholder="Payment reference" />
             <div className="flex gap-3 justify-end pt-2">
               <Button variant="outline" onClick={() => { setShowContribute(false); setContributionForm({ amount: "", reference: "" }); }}>Cancel</Button>

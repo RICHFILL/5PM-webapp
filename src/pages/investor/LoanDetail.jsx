@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Banknote, CheckCircle2, Clock } from "lucide-react";
 import { loanApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button } from "../../components/common";
+import { formatNaira } from '../../utils/format';
 
-const formatNaira = (amount) => "₦" + (amount || 0).toLocaleString("en-NG");
 
 export default function LoanDetail() {
   const { id } = useParams();

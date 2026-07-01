@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Search, Gift, Plus, CheckCircle, XCircle, Clock, ChevronDown, Loader } from "lucide-react";
 import { adminApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Modal, Input, Pagination } from "../../components/common";
 import toast from "react-hot-toast";
+import { formatNaira } from '../../utils/format';
 
-const formatNaira = (amount) => "₦" + (amount || 0).toLocaleString("en-NG");
 const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }) : "--";
 
 const statusVariant = (status) => {
@@ -186,7 +186,7 @@ export default function AdminDistributions() {
               </div>
             )}
           </div>
-          <Input label="Amount (₦)" type="number" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} placeholder="e.g. 50000" />
+          <Input label="Amount (Ã¢â€šÂ¦)" type="number" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} placeholder="e.g. 50000" />
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
             <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}

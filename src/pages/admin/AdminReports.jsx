@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Download, Users, TrendingUp, DollarSign, Activity } from "lucide-react";
 import { adminApi } from "../../services/api";
 import { Card, Skeleton, Button } from "../../components/common";
 import toast from "react-hot-toast";
+import { formatNaira } from '../../utils/format';
 
-const formatNaira = (amount) => "₦" + (amount || 0).toLocaleString("en-NG");
 
 export default function AdminReports() {
   const [data, setData] = useState(null);

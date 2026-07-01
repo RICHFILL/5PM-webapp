@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { MapPin, Home, TrendingUp, Users, Search } from "lucide-react";
 import { propertyApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button } from "../../components/common";
+import { formatNaira } from '../../utils/format';
 
-const formatNaira = (amount) => "₦" + (amount || 0).toLocaleString("en-NG");
 
 export default function Properties() {
   const navigate = useNavigate();

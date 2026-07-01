@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Award, TrendingUp, Home, ExternalLink } from "lucide-react";
 import { tokenApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
+import { formatNaira } from '../../utils/format';
 
-const formatNaira = (amount) => "₦" + (amount || 0).toLocaleString("en-NG");
 
 export default function MyTokens() {
   const [tokens, setTokens] = useState([]);
@@ -90,10 +90,10 @@ export default function MyTokens() {
       <Modal isOpen={!!listToken} onClose={() => setListToken(null)} title="List Token for Sale" size="md">
         <div className="space-y-4">
           <div className="bg-dark-lavender/10 rounded-xl p-3">
-            <p className="text-sm font-semibold">{listToken?.tokenId} — {listToken?.units} units available</p>
+            <p className="text-sm font-semibold">{listToken?.tokenId} Ã¢â‚¬â€ {listToken?.units} units available</p>
           </div>
           <Input label="Units to Sell" type="number" value={listUnits} onChange={(e) => setListUnits(e.target.value)} placeholder="e.g. 5" max={listToken?.units} />
-          <Input label="Asking Price (₦)" type="number" value={listPrice} onChange={(e) => setListPrice(e.target.value)} placeholder="e.g. 500000" />
+          <Input label="Asking Price (Ã¢â€šÂ¦)" type="number" value={listPrice} onChange={(e) => setListPrice(e.target.value)} placeholder="e.g. 500000" />
           <div className="flex gap-3 justify-end pt-2">
             <Button variant="outline" onClick={() => setListToken(null)}>Cancel</Button>
             <Button onClick={handleList} disabled={saving || !listPrice || !listUnits}>List for Sale</Button>

@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Search, Filter, TrendingUp, Clock, DollarSign, ChevronRight, CheckCircle2, AlertCircle } from "lucide-react";
 import { investmentApi } from "../../services/api";
 import useInvestmentStore from "../../store/investmentStore";
 import useAuthStore from "../../store/authStore";
 import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
+import { formatNaira } from '../../utils/format';
 
-const formatNaira = (amount) => "₦" + (amount || 0).toLocaleString("en-NG");
 const formatROI = (roi) => "3.5%";
 
 function InvestModal({ isOpen, onClose, product }) {

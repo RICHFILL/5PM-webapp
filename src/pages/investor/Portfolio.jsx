@@ -1,12 +1,12 @@
-import { useState, useEffect, useMemo } from "react";
+﻿import { useState, useEffect, useMemo } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
 import { TrendingUp, Wallet, Percent, PieChartIcon, Shield } from "lucide-react";
 import { userApi } from "../../services/api";
 import useAuthStore from "../../store/authStore";
 import { Card, Skeleton } from "../../components/common";
 import PortfolioGrowthChart from "../../components/charts/PortfolioGrowthChart";
+import { formatNaira } from '../../utils/format';
 
-const formatNaira = (amount) => "₦" + (amount || 0).toLocaleString("en-NG");
 
 const COLORS = ["#00B8DB", "#1E3A5F", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6"];
 

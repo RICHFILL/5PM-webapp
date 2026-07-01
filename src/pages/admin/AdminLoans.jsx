@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Search, AlertCircle } from "lucide-react";
 import { adminLoanApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
 import toast from "react-hot-toast";
+import { formatNaira } from '../../utils/format';
 
-const formatNaira = (amount) => "₦" + (amount || 0).toLocaleString("en-NG");
 const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }) : "--";
 
 const statusVariant = (s) => {
@@ -158,7 +158,7 @@ export default function AdminLoans() {
             </div>
           ) : (
             <div className="space-y-4">
-              <Input label="Repayment Amount (₦)" type="number" value={repayAmount} onChange={(e) => setRepayAmount(e.target.value)} placeholder="Enter amount" />
+              <Input label="Repayment Amount (Ã¢â€šÂ¦)" type="number" value={repayAmount} onChange={(e) => setRepayAmount(e.target.value)} placeholder="Enter amount" />
               <div className="flex gap-3 justify-end">
                 <Button variant="outline" onClick={() => setActionLoan(null)}>Cancel</Button>
                 <Button onClick={() => handleRepay(actionLoan.id)} disabled={saving || !repayAmount}>Record</Button>

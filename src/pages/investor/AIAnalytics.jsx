@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Brain, TrendingUp, PieChart, Shield, AlertTriangle, Lightbulb, BarChart3 } from "lucide-react";
 import { analyticsApi } from "../../services/api";
 import { Card, Skeleton, Badge } from "../../components/common";
+import { formatNaira } from '../../utils/format';
 
-const formatNaira = (amount) => "₦" + (amount || 0).toLocaleString("en-NG");
 
 export default function AIAnalytics() {
   const [data, setData] = useState(null);

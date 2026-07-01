@@ -163,6 +163,7 @@ export const adminApi = {
   recordInvestmentPayment: (id, data) => api.post(`/admin/investments/${id}/payments`, data).then(r => r.data),
   getPropertyDetail: (id) => api.get(`/admin/properties/${id}`).then(r => r.data),
   getPropertyRequests: (propertyId) => api.get(`/admin/properties/${propertyId}/requests`).then(r => r.data),
+  deleteProperty: (id) => api.delete(`/admin/properties/${id}`).then(r => r.data),
   handlePropertyRequest: (propertyId, requestId, action, adminNote) =>
     api.patch(`/admin/properties/${propertyId}/requests/${requestId}`, { action, adminNote }).then(r => r.data),
   getReports: () => api.get('/admin/reports').then(r => r.data),

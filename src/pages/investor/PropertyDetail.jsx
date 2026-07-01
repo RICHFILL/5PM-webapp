@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, MapPin, Home, TrendingUp, Users, CheckCircle2, AlertCircle, Minus, Plus, FileText, Image, Construction, Calendar, ExternalLink, Send } from "lucide-react";
 import { propertyApi, propertyUpdateApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
+import { formatNaira } from '../../utils/format';
 
-const formatNaira = (amount) => "₦" + (amount || 0).toLocaleString("en-NG");
 
 export default function PropertyDetail() {
   const { id } = useParams();
@@ -108,7 +108,11 @@ export default function PropertyDetail() {
               </div>
               <Badge variant={property.status === "available" ? "success" : "default"} size="lg">{property.status || "Available"}</Badge>
             </div>
-            <p className="text-gray-600 leading-relaxed">{property.description || "No description available."}</p>
+            {property.description ? (
+              <div className="prose prose-sm max-w-none text-gray-600" dangerouslySetInnerHTML={{ __html: property.description }} />
+            ) : (
+              <p className="text-gray-600 leading-relaxed">No description available.</p>
+            )}
           </Card>
 
           {property.features?.length > 0 && (

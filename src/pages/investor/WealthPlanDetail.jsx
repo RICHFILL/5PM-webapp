@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
+﻿import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, PiggyBank, TrendingUp, CalendarDays, DollarSign, CheckCircle } from "lucide-react";
 import { wealthApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button } from "../../components/common";
+import { formatNaira } from '../../utils/format';
 
-const formatNaira = (amount) => "₦" + (amount || 0).toLocaleString("en-NG");
 const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-NG", { day: "numeric", month: "long", year: "numeric" }) : "--";
 
 export default function WealthPlanDetail() {

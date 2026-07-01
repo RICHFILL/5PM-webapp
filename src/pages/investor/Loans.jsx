@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Banknote, Plus, CheckCircle2, AlertCircle } from "lucide-react";
 import { loanApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
+import { formatNaira } from '../../utils/format';
 
-const formatNaira = (amount) => "₦" + (amount || 0).toLocaleString("en-NG");
 const statusVariant = (s) => {
   switch (s) {
     case "active": return "success";
@@ -103,7 +103,7 @@ export default function Loans() {
 
       <Modal isOpen={showModal} onClose={() => { setShowModal(false); setForm(defaultForm); }} title="Apply for Loan" size="md">
         <div className="space-y-4">
-          <Input label="Loan Amount (₦)" type="number" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} placeholder="e.g. 500000" />
+          <Input label="Loan Amount (Ã¢â€šÂ¦)" type="number" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} placeholder="e.g. 500000" />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input label="Term (months)" type="number" value={form.term} onChange={(e) => setForm({ ...form, term: e.target.value })} placeholder="e.g. 12" />
             <Input label="Interest Rate (%)" type="number" value={form.interestRate} onChange={(e) => setForm({ ...form, interestRate: e.target.value })} placeholder="e.g. 3.5" />

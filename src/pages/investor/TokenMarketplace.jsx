@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Award, Home, Users, CheckCircle2 } from "lucide-react";
 import { tokenApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Modal } from "../../components/common";
+import { formatNaira } from '../../utils/format';
 
-const formatNaira = (amount) => "₦" + (amount || 0).toLocaleString("en-NG");
 
 export default function TokenMarketplace() {
   const [listings, setListings] = useState([]);

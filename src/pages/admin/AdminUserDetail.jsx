@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Mail, Phone, CalendarDays, TrendingUp, DollarSign, Activity } from "lucide-react";
+import { ArrowLeft, Mail, Phone, CalendarDays, TrendingUp, DollarSign, Activity, Building2 } from "lucide-react";
 import { adminApi, userApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Input, Modal } from "../../components/common";
+import { formatCurrency } from "../../utils/format";
 import toast from "react-hot-toast";
 
-const formatNaira = (amount) => "₦" + (amount || 0).toLocaleString("en-NG");
 const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-NG", { day: "numeric", month: "long", year: "numeric" }) : "--";
 
 export default function AdminUserDetail() {
@@ -23,8 +23,10 @@ export default function AdminUserDetail() {
     try {
       setLoading(true);
       const data = await adminApi.getUserDetail(id);
-      const u = data?.data || data?.user || data;
+      const u = data?.data?.user || data?.user || data;
+      const inv = data?.data?.investments || data?.investments || [];
       setUser(u);
+      setInvestments(Array.isArray(inv) ? inv : []);
       setEditForm({ firstName: u.firstName || "", lastName: u.lastName || "", phone: u.phone || "", role: u.role || "investor" });
     } catch (err) {
       setUser(null);
@@ -115,9 +117,9 @@ export default function AdminUserDetail() {
         <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           {[
             { label: "Active Investments", value: stats.activeInvestments || stats.totalInvestments || 0, icon: TrendingUp, color: "bg-blue-500" },
-            { label: "Total Invested", value: formatNaira(stats.totalInvested || stats.totalAmount || 0), icon: DollarSign, color: "bg-green-500" },
-            { label: "Total Interest", value: formatNaira(stats.totalInterest || stats.interestEarned || 0), icon: Activity, color: "bg-neon-tangerine" },
-            { label: "Payments Recorded", value: formatNaira(stats.totalPayments || 0), icon: CalendarDays, color: "bg-yellow-500" },
+            { label: "Total Invested", value: formatCurrency(stats.totalInvested || stats.totalAmount || 0, "NGN"), icon: DollarSign, color: "bg-green-500" },
+            { label: "Total Interest", value: formatCurrency(stats.totalInterest || stats.interestEarned || 0, "NGN"), icon: Activity, color: "bg-neon-tangerine" },
+            { label: "Payments Recorded", value: formatCurrency(stats.totalPayments || 0, "NGN"), icon: CalendarDays, color: "bg-yellow-500" },
           ].map((s) => (
             <div key={s.label} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
               <div className="inline-flex rounded-xl border border-gray-200 bg-gray-50 p-3"><s.icon className="h-5 w-5 text-gray-600" /></div>
@@ -148,6 +150,38 @@ export default function AdminUserDetail() {
           ))}
         </div>
       </Card>
+
+      {investments.length > 0 && (
+        <Card>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-900">Investments ({investments.length})</h3>
+          </div>
+          <div className="overflow-x-auto -mx-6">
+            <table className="w-full text-sm min-w-[500px]">
+              <thead className="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Reference</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Amount</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Project</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Date</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {investments.map((inv) => (
+                  <tr key={inv.id} className="hover:bg-gray-50 transition-colors cursor-pointer" onClick={() => navigate(`/admin/investments/${inv.id}`)}>
+                    <td className="px-6 py-4 font-medium text-gray-900">{inv.refNumber || inv.id?.slice(0, 8) || "--"}</td>
+                    <td className="px-6 py-4 font-semibold text-gray-900">{formatCurrency(inv.amount || inv.totalAmount, "NGN")}</td>
+                    <td className="px-6 py-4"><Badge variant={inv.status === "active" ? "success" : inv.status === "completed" ? "default" : "warning"}>{inv.status}</Badge></td>
+                    <td className="px-6 py-4 text-gray-600">{inv.projectData?.title || inv.project || "--"}</td>
+                    <td className="px-6 py-4 text-gray-500">{formatDate(inv.createdAt)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      )}
 
       <section className="flex justify-end">
         <Button variant="danger" size="sm" onClick={async () => {

@@ -1,12 +1,12 @@
-import { useState, useEffect, useMemo } from "react";
+﻿import { useState, useEffect, useMemo } from "react";
 import { FileText, Download, Filter, Calendar, TrendingUp, DollarSign, PiggyBank } from "lucide-react";
 import { investmentApi } from "../../services/api";
 import useAuthStore from "../../store/authStore";
 import { Card, Skeleton, Badge, Button } from "../../components/common";
 import ReturnHistoryChart from "../../components/charts/ReturnHistoryChart";
 import InvestmentPerformanceChart from "../../components/charts/InvestmentPerformanceChart";
+import { formatNaira } from '../../utils/format';
 
-const formatNaira = (amount) => "₦" + (amount || 0).toLocaleString("en-NG");
 const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }) : "--";
 
 const periods = ["This Month", "Last 3 Months", "Last 6 Months", "This Year", "All Time"];

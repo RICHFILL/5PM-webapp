@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Target, Users, TrendingUp, CheckCircle2, AlertCircle, Clock, Calendar } from "lucide-react";
 import { campaignApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
+import { formatNaira } from '../../utils/format';
 
-const formatNaira = (amount) => "₦" + (amount || 0).toLocaleString("en-NG");
 
 export default function CampaignDetail() {
   const { id } = useParams();
@@ -179,7 +179,7 @@ export default function CampaignDetail() {
               <div className="flex justify-between text-sm"><span className="text-gray-600">Campaign</span><span className="font-semibold">{campaign.title}</span></div>
               <div className="flex justify-between text-sm"><span className="text-gray-600">Min Investment</span><span className="font-semibold">{formatNaira(campaign.minInvestment)}</span></div>
             </div>
-            <Input label="Amount (₦)" type="number" value={amount} onChange={(e) => setAmount(e.target.value)}
+            <Input label="Amount (Ã¢â€šÂ¦)" type="number" value={amount} onChange={(e) => setAmount(e.target.value)}
               placeholder="Enter amount" min={campaign.minInvestment} />
             {investError && <p className="text-sm text-red-600 flex items-center gap-1"><AlertCircle size={14} />{investError}</p>}
             <div className="flex gap-3 justify-end pt-2">

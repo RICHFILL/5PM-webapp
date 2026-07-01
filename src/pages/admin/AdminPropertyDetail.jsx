@@ -1,11 +1,11 @@
-import { useState, useEffect, useRef } from "react";
+﻿import { useState, useEffect, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Home, Plus, Trash2, Pencil, FileText, Image, Construction, Calendar, Upload, X, ExternalLink, Download, CheckCircle, XCircle, MessageSquare } from "lucide-react";
+import { ArrowLeft, Home, Plus, Trash2, Pencil, FileText, Image, Construction, Calendar, Upload, X, ExternalLink, Download, CheckCircle, XCircle, MessageSquare, AlertTriangle } from "lucide-react";
 import { adminApi, propertyUpdateApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
 import toast from "react-hot-toast";
+import { formatNaira } from '../../utils/format';
 
-const formatNaira = (amount) => "₦" + (amount || 0).toLocaleString("en-NG");
 const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }) : "--";
 
 const updateTypeIcon = (type) => {
@@ -38,6 +38,7 @@ export default function AdminPropertyDetail() {
   const [requestsLoading, setRequestsLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState(null);
   const [adminNote, setAdminNote] = useState("");
+  const [deleting, setDeleting] = useState(false);
 
   const fetch = async () => {
     try {
@@ -91,6 +92,18 @@ export default function AdminPropertyDetail() {
     } catch {
       toast.error(`Failed to ${action} request`);
     } finally { setActionLoading(null); }
+  };
+
+  const handleDeleteProperty = async () => {
+    if (!window.confirm("Delete this property permanently? This cannot be undone.")) return;
+    setDeleting(true);
+    try {
+      await adminApi.deleteProperty(id);
+      toast.success("Property deleted");
+      navigate("/admin/properties");
+    } catch {
+      toast.error("Failed to delete property");
+    } finally { setDeleting(false); }
   };
 
   const handleUploadFiles = async () => {
@@ -176,6 +189,10 @@ export default function AdminPropertyDetail() {
           <div className="flex items-center gap-2">
             <Badge variant={property.investmentType === "request" ? "warning" : "success"} size="sm">{property.investmentType === "request" ? "By Request" : "Direct"}</Badge>
             <Badge variant={property.status === "active" ? "success" : "default"} size="lg">{property.status || "active"}</Badge>
+            <button onClick={handleDeleteProperty} disabled={deleting}
+              className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors" title="Delete property">
+              <Trash2 size={16} />
+            </button>
           </div>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
@@ -293,7 +310,7 @@ export default function AdminPropertyDetail() {
                   <div className="flex items-start justify-between mb-2">
                     <div>
                       <p className="font-semibold text-gray-900 text-sm">{r.user?.firstName} {r.user?.lastName}</p>
-                      <p className="text-xs text-gray-500">{r.user?.email} {r.user?.phone ? `• ${r.user.phone}` : ""}</p>
+                      <p className="text-xs text-gray-500">{r.user?.email} {r.user?.phone ? `Ã¢â‚¬Â¢ ${r.user.phone}` : ""}</p>
                     </div>
                     <Badge variant={r.status === "pending" ? "warning" : r.status === "approved" ? "success" : "danger"} size="sm">{r.status}</Badge>
                   </div>
