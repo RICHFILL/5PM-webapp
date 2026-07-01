@@ -23,11 +23,11 @@ function PublicLayout({ children }) {
         </div>
       </header>
       <main className="flex-1">{children}</main>
-      <footer className="bg-dark-lavender text-white py-12">
+      <footer className="bg-gray-900 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
-              <img src="/assets/footer-logo.png" alt="Logo" className="h-10 mb-4" />
+              <img src="/assets/logo.png" alt="Logo" className="h-20 mb-2 object-contain" style={{ filter: 'grayscale(1) brightness(200%)' }} />
               <p className="text-sm text-gray-400">Premium digital wealth and investment platform.</p>
               <div className="flex flex-col gap-2 mt-6">
                 <a href="#" target="_blank" rel="noopener noreferrer">
