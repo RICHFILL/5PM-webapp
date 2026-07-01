@@ -312,6 +312,39 @@ function LandingPage() {
         </div>
       </section>
 
+      {/* ───── ABOUT US ───── */}
+      <section className="py-24 bg-dark-lavender">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            <ScrollReveal>
+              <span className="text-neon-tangerine text-xs font-bold uppercase tracking-[0.2em]">About 5PM Nexus Invest</span>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mt-4 mb-6">Trusted Platform for<br />Wealth Creation</h2>
+              <p className="text-gray-300 text-base leading-relaxed mb-6">
+                5PM Nexus Invest is a fintech-powered digital wealth platform that connects investors to professionally managed, asset-backed real estate and structured financial products in Nigeria.
+              </p>
+              <p className="text-gray-400 text-sm leading-relaxed">
+                Founded to democratize wealth creation, we combine rigorous risk management, full document transparency, and seamless digital experiences — making premium investments accessible to every Nigerian, anywhere in the world.
+              </p>
+            </ScrollReveal>
+            <ScrollReveal>
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  { value: "₦2.4B+", label: "Assets Under Management" },
+                  { value: "100+", label: "Active Investors" },
+                  { value: "3.5%", label: "Average Monthly ROI" },
+                  { value: "100%", label: "Asset-Backed Security" },
+                ].map((stat) => (
+                  <div key={stat.label} className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 text-center">
+                    <p className="text-2xl sm:text-3xl font-black text-neon-tangerine">{stat.value}</p>
+                    <p className="text-gray-400 text-sm mt-1">{stat.label}</p>
+                  </div>
+                ))}
+              </div>
+            </ScrollReveal>
+          </div>
+        </div>
+      </section>
+
       {/* ───── INVESTMENT PRODUCTS ───── */}
       <section className="py-24 bg-gray-50" id="investments">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
