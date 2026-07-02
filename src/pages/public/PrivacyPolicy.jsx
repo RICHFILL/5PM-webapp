@@ -154,7 +154,7 @@ function PrivacyPolicy() {
         "If you have questions, concerns, or complaints about this Privacy Policy or your data, please reach out to us:",
       subsections: [],
       contact: {
-        email: "contact@5pcentdailyfx.com",
+        email: "contact@5pmnexus.com",
         phone: "+234 810 387 0605",
         address: "No. 52, Raymond Njoku St, Ikoyi, Lagos State, Nigeria.",
       },

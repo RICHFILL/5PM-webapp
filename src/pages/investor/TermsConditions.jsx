@@ -99,7 +99,7 @@ function TermsConditions() {
       title: "Contact Information",
       content: "If you have any questions, concerns, or feedback regarding these Terms, please contact us at:",
       contact: {
-        email: "contact@5pcentdailyfx.com",
+        email: "contact@5pmnexus.com",
         phone: "+234 810 387 0605",
         address: "No. 52, Raymond Njoku St, Ikoyi, Lagos State, Nigeria.",
       },
