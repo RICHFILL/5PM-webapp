@@ -54,7 +54,7 @@ const testimonials = [
   {
     name: "Adaeze Okonkwo",
     location: "London, UK · Diaspora Investor",
-    text: "I invested ₦500,000 into the Lekki Estate fund from the UK. Within 14 months I received my 20% return  deposited straight into my wallet. This is the most transparent platform I've used.",
+    text: "I invested ₦50,000,000 into the Lekki Estate fund from the UK. Within 1 month I received my 3.5% return deposited straight into my wallet. This is the most transparent platform I've used.",
     initials: "AO",
     avatarBg: "bg-purple-500",
   },

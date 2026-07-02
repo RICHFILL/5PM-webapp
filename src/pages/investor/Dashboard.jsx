@@ -239,7 +239,7 @@ function Dashboard() {
       </div>
 
       {/* Charts Section */}
-      <div className="mb-6 md:mb-8">
+      <div className="mb-6 mt-4 md:mb-8">
         <div className="flex items-center gap-2 mb-4 md:mb-6">
           <BarChart3 className="text-neon-tangerine shrink-0" size={20} />
           <h2 className="text-lg md:text-2xl font-bold text-gray-900">Portfolio Analytics</h2>
