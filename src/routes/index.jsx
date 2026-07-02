@@ -13,6 +13,8 @@ const HowItWorks = lazy(() => import('../pages/public/HowItWorks'));
 const ContactUs = lazy(() => import('../pages/public/ContactUs'));
 const FAQ = lazy(() => import('../pages/public/FAQ'));
 const PrivacyPolicy = lazy(() => import('../pages/public/PrivacyPolicy'));
+const HelpCentre = lazy(() => import('../pages/public/HelpCentre'));
+const HelpArticle = lazy(() => import('../pages/public/HelpArticle'));
 
 // Auth pages
 const Login = lazy(() => import('../pages/auth/Login'));
@@ -126,6 +128,8 @@ function AppRoutes() {
         <Route path="/how-it-works" element={<PublicRoute><HowItWorks /></PublicRoute>} />
         <Route path="/contact" element={<PublicRoute><ContactUs /></PublicRoute>} />
         <Route path="/faq" element={<PublicRoute><FAQ /></PublicRoute>} />
+        <Route path="/help" element={<PublicRoute><HelpCentre /></PublicRoute>} />
+        <Route path="/help/:id" element={<PublicRoute><HelpArticle /></PublicRoute>} />
         <Route path="/privacy" element={<PublicRoute><PrivacyPolicy /></PublicRoute>} />
         <Route path="/terms" element={<PublicRoute><TermsConditions /></PublicRoute>} />
 

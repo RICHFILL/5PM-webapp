@@ -17,12 +17,17 @@ function Register() {
   const [agreeTerms, setAgreeTerms] = useState(false);
 
   const passwordChecks = {
-    minLength: formData.password.length >= 8,
+    minLength: formData.password.length >= 12,
+    hasLowercase: /[a-z]/.test(formData.password),
     hasUppercase: /[A-Z]/.test(formData.password),
     hasNumber: /[0-9]/.test(formData.password),
     hasSpecial: /[!@#$%^&*]/.test(formData.password),
   };
   const passwordsMatch = formData.password === formData.confirmPassword && formData.password.length > 0;
+  const strengthScore = Object.values(passwordChecks).filter(Boolean).length;
+  const strengthLabel = strengthScore <= 1 ? "Weak" : strengthScore <= 2 ? "Fair" : strengthScore <= 3 ? "Good" : "Strong";
+  const strengthColor = strengthScore <= 1 ? "bg-red-500" : strengthScore <= 2 ? "bg-orange-400" : strengthScore <= 3 ? "bg-yellow-400" : "bg-green-500";
+  const strengthTextColor = strengthScore <= 1 ? "text-red-600" : strengthScore <= 2 ? "text-orange-500" : strengthScore <= 3 ? "text-yellow-600" : "text-green-600";
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -83,7 +88,18 @@ function Register() {
             </button>
           </div>
           <div className="mt-3 space-y-2 text-sm">
-            {Object.entries({ "At least 8 characters": passwordChecks.minLength, "One uppercase letter": passwordChecks.hasUppercase, "One number": passwordChecks.hasNumber, "One special character (!@#$%^&*)": passwordChecks.hasSpecial }).map(([label, check]) => (
+            {formData.password && (
+              <div className="mb-3">
+                <div className="flex items-center justify-between text-xs mb-1">
+                  <span className={strengthTextColor}>{strengthLabel}</span>
+                  <span className="text-gray-400">{strengthScore}/5</span>
+                </div>
+                <div className="w-full bg-gray-100 rounded-full h-2">
+                  <div className={`${strengthColor} h-2 rounded-full transition-all duration-300`} style={{ width: `${(strengthScore / 5) * 100}%` }}></div>
+                </div>
+              </div>
+            )}
+            {Object.entries({ "At least 12 characters": passwordChecks.minLength, "One lowercase letter": passwordChecks.hasLowercase, "One uppercase letter": passwordChecks.hasUppercase, "One number": passwordChecks.hasNumber, "One special character (!@#$%^&*)": passwordChecks.hasSpecial }).map(([label, check]) => (
               <div key={label} className={`flex items-center gap-2 ${check ? "text-green-600" : "text-gray-500"}`}>
                 <Check size={16} /> <span>{label}</span>
               </div>

@@ -9,6 +9,7 @@ export const ROUTES = {
   INVESTMENT_OPPORTUNITIES: '/opportunities',
   HOW_IT_WORKS: '/how-it-works',
   CONTACT: '/contact',
+  HELP: '/help',
   FAQ: '/faq',
   TERMS: '/terms',
   PRIVACY: '/privacy',

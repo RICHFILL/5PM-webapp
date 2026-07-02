@@ -106,7 +106,13 @@ export default function Loans() {
           <Input label="Loan Amount (Ã¢â€šÂ¦)" type="number" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} placeholder="e.g. 500000" />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input label="Term (months)" type="number" value={form.term} onChange={(e) => setForm({ ...form, term: e.target.value })} placeholder="e.g. 12" />
-            <Input label="Interest Rate (%)" type="number" value={form.interestRate} onChange={(e) => setForm({ ...form, interestRate: e.target.value })} placeholder="e.g. 3.5" />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Interest Rate</label>
+              <div className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-700 text-sm">
+                {form.interestRate}% p.a.
+              </div>
+              <p className="text-xs text-gray-500 mt-1">Interest rates are determined by the selected loan product and cannot be modified.</p>
+            </div>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Purpose</label>

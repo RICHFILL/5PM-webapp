@@ -1,6 +1,6 @@
 ﻿import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Building2, TrendingUp, Users, CheckCircle2, DollarSign } from "lucide-react";
+import { Building2, TrendingUp, Users, CheckCircle2, DollarSign, Clock, AlertCircle } from "lucide-react";
 import { reitApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
 import { formatNaira } from '../../utils/format';
@@ -14,6 +14,7 @@ export default function ReitPools() {
   const [shares, setShares] = useState("");
   const [saving, setSaving] = useState(false);
   const [step, setStep] = useState("form");
+  const [investmentPending, setInvestmentPending] = useState(false);
 
   useEffect(() => {
     const fetch = async () => {
@@ -29,7 +30,9 @@ export default function ReitPools() {
     if (!shares || parseFloat(shares) <= 0) return;
     setSaving(true);
     try {
-      await reitApi.invest(investPool.id, { shares: parseFloat(shares) });
+      const investRes = await reitApi.invest(investPool.id, { shares: parseFloat(shares) });
+      const isPending = investRes?.status === "pending" || investRes?.investmentStatus === "pending" || investRes?.data?.status === "pending";
+      setInvestmentPending(isPending);
       const res = await reitApi.getPools();
       setPools(Array.isArray(res) ? res : res?.data ?? []);
       setStep("confirmation");
@@ -115,8 +118,19 @@ export default function ReitPools() {
           </div>
         ) : (
           <div className="text-center space-y-4 py-4">
-            <CheckCircle2 className="text-green-600 mx-auto" size={48} />
-            <h3 className="text-lg font-semibold">Investment Successful!</h3>
+            {investmentPending ? (
+              <>
+                <Clock className="text-yellow-500 mx-auto" size={48} />
+                <h3 className="text-lg font-semibold">Pending Approval</h3>
+                <p className="text-sm text-gray-500">Your investment is awaiting verification.</p>
+              </>
+            ) : (
+              <>
+                <CheckCircle2 className="text-green-600 mx-auto" size={48} />
+                <h3 className="text-lg font-semibold">Investment Successful!</h3>
+                <p className="text-sm text-gray-500">Your investment has been recorded.</p>
+              </>
+            )}
             <Button onClick={() => setInvestPool(null)} variant="secondary">Done</Button>
           </div>
         )}

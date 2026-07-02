@@ -13,6 +13,7 @@ function PublicLayout({ children }) {
             <Link to={ROUTES.ABOUT} className="text-sm text-gray-600 hover:text-neon-tangerine transition-colors">About</Link>
             <Link to={ROUTES.INVESTMENT_OPPORTUNITIES} className="text-sm text-gray-600 hover:text-neon-tangerine transition-colors">Investments</Link>
             <Link to={ROUTES.HOW_IT_WORKS} className="text-sm text-gray-600 hover:text-neon-tangerine transition-colors">How It Works</Link>
+            <Link to={ROUTES.HELP} className="text-sm text-gray-600 hover:text-neon-tangerine transition-colors">Help</Link>
             <Link to={ROUTES.FAQ} className="text-sm text-gray-600 hover:text-neon-tangerine transition-colors">FAQ</Link>
             <Link to={ROUTES.CONTACT} className="text-sm text-gray-600 hover:text-neon-tangerine transition-colors">Contact</Link>
           </nav>
@@ -42,6 +43,7 @@ function PublicLayout({ children }) {
               <h4 className="font-semibold mb-4">Quick Links</h4>
               <div className="space-y-2 text-sm text-gray-400">
                 <Link to={ROUTES.ABOUT} className="block hover:text-white">About Us</Link>
+                <Link to={ROUTES.HELP} className="block hover:text-white">Help Centre</Link>
                 <Link to={ROUTES.INVESTMENT_OPPORTUNITIES} className="block hover:text-white">Investments</Link>
                 <Link to={ROUTES.HOW_IT_WORKS} className="block hover:text-white">How It Works</Link>
                 <Link to={ROUTES.CONTACT} className="block hover:text-white">Contact</Link>

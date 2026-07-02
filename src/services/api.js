@@ -323,6 +323,18 @@ export const adminSettingsApi = {
   update: (key, value) => api.put(`/admin/settings/${key}`, { value }).then(r => r.data),
 };
 
+// --- Help Centre ---
+export const helpApi = {
+  getCategories: () => api.get('/help/categories').then(r => r.data),
+  getArticles: (params) => {
+    const q = params ? '?' + new URLSearchParams(params).toString() : '';
+    return api.get(`/help/articles${q}`).then(r => r.data);
+  },
+  getArticleBySlug: (slug) => api.get(`/help/articles/${slug}`).then(r => r.data),
+  getPopularArticles: (limit = 5) => api.get(`/help/articles/popular?limit=${limit}`).then(r => r.data),
+  getRecentArticles: (limit = 5) => api.get(`/help/articles/recent?limit=${limit}`).then(r => r.data),
+};
+
 // --- Analytics ---
 export const analyticsApi = {
   getInsights: () => api.get('/analytics/insights').then(r => r.data),
