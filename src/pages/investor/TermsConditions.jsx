@@ -100,7 +100,7 @@ function TermsConditions() {
       content: "If you have any questions, concerns, or feedback regarding these Terms, please contact us at:",
       contact: {
         email: "contact@5pmnexus.com",
-        phone: "+234 810 387 0605",
+        phone: "+2347033417802 or +2347080897994",
         address: "No. 52, Raymond Njoku St, Ikoyi, Lagos State, Nigeria.",
       },
     },
