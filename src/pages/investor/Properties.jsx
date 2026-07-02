@@ -16,7 +16,12 @@ export default function Properties() {
     const fetch = async () => {
       try {
         const data = await propertyApi.getProperties();
-        setProperties(Array.isArray(data) ? data : data?.data ?? data?.properties ?? []);
+        const raw = Array.isArray(data) ? data : data?.data ?? data?.properties ?? [];
+        setProperties(raw.map((p) => ({
+          ...p,
+          images: typeof p.images === 'string' ? JSON.parse(p.images) : (p.images || []),
+          documents: typeof p.documents === 'string' ? JSON.parse(p.documents) : (p.documents || []),
+        })));
       } catch (err) {
         setProperties([]);
       } finally { setLoading(false); }

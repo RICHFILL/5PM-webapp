@@ -81,10 +81,16 @@ export default function AdminPropertyDetail() {
     } finally { setPropertySaving(false); }
   };
 
+  const normalizeProperty = (p) => ({
+    ...p,
+    images: typeof p.images === 'string' ? JSON.parse(p.images) : (p.images || []),
+    documents: typeof p.documents === 'string' ? JSON.parse(p.documents) : (p.documents || []),
+  });
+
   const fetch = async () => {
     try {
       const res = await adminApi.getPropertyDetail(id);
-      setProperty(res?.data || res);
+      setProperty(normalizeProperty(res?.data || res));
     } catch {
       setProperty(null);
       toast.error("Failed to load property details");
@@ -109,7 +115,7 @@ export default function AdminPropertyDetail() {
   }, [id]);
 
   const fetchRequests = async () => {
-    if (!property?.investmentType === "request") return;
+    if (property?.investmentType !== "request") return;
     setRequestsLoading(true);
     try {
       const res = await adminApi.getPropertyRequests(id);
@@ -338,6 +344,13 @@ export default function AdminPropertyDetail() {
           )}
         </div>
       </Card>
+
+      {property.description && (
+        <Card>
+          <h2 className="text-lg font-semibold text-gray-900 mb-3">Description</h2>
+          <div className="prose prose-sm max-w-none text-gray-600" dangerouslySetInnerHTML={{ __html: property.description }} />
+        </Card>
+      )}
 
       {property.investmentType === "request" && (
         <Card>

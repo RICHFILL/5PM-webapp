@@ -18,11 +18,17 @@ export default function PropertyDetail() {
   const [purchaseError, setPurchaseError] = useState("");
   const [requestMessage, setRequestMessage] = useState("");
 
+  const normalizeProperty = (p) => ({
+    ...p,
+    images: typeof p.images === 'string' ? JSON.parse(p.images) : (p.images || []),
+    documents: typeof p.documents === 'string' ? JSON.parse(p.documents) : (p.documents || []),
+  });
+
   useEffect(() => {
     const fetch = async () => {
       try {
         const data = await propertyApi.getPropertyDetail(id);
-        setProperty(data?.data || data);
+        setProperty(normalizeProperty(data?.data || data));
       } catch (err) {
         setProperty(null);
       } finally { setLoading(false); }
