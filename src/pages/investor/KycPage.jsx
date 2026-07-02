@@ -181,7 +181,25 @@ function Step5Selfie({ data, onChange, onNext, onPrev }) {
     };
   }, [stream]);
 
-  const startCamera = async () => {
+  const takeSelfieNative = async () => {
+    try {
+      const { Camera, CameraResultType } = await import('@capacitor/camera');
+      const image = await Camera.getPhoto({
+        quality: 90,
+        resultType: CameraResultType.Uri,
+        width: 480,
+        height: 640,
+      });
+      if (!image.webPath) return;
+      const response = await fetch(image.webPath);
+      const blob = await response.blob();
+      onChange(new File([blob], 'selfie.jpg', { type: 'image/jpeg' }));
+    } catch {
+      startWebCamera();
+    }
+  };
+
+  const startWebCamera = async () => {
     try {
       const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
       if (videoRef.current) videoRef.current.srcObject = s;
@@ -226,7 +244,7 @@ function Step5Selfie({ data, onChange, onNext, onPrev }) {
                 <Camera size={40} className="text-gray-400" />
               </div>
               <div className="flex gap-4 justify-center mt-4">
-                <Button type="button" onClick={startCamera}><Camera size={16} /> Open Camera</Button>
+                <Button type="button" onClick={takeSelfieNative}><Camera size={16} /> Open Camera</Button>
                 <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}><Upload size={16} /> Upload Photo</Button>
                 <input ref={fileInputRef} type="file" accept="image/*" onChange={(e) => onChange(e.target.files?.[0])} className="hidden" />
               </div>
