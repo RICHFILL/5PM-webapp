@@ -18,7 +18,7 @@ const categoryOptions = [
   { id: "getting-started", label: "Getting Started", icon: Rocket },
   { id: "security", label: "Account & Security", icon: Shield },
   { id: "deposits-withdrawals", label: "Deposits & Withdrawals", icon: Wallet },
-  { id: "trading", label: "Trading & Investing", icon: TrendingUp },
+  { id: "trading", label: "Investments", icon: TrendingUp },
   { id: "corporate", label: "Corporate Accounts", icon: Building },
   { id: "billing", label: "Billing & Fees", icon: Banknote },
 ];
