@@ -87,10 +87,10 @@ export default function MyTokens() {
         </Card>
       )}
 
-      <Modal isOpen={!!listToken} onClose={() => setListToken(null)} title="List Token for Sale" size="md">
+      <Modal isOpen={!!listToken} onClose={() => setListToken(null)} title="List Token for Sale" size="lg">
         <div className="space-y-4">
           <div className="bg-dark-lavender/10 rounded-xl p-3">
-            <p className="text-sm font-semibold">{listToken?.tokenId} Ã¢â‚¬â€ {listToken?.units} units available</p>
+            <p className="text-sm font-semibold">{listToken?.tokenId} - {listToken?.units} units available</p>
           </div>
           <Input label="Units to Sell" type="number" value={listUnits} onChange={(e) => setListUnits(e.target.value)} placeholder="e.g. 5" max={listToken?.units} />
           <Input label="Asking Price (Ã¢â€šÂ¦)" type="number" value={listPrice} onChange={(e) => setListPrice(e.target.value)} placeholder="e.g. 500000" />

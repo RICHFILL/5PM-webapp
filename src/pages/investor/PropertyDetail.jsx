@@ -225,7 +225,7 @@ export default function PropertyDetail() {
       </div>
 
       <Modal isOpen={showPurchase} onClose={() => setShowPurchase(false)}
-        title={purchaseStep === "form" ? (isRequestMode ? "Request to Invest" : "Purchase Units") : isRequestMode ? "Request Submitted" : "Purchase Confirmed"} size="md">
+        title={purchaseStep === "form" ? (isRequestMode ? "Request to Invest" : "Purchase Units") : isRequestMode ? "Request Submitted" : "Purchase Confirmed"} size="lg">
         {purchaseStep === "form" ? (
           <div className="space-y-4">
             <div className="bg-dark-lavender/10 rounded-xl p-4 space-y-2">

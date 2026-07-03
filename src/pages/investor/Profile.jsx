@@ -199,7 +199,7 @@ function Profile() {
         </div>
       </div>
 
-      <Modal isOpen={showPasswordModal} onClose={() => { setShowPasswordModal(false); setError(""); }} title="Change Password" size="sm">
+      <Modal isOpen={showPasswordModal} onClose={() => { setShowPasswordModal(false); setError(""); }} title="Change Password"  size="lg">
         {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4 text-sm">{error}</div>}
         <div className="space-y-4">
           <Input label="Current Password" type="password" value={passwordData.current} onChange={(e) => setPasswordData({...passwordData, current: e.target.value})} />
@@ -212,7 +212,7 @@ function Profile() {
         </div>
       </Modal>
 
-      <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)} title="Edit Profile" size="sm">
+      <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)} title="Edit Profile"  size="lg">
         {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4 text-sm">{error}</div>}
         <form onSubmit={handleEditProfile} className="space-y-4">
           <Input label="First Name" value={editForm.firstName} onChange={(e) => setEditForm({...editForm, firstName: e.target.value})} required />
