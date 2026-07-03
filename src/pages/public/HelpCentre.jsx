@@ -91,7 +91,7 @@ function HelpCentre() {
           <div className="max-w-3xl">
             <span className="text-neon-tangerine text-xs font-bold uppercase tracking-[0.2em]">Help Centre</span>
             <h1 className="text-3xl md:text-5xl font-black mt-4 mb-6 leading-tight">How Can We Help You?</h1>
-            <p className="text-lg text-gray-300 max-w-2xl leading-relaxed">Browse our guides and articles to get the most out of your 5PM Nexus Invest experience.</p>
+            <p className="text-lg text-gray-300 max-w-2xl leading-relaxed">Browse our guides and articles to get the most out of your 5PM NEXUS INVEST experience.</p>
           </div>
         </div>
       </section>

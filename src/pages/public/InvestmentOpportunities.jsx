@@ -7,33 +7,36 @@ const products = [
   {
     icon: PiggyBank,
     name: "Nexus Income Vault",
-    description: "A stable fixed-income investment product designed for investors seeking predictable monthly returns with capital preservation.",
-    features: ["Monthly interest payments", "Capital guaranteed at maturity", "Low minimum investment"],
-    roi: "3.5% monthly",
+    description: "A professionally managed fixed-income product within our asset-backed fund, designed for investors seeking predictable monthly returns with capital preservation secured by real estate assets.",
+    features: ["Monthly returns up to 3.5%", "Asset-backed capital preservation", "Position confirmed upon fund deployment"],
+    roi: "Up to 3.5% monthly",
     min: "₦10,000,000",
-    duration: "6–24 months",
+    minUSD: "$7,000",
+    duration: "Flexible",
     color: "from-neon-tangerine",
-    tag: "Fixed Income",
+    tag: "Managed Fund",
   },
   {
     icon: Building2,
     name: "Fractional Real Estate",
-    description: "Own a fractional share of premium residential and commercial real estate properties across Nigeria's fastest-growing cities.",
-    features: ["Property-backed security", "Quarterly rental distributions", "Capital appreciation potential"],
-    roi: "3.5% monthly",
+    description: "Own a fractional share of premium real estate assets — residential developments, commercial properties, and strategic land holdings — professionally managed within our fund portfolio.",
+    features: ["Physical asset-backed security", "Monthly return distributions", "Capital appreciation on exit"],
+    roi: "Up to 3.5% monthly",
     min: "₦10,000,000",
-    duration: "12–36 months",
+    minUSD: "$7,000",
+    duration: "Flexible",
     color: "from-dark-lavender",
     tag: "Real Estate",
   },
   {
     icon: TrendingUp,
     name: "Wealth Plans",
-    description: "Diversified portfolio investment plans tailored to your financial goals, from short-term gains to long-term wealth building.",
-    features: ["Professionally managed portfolios", "Risk-adjusted returns", "Flexible tenure options"],
-    roi: "3.5% monthly",
+    description: "Diversified portfolio allocation within our managed fund, tailored to your financial goals — from steady monthly income to long-term capital appreciation through real estate assets.",
+    features: ["Professionally managed portfolio", "Risk-adjusted monthly returns", "Flexible tenure — your terms"],
+    roi: "Up to 3.5% monthly",
     min: "₦10,000,000",
-    duration: "3–60 months",
+    minUSD: "$7,000",
+    duration: "Flexible",
     color: "from-neon-tangerine",
     tag: "Structured",
   },
@@ -63,10 +66,10 @@ function InvestmentOpportunities() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               {[
-                { value: "3.5%", label: "Monthly ROI (avg)" },
-                { value: "₦10M", label: "Minimum Investment" },
+                { value: "Up to 3.5%", label: "Monthly ROI" },
+                { value: "₦10M / $7K", label: "Minimum Investment" },
                 { value: "100%", label: "Asset-Backed" },
-                { value: "6–60", label: "Months Tenure" },
+                { value: "Flexible", label: "Tenure" },
               ].map((s) => (
                 <div key={s.label} className="bg-white/5 rounded-xl p-5 border border-white/10 text-center">
                   <p className="text-xl sm:text-2xl font-black text-neon-tangerine">{s.value}</p>
@@ -114,10 +117,11 @@ function InvestmentOpportunities() {
                     <div>
                       <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Minimum Investment</p>
                       <p className="text-lg font-bold text-gray-900 mt-1">{product.min}</p>
+                      <p className="text-sm text-gray-500 mt-0.5">{product.minUSD}</p>
                     </div>
                     <div className="w-full h-px bg-gray-200" />
                     <div>
-                      <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Duration</p>
+                      <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Tenure</p>
                       <p className="text-lg font-bold text-gray-900 mt-1">{product.duration}</p>
                     </div>
                   </div>

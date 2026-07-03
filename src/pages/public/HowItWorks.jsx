@@ -4,11 +4,11 @@ import { Button } from "../../components/common";
 import { ROUTES } from "../../constants";
 
 const steps = [
-  { icon: UserPlus, title: "Create Your Account", description: "Sign up with your email and basic information. It takes less than 2 minutes to get started on the platform.", checks: ["Email registration", "Phone number verification", "Set your password"] },
-  { icon: Shield, title: "Complete KYC Verification", description: "Verify your identity by providing your personal information, BVN/NIN, and uploading required documents.", checks: ["Personal information", "BVN / NIN validation", "ID & selfie upload"] },
-  { icon: Wallet, title: "Fund Your Wallet", description: "Deposit funds into your investment wallet via bank transfer. Your wallet is your gateway to all investment opportunities.", checks: ["Bank transfer deposits", "USD · GBP · EUR accepted", "Instant wallet top-up"] },
-  { icon: TrendingUp, title: "Choose Your Investment", description: "Browse our curated investment products from fixed-income vaults to fractional real estate.", checks: ["Compare product details", "Review risk profiles", "Invest with one click"] },
-  { icon: BarChart3, title: "Track & Earn Returns", description: "Monitor your portfolio performance, receive distributions directly to your wallet, and reinvest or withdraw.", checks: ["Live ROI tracking", "Monthly statements", "Instant withdrawals"] },
+  { icon: UserPlus, title: "Reach Out or Visit Our Website", description: "Contact us via phone or visit www.5pmnexus.com. Our team will walk you through the programme in plain language — no jargon, no pressure.", checks: ["Call or email us", "Browse investment opportunities", "Speak with our team"] },
+  { icon: Shield, title: "Review & Documentation", description: "Receive the investment agreement, asset disclosure, and programme terms. Review at your own pace with full transparency on every detail.", checks: ["Investment agreement", "Asset disclosure documents", "Programme terms & conditions"] },
+  { icon: Wallet, title: "Capital Deployment", description: "Transfer funds through designated channels. Your position is confirmed upon receipt of funds, and your capital stays in your name throughout the tenure.", checks: ["Bank transfer deposits", "USD · GBP · EUR accepted", "Capital stays in your name"] },
+  { icon: TrendingUp, title: "Returns Begin", description: "Monthly returns activate from the confirmed deployment date. Dashboard access is granted immediately so you can track your position in real time.", checks: ["3.5% monthly target returns", "Real-time dashboard access", "Monthly payment schedule"] },
+  { icon: BarChart3, title: "Stay Informed", description: "Receive monthly updates in clear, plain language. Monitor your position, view accrued returns, and choose to reinvest or withdraw — your capital, your terms.", checks: ["Monthly performance updates", "Live ROI tracking", "Easy withdrawal process"] },
 ];
 
 function HowItWorks() {
@@ -20,10 +20,10 @@ function HowItWorks() {
           <div className="max-w-3xl">
             <span className="text-neon-tangerine text-xs font-bold uppercase tracking-[0.2em]">How It Works</span>
             <h1 className="text-3xl md:text-5xl font-black mt-4 mb-6 leading-tight">
-              Start Investing in<br />Four Simple Steps
+              Start Investing in<br />Five Simple Steps
             </h1>
             <p className="text-lg text-gray-300 max-w-2xl leading-relaxed">
-              Getting started with 5PM Nexus Invest is straightforward. From account creation to earning returns — we guide you every step of the way.
+              5PM NEXUS INVEST operates as a fully managed fund. Investors do not source deals, negotiate property transactions, or monitor markets. Our team handles every operational layer.
             </p>
           </div>
         </div>

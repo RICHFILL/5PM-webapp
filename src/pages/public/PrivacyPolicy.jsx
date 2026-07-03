@@ -167,7 +167,7 @@ function PrivacyPolicy() {
       <section className="bg-dark-lavender text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-2xl md:text-5xl font-bold mb-6">Privacy Policy</h1>
-          <p className="text-xl text-gray-300 max-w-3xl">Effective Date: 01/04/2024</p>
+          <p className="text-xl text-gray-300 max-w-3xl">Effective Date: 01/01/2026</p>
         </div>
       </section>
 

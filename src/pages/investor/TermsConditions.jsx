@@ -115,7 +115,7 @@ function TermsConditions() {
     <div className="p-4 md:p-8 max-w-4xl mx-auto">
       <div className="bg-white rounded-xl shadow-sm p-8">
         <h1 className="text-2xl md:text-4xl font-bold text-gray-900 mb-2">Terms of Service</h1>
-        <p className="text-gray-500 mb-2">Effective Date: 01/04/2024</p>
+        <p className="text-gray-500 mb-2">Effective Date: 01/01/2026</p>
 
         {/* Welcome */}
         <p className="text-gray-600 mb-8 leading-relaxed">

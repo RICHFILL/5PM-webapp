@@ -75,11 +75,11 @@ const testimonials = [
 ];
 
 const faqs = [
-  { q: "What is 5PM Nexus Invest?", a: "5PM Nexus Invest is a fintech-powered digital wealth and investment platform that connects investors to professionally managed, asset-backed real estate and structured financial products in Nigeria." },
-  { q: "Is my investment safe?", a: "Every investment on our platform is tied to a real, tangible asset  real estate properties or structured financial instruments. We operate within regulatory guidelines and provide full document access to every investor." },
-  { q: "Can I invest from outside Nigeria?", a: "Absolutely. 5PM Nexus Invest is built for the diaspora. You can fund your wallet in USD, GBP, or EUR, and your returns are denominated in Naira. Full KYC and account management is available remotely." },
-  { q: "What is the minimum investment amount?", a: "All investment products start from ₦10,000,000" },
-  { q: "How are returns paid out?", a: "Returns are paid directly into your wallet at maturity or on scheduled distribution dates, depending on the product. You'll receive a notification and can withdraw to your bank account or reinvest immediately." },
+  { q: "What is 5PM NEXUS INVEST?", a: "5PM NEXUS INVEST is a professionally managed fund targeting up to 3.5% monthly returns, with strict risk controls on every move. Every position is secured by real estate assets: residential developments, commercial properties, and strategic land holdings." },
+  { q: "Is my investment safe?", a: "Every investment is tied to real, tangible assets with strict risk controls on every capital deployment decision. We maintain capital reserves, avoid overleveraged positions, and provide full document access to every investor." },
+  { q: "Can I invest from outside Nigeria?", a: "Absolutely. 5PM NEXUS INVEST is built for the diaspora. You can fund your position in USD, GBP, or EUR. Full KYC and account management is available remotely." },
+  { q: "What is the minimum investment amount?", a: "All investment products start from ₦10,000,000 or $7,000 USD." },
+  { q: "How are returns paid out?", a: "Returns are paid monthly directly into your wallet. You'll receive a notification and can withdraw to your bank account or reinvest immediately — your choice." },
 ];
 
 function ScrollReveal({ children, className = "" }) {
@@ -125,7 +125,7 @@ function LandingPage() {
             <div>
               <div className="inline-flex items-center gap-2 bg-neon-tangerine/20 border border-neon-tangerine/30 rounded-full px-4 py-1.5 mb-6">
                 <div className="w-2 h-2 rounded-full bg-neon-tangerine animate-pulse" />
-                <span className="text-neon-tangerine text-xs font-semibold tracking-wide uppercase">ASSEST BACKED INVESTMENT PLATFORM</span>
+                <span className="text-neon-tangerine text-xs font-semibold tracking-wide uppercase">ASSET-BACKED INVESTMENT PLATFORM</span>
               </div>
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black leading-[1.05] mb-6">
@@ -137,7 +137,7 @@ function LandingPage() {
               <div className="w-20 h-1 bg-neon-tangerine rounded-full mb-6" />
 
               <p className="text-gray-600 text-lg leading-relaxed mb-8 max-w-lg">
-                Invest in professionally managed, asset-backed real estate and structured financial products  from anywhere in the world. Transparent returns. Zero guesswork.
+                A professionally managed fund targeting up to 3.5% monthly returns, with strict risk controls on every move. Nothing wild, nothing rushed — just steady, predictable growth backed by real estate assets.
               </p>
 
               <div className="flex flex-wrap gap-4 mb-12">
@@ -263,7 +263,7 @@ function LandingPage() {
           <ScrollReveal className="text-center mb-16">
             <span className="text-neon-tangerine text-xs font-bold uppercase tracking-[0.2em]">Why Investors Choose Us</span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black mt-3 mb-4">The Smarter Way<br />to Invest in Nigeria</h2>
-            <p className="text-gray-600 max-w-xl mx-auto">From diaspora investors to salary earners, 5PM Nexus Invest makes real wealth creation accessible, transparent, and profitable.</p>
+                <p className="text-gray-600 max-w-xl mx-auto">From diaspora investors to salary earners, 5PM NEXUS INVEST makes real wealth creation accessible, transparent, and profitable.</p>
           </ScrollReveal>
 
           <div className="grid md:grid-cols-3 gap-8">
@@ -275,8 +275,8 @@ function LandingPage() {
                 borderHover: "hover:border-neon-tangerine/40",
               },
               {
-                icon: TrendingUp, title: "3.5% Monthly Returns",
-                text: "Our carefully selected real estate and income vault products consistently deliver monthly returns that outperform traditional savings by 3×.",
+                icon: TrendingUp, title: "Up to 3.5% Monthly Returns",
+                text: "Our carefully selected real estate and income vault products target up to 3.5% monthly returns — well above conventional instruments. Returns are fixed, predictable, and paid monthly.",
                 iconBg: "bg-dark-lavender/20", iconColor: "text-dark-lavender/80",
                 borderHover: "hover:border-dark-lavender/40",
                 tags: ["Real Estate: 3.5% p.m.", "Vault: 3-3.50% p.m."],
@@ -317,13 +317,13 @@ function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <ScrollReveal>
-              <span className="text-neon-tangerine text-xs font-bold uppercase tracking-[0.2em]">About 5PM Nexus Invest</span>
+              <span className="text-neon-tangerine text-xs font-bold uppercase tracking-[0.2em]">About 5PM NEXUS INVEST</span>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mt-4 mb-6">Trusted Platform for<br />Wealth Creation</h2>
               <p className="text-gray-300 text-base leading-relaxed mb-6">
-                5PM Nexus Invest is a fintech-powered digital wealth platform that connects investors to professionally managed, asset-backed real estate and structured financial products in Nigeria.
+                5PM NEXUS INVEST channels investor capital into carefully selected real estate assets with verified revenue streams. Returns are fixed, predictable, and paid monthly — shielded from the volatility of equity markets and digital assets by the permanence of physical property.
               </p>
               <p className="text-gray-400 text-sm leading-relaxed">
-                Founded to democratize wealth creation, we combine rigorous risk management, full document transparency, and seamless digital experiences — making premium investments accessible to every Nigerian, anywhere in the world.
+                We run a professionally managed fund with strict risk controls on every capital deployment decision. Every position is secured by real estate assets: residential developments, commercial properties, and strategic land holdings.
               </p>
             </ScrollReveal>
             <ScrollReveal>
@@ -383,11 +383,12 @@ function LandingPage() {
                       </div>
                       <div className="text-center">
                         <p className="text-gray-900 text-base font-black">{product.duration}</p>
-                        <p className="text-gray-400 text-xs">Duration</p>
+                        <p className="text-gray-400 text-xs">Tenure</p>
                       </div>
                       <div className="text-right">
                         <p className="text-gray-900 text-base font-black">{product.min}</p>
-                        <p className="text-gray-400 text-xs">Min. Invest</p>
+                        <p className="text-gray-400 text-xs">Min. Invest (NGN)</p>
+                        <p className="text-gray-400 text-xs">$7,000 (USD)</p>
                       </div>
                     </div>
                     <Link to={ROUTES.REGISTER}>
@@ -500,7 +501,7 @@ function LandingPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <ScrollReveal>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-5">Your Wealth Journey<br />Starts Today</h2>
-            <p className="text-white/80 text-lg mb-10 max-w-xl mx-auto">Join over 8,400 investors already building wealth through transparent, asset-backed investments in Nigeria's fastest-growing markets.</p>
+            <p className="text-white/80 text-lg mb-10 max-w-xl mx-auto">Join over 100 investors already building wealth through transparent, asset-backed investments in Nigeria's fastest-growing markets.</p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link to={ROUTES.REGISTER}>
                 <Button size="lg" className="border-2 border-gray-300 hover:border-neon-tangerine text-gray-700 hover:text-neon-tangerine font-medium px-8 py-4 rounded-xl transition-all text-base">

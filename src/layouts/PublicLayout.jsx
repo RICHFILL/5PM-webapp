@@ -61,7 +61,8 @@ function PublicLayout({ children }) {
               <h4 className="font-semibold mb-4">Contact</h4>
               <div className="space-y-2 text-sm text-gray-400">
                 <p>info@5pmnexus.com</p>
-                <p>Lagos, Nigeria</p>
+                <p><a href="tel:+2347033417802" className="hover:text-white">+2347033417802</a>, <a href="tel:+2347080897994" className="hover:text-white">+2347080897994</a></p>
+                <p>No. 52, Raymond Njoku St, Ikoyi, Lagos State, Nigeria.</p>
               </div>
             </div>
           </div>

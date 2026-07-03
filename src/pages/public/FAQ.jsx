@@ -11,16 +11,16 @@ const faqs = [
       { q: "How do I create an account?", a: "Click the 'Get Started' button on our homepage, fill in your details, and verify your email address. The entire process takes less than 2 minutes." },
       { q: "Is there a minimum age requirement?", a: "Yes, you must be at least 18 years old to create an account and invest on our platform." },
       { q: "Do I need to complete KYC before investing?", a: "Yes, all investors must complete KYC verification before making any investments. This is a regulatory requirement to ensure platform security." },
-      { q: "Can I invest from outside Nigeria?", a: "Absolutely. 5PM Nexus Invest is built for the diaspora. You can fund your wallet in USD, GBP, or EUR, and manage your entire portfolio remotely." },
+      { q: "Can I invest from outside Nigeria?", a: "Absolutely. 5PM NEXUS INVEST is built for the diaspora. You can fund your position in USD, GBP, or EUR, and manage your entire portfolio remotely." },
     ],
   },
   {
     category: "Investments",
     items: [
-      { q: "What is the minimum investment amount?", a: "All investment products start from ₦10,000,000" },
-      { q: "How are my returns calculated?", a: "Returns are calculated based on the specific terms of each investment product. The expected ROI is clearly stated before you invest." },
+      { q: "What is the minimum investment amount?", a: "All investment products start from $7,000 USD or its NGN equivalent." },
+      { q: "How are my returns calculated?", a: "Returns target up to 3.5% monthly on your invested capital. They are fixed, predictable, and paid monthly — no market volatility, no guesswork." },
       { q: "Can I withdraw my investment early?", a: "Early withdrawal terms depend on the specific investment product. Some products allow early withdrawal with penalties, while others require holding until maturity." },
-      { q: "What types of investments are available?", a: "We offer fractional real estate, fixed-income vaults, and structured wealth plans — all asset-backed and professionally managed." },
+      { q: "What types of investments are available?", a: "We operate a professionally managed fund backed by real estate assets — residential developments, commercial properties, and strategic land holdings. All asset-backed and professionally managed." },
     ],
   },
   {
@@ -35,9 +35,9 @@ const faqs = [
   {
     category: "Security & Compliance",
     items: [
-      { q: "Is my investment secure?", a: "Yes. All investments are asset-backed, and we employ industry-standard encryption, secure authentication, and regular security audits." },
+      { q: "Is my investment secure?", a: "Yes. Every investor position is backed by documented real estate assets with strict risk controls on every capital deployment decision. No overleveraged positions, regular independent valuations, and capital reserves maintained to support monthly distributions." },
       { q: "How is my personal data protected?", a: "We use advanced encryption protocols and follow data protection regulations to safeguard your personal information." },
-      { q: "Is 5PM Nexus Invest regulated?", a: "We operate in full compliance with Nigerian regulatory requirements and maintain transparent documentation for all investment products." },
+      { q: "Is 5PM NEXUS INVEST regulated?", a: "We operate in full compliance with Nigerian regulatory requirements and maintain transparent documentation for all investment products. Asset valuations are verified by independent professionals and title documentation is available for review." },
     ],
   },
 ];
