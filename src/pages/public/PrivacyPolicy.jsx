@@ -86,7 +86,7 @@ function PrivacyPolicy() {
     {
       title: "Data Security",
       content:
-        "We prioritize your data security by implementing the following measures. Despite our efforts, no system is 100% secure — we encourage users to safeguard their account credentials.",
+        "We prioritize your data security by implementing the following measures. Despite our efforts, no system is 100% secure - we encourage users to safeguard their account credentials.",
       subsections: [
         {
           subtitle: "Encryption",
@@ -112,10 +112,10 @@ function PrivacyPolicy() {
         {
           subtitle: null,
           items: [
-            "Access and Correction — Review and update your information",
-            "Deletion — Request the removal of your personal data where legally permissible",
-            "Restriction — Limit the use of your data in certain circumstances",
-            "Portability — Request a copy of your data in a machine-readable format",
+            "Access and Correction - Review and update your information",
+            "Deletion - Request the removal of your personal data where legally permissible",
+            "Restriction - Limit the use of your data in certain circumstances",
+            "Portability - Request a copy of your data in a machine-readable format",
           ],
         },
       ],

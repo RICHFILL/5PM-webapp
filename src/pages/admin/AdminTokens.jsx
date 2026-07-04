@@ -54,7 +54,7 @@ export default function AdminTokens() {
             {tokens.map((t) => (
               <tr key={t.id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-6 py-4 font-mono text-sm text-neon-tangerine/80">{t.tokenId}</td>
-                <td className="px-6 py-4 text-gray-900">{t.propertyData?.title || "—"}</td>
+                <td className="px-6 py-4 text-gray-900">{t.propertyData?.title || "-"}</td>
                 <td className="px-6 py-4 font-semibold text-gray-900">{t.units}</td>
                 <td className="px-6 py-4"><Badge variant={t.status === "active" ? "success" : "default"}>{t.status}</Badge></td>
                 <td className="px-6 py-4 text-gray-500">{formatDate(t.createdAt)}</td>

@@ -134,7 +134,7 @@ function Step4Documents({ data, onChange, onPrev, onNext }) {
   const documentFields = [
     { key: "passport", label: "Passport Photograph", accept: "image/*", required: true },
     { key: "governmentId", label: "Government-Issued ID (optional)", accept: "image/*,.pdf" },
-    { key: "utilityBill", label: "Utility Bill — proof of address (optional)", accept: "image/*,.pdf" },
+    { key: "utilityBill", label: "Utility Bill - proof of address (optional)", accept: "image/*,.pdf" },
   ];
   return (
     <div className="space-y-4">

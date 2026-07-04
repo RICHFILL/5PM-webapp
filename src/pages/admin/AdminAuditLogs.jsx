@@ -91,7 +91,7 @@ export default function AdminAuditLogs() {
                   {l.resourceId && <span className="text-gray-400 text-xs ml-1">#{l.resourceId?.slice(0, 8)}</span>}
                 </td>
                 <td className="px-6 py-4 text-gray-600">
-                  {l.auditLogUser ? `${l.auditLogUser.firstName} ${l.auditLogUser.lastName}` : "—"}
+                  {l.auditLogUser ? `${l.auditLogUser.firstName} ${l.auditLogUser.lastName}` : "-"}
                 </td>
                 <td className="px-6 py-4 text-gray-500 text-xs">{formatDate(l.timestamp || l.createdAt)}</td>
               </tr>

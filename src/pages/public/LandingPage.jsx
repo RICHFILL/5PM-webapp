@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
-  TrendingUp, Building2, Shield, Star, ArrowRight, ChevronDown,
+  TrendingUp, Shield, Star, ArrowRight, ChevronDown,
   Home, Wallet, CheckCircle, Globe, BarChart3, Users, ChevronRight,
 } from "lucide-react";
 import { Button } from "../../components/common";
@@ -10,36 +10,36 @@ import { ROUTES } from "../../constants";
 const products = [
   {
     name: "Nexus Income Vault",
-    description: "Stable fixed-income investment with consistent returns.",
+    description: "Stable fixed-income investment with consistent monthly returns.",
     roi: "3.5% monthly",
     roiLabel: "42-60% p.a.",
     min: "₦10,000,000",
     duration: "12 months",
     tag: "Income Vault",
     tagClass: "bg-neon-tangerine/20 text-neon-tangerine",
-    headerBg: "bg-neon-tangerine",
+    image: "/assets/products/vault.png",
   },
   {
     name: "Fractional Real Estate",
-    description: "Own a piece of prime real estate with fractional ownership.",
+    description: "Own a fraction of prime real estate assets within our managed fund.",
     roi: "3.5% monthly",
     roiLabel: "42-60% p.a.",
     min: "₦10,000,000",
     duration: "18 months",
     tag: "Real Estate",
     tagClass: "bg-blue-100 text-blue-700",
-    headerBg: "bg-dark-lavender",
+    image: "/assets/products/realestate.png",
   },
   {
     name: "Wealth Plans",
-    description: "Long-term wealth building with diversified portfolios.",
+    description: "Structured long-term plans for diversified portfolio growth.",
     roi: "3.5% monthly",
     roiLabel: "42-60% p.a.",
     min: "₦10,000,000",
     duration: "24 months",
     tag: "Structured",
     tagClass: "bg-purple-100 text-purple-700",
-    headerBg: "bg-purple-500",
+    image: "/assets/products/wealth.png",
   },
 ];
 
@@ -53,22 +53,25 @@ const stats = [
 const testimonials = [
   {
     name: "Adaeze Okonkwo",
-    location: "London, UK · Diaspora Investor",
-    text: "I invested ₦50,000,000 into the Lekki Estate fund from the UK. Within 1 month I received my 3.5% return deposited straight into my wallet. This is the most transparent platform I've used.",
+    location: "London, UK",
+    tag: "Diaspora Investor",
+    text: "I invested from the UK and received my first 3.5% return within a month, deposited straight into my wallet. The most transparent platform I have used.",
     initials: "AO",
     avatarBg: "bg-purple-500",
   },
   {
     name: "Babatunde Makinde",
-    location: "Ibadan · Civil Servant",
-    text: "As a civil servant, I invest monthly through salary deductions. The dashboard helps me track every kobo. I've earned more in 2 years here than 6 years of bank savings.",
+    location: "Ibadan",
+    tag: "Civil Servant",
+    text: "I invest monthly through salary deductions. The dashboard helps me track every kobo. I have earned more in 2 years here than 6 years of bank savings.",
     initials: "BM",
     avatarBg: "bg-neon-tangerine",
   },
   {
     name: "Chidinma Eze",
-    location: "Lagos · HNW Investor",
-    text: "Managing a ₦20M portfolio across 4 properties through one dashboard is a game-changer. The reporting and document access is exactly what high-value investors need.",
+    location: "Lagos",
+    tag: "High-Net-Worth Investor",
+    text: "Managing a portfolio across four properties through one dashboard is a game-changer. The reporting and document access is exactly what serious investors need.",
     initials: "CE",
     avatarBg: "bg-blue-500",
   },
@@ -78,8 +81,8 @@ const faqs = [
   { q: "What is 5PM NEXUS INVEST?", a: "5PM NEXUS INVEST is a professionally managed fund targeting up to 3.5% monthly returns, with strict risk controls on every move. Every position is secured by real estate assets: residential developments, commercial properties, and strategic land holdings." },
   { q: "Is my investment safe?", a: "Every investment is tied to real, tangible assets with strict risk controls on every capital deployment decision. We maintain capital reserves, avoid overleveraged positions, and provide full document access to every investor." },
   { q: "Can I invest from outside Nigeria?", a: "Absolutely. 5PM NEXUS INVEST is built for the diaspora. You can fund your position in USD, GBP, or EUR. Full KYC and account management is available remotely." },
-  { q: "What is the minimum investment amount?", a: "All investment products start from ₦10,000,000 or $7,000 USD." },
-  { q: "How are returns paid out?", a: "Returns are paid monthly directly into your wallet. You'll receive a notification and can withdraw to your bank account or reinvest immediately — your choice." },
+  { q: "What is the minimum investment amount?", a: "All investment products start from N10,000,000 or $7,000 USD." },
+  { q: "How are returns paid out?", a: "Returns are paid monthly directly into your wallet. You will receive a notification and can withdraw to your bank account or reinvest immediately on your terms." },
 ];
 
 function ScrollReveal({ children, className = "" }) {
@@ -118,7 +121,7 @@ function LandingPage() {
   return (
     <div className="bg-white text-gray-900">
 
-      {/* ───── HERO ───── */}
+      {/* Hero */}
       <section className="relative overflow-hidden bg-gray-50 border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -137,7 +140,7 @@ function LandingPage() {
               <div className="w-20 h-1 bg-neon-tangerine rounded-full mb-6" />
 
               <p className="text-gray-600 text-lg leading-relaxed mb-8 max-w-lg">
-                A professionally managed fund targeting up to 3.5% monthly returns, with strict risk controls on every move. Nothing wild, nothing rushed — just steady, predictable growth backed by real estate assets.
+                A professionally managed fund targeting up to 3.5% monthly returns, with strict risk controls on every move. Nothing wild, nothing rushed. Just steady, predictable growth backed by real estate assets.
               </p>
 
               <div className="flex flex-wrap gap-4 mb-12">
@@ -169,11 +172,11 @@ function LandingPage() {
 
             {/* Dashboard Preview Card */}
             <div className="relative hidden lg:block">
-              <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-xl" style={{ animation: "float 4s ease-in-out infinite" }}>
+              <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-shadow duration-500">
                 <div className="flex items-center justify-between mb-5">
                   <div>
                     <p className="text-gray-400 text-xs uppercase tracking-widest">Portfolio Value</p>
-                    <p className="text-3xl font-black text-gray-900 mt-0.5">₦4,820,500</p>
+                    <p className="text-3xl font-black text-gray-900 mt-0.5">N4,820,500</p>
                   </div>
                   <div className="bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full border border-green-200">
                     +24.6% YTD
@@ -182,7 +185,7 @@ function LandingPage() {
 
                 <div className="grid grid-cols-3 gap-3 mb-5">
                   <div className="bg-gray-50 rounded-xl p-3 text-center">
-                    <p className="text-blue-500 text-lg font-black">₦620K</p>
+                    <p className="text-blue-500 text-lg font-black">N620K</p>
                     <p className="text-gray-500 text-[10px] mt-0.5">Returns Earned</p>
                   </div>
                   <div className="bg-gray-50 rounded-xl p-3 text-center">
@@ -203,12 +206,12 @@ function LandingPage() {
                       </div>
                       <div>
                         <p className="text-gray-900 text-xs font-semibold">Lekki Phase 1 Residences</p>
-                        <p className="text-gray-500 text-[10px]">Real Estate · 18 months</p>
+                        <p className="text-gray-500 text-[10px]">Real Estate - 18 months</p>
                       </div>
                     </div>
                     <div className="text-right">
                       <p className="text-green-600 text-xs font-bold">+18% ROI</p>
-                      <p className="text-gray-500 text-[10px]">₦1.2M</p>
+                      <p className="text-gray-500 text-[10px]">N1.2M</p>
                     </div>
                   </div>
                   <div className="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3">
@@ -218,17 +221,17 @@ function LandingPage() {
                       </div>
                       <div>
                         <p className="text-gray-900 text-xs font-semibold">Nexus Income Vault</p>
-                        <p className="text-gray-500 text-[10px]">Structured · 12 months</p>
+                        <p className="text-gray-500 text-[10px]">Structured - 12 months</p>
                       </div>
                     </div>
                     <div className="text-right">
                       <p className="text-green-600 text-xs font-bold">+15% ROI</p>
-                      <p className="text-gray-500 text-[10px]">₦500K</p>
+                      <p className="text-gray-500 text-[10px]">N500K</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-5 h-1 bg-neon-tangerine rounded-full" />
+                <div className="mt-5 h-1 bg-gradient-to-r from-neon-tangerine to-neon-tangerine/40 rounded-full" />
               </div>
 
               <div className="absolute -top-4 -right-4 bg-white border border-gray-200 rounded-xl px-4 py-2.5 shadow-lg flex items-center gap-3">
@@ -237,7 +240,7 @@ function LandingPage() {
                 </div>
                 <div>
                   <p className="text-gray-900 text-xs font-semibold">Dividend Paid</p>
-                  <p className="text-green-600 text-xs">₦48,000 received</p>
+                  <p className="text-green-600 text-xs">N48,000 received</p>
                 </div>
               </div>
             </div>
@@ -257,26 +260,26 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* ───── WHY CHOOSE US ───── */}
+      {/* Why Choose Us */}
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal className="text-center mb-16">
             <span className="text-neon-tangerine text-xs font-bold uppercase tracking-[0.2em]">Why Investors Choose Us</span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black mt-3 mb-4">The Smarter Way<br />to Invest in Nigeria</h2>
-                <p className="text-gray-600 max-w-xl mx-auto">From diaspora investors to salary earners, 5PM NEXUS INVEST makes real wealth creation accessible, transparent, and profitable.</p>
+            <p className="text-gray-600 max-w-xl mx-auto">From diaspora investors to salary earners, 5PM NEXUS INVEST makes real wealth creation accessible, transparent, and profitable.</p>
           </ScrollReveal>
 
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
                 icon: Shield, title: "Asset-Backed Security",
-                text: "Every investment is tied to real, tangible assets  real estate, structured products  so your capital is always backed by something real.",
+                text: "Every investment is tied to real, tangible assets like real estate and structured products, so your capital is always backed by something real.",
                 iconBg: "bg-neon-tangerine/20", iconColor: "text-neon-tangerine",
                 borderHover: "hover:border-neon-tangerine/40",
               },
               {
                 icon: TrendingUp, title: "Up to 3.5% Monthly Returns",
-                text: "Our carefully selected real estate and income vault products target up to 3.5% monthly returns — well above conventional instruments. Returns are fixed, predictable, and paid monthly.",
+                text: "Our carefully selected real estate and income vault products target up to 3.5% monthly returns, well above conventional instruments. Returns are fixed, predictable, and paid monthly.",
                 iconBg: "bg-dark-lavender/20", iconColor: "text-dark-lavender/80",
                 borderHover: "hover:border-dark-lavender/40",
                 tags: ["Real Estate: 3.5% p.m.", "Vault: 3-3.50% p.m."],
@@ -284,7 +287,7 @@ function LandingPage() {
               },
               {
                 icon: Globe, title: "Invest from Anywhere",
-                text: "Whether you're in Lagos, London, or Houston  open an account, complete KYC, and start investing in minutes. Full dashboard access on web & mobile.",
+                text: "Whether you are in Lagos, London, or Houston, you can open an account, complete KYC, and start investing in minutes. Full dashboard access on web and mobile.",
                 iconBg: "bg-blue-100", iconColor: "text-blue-500",
                 borderHover: "hover:border-blue-300",
               },
@@ -312,7 +315,7 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* ───── ABOUT US ───── */}
+      {/* About Us */}
       <section className="py-24 bg-dark-lavender">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-16 items-center">
@@ -320,7 +323,7 @@ function LandingPage() {
               <span className="text-neon-tangerine text-xs font-bold uppercase tracking-[0.2em]">About 5PM NEXUS INVEST</span>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mt-4 mb-6">Trusted Platform for<br />Wealth Creation</h2>
               <p className="text-gray-300 text-base leading-relaxed mb-6">
-                5PM NEXUS INVEST channels investor capital into carefully selected real estate assets with verified revenue streams. Returns are fixed, predictable, and paid monthly — shielded from the volatility of equity markets and digital assets by the permanence of physical property.
+                5PM NEXUS INVEST channels investor capital into carefully selected real estate assets with verified revenue streams. Returns are fixed, predictable, and paid monthly, shielded from the volatility of equity markets and digital assets by the permanence of physical property.
               </p>
               <p className="text-gray-400 text-sm leading-relaxed">
                 We run a professionally managed fund with strict risk controls on every capital deployment decision. Every position is secured by real estate assets: residential developments, commercial properties, and strategic land holdings.
@@ -329,7 +332,7 @@ function LandingPage() {
             <ScrollReveal>
               <div className="grid grid-cols-2 gap-4">
                 {[
-                  { value: "₦2.4B+", label: "Assets Under Management" },
+                  { value: "N2.4B+", label: "Assets Under Management" },
                   { value: "100+", label: "Active Investors" },
                   { value: "3.5%", label: "Average Monthly ROI" },
                   { value: "100%", label: "Asset-Backed Security" },
@@ -345,7 +348,7 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* ───── INVESTMENT PRODUCTS ───── */}
+      {/* Investment Products */}
       <section className="py-24 bg-gray-50" id="investments">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-14">
@@ -354,7 +357,7 @@ function LandingPage() {
               <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mt-2">Current Investment Deals</h2>
             </div>
             <Link to={ROUTES.INVESTMENT_OPPORTUNITIES} className="border-2 border-neon-tangerine hover:bg-neon-tangerine/10 text-neon-tangerine text-sm font-semibold px-5 py-2.5 rounded-lg transition-all">
-              View All Deals →
+              View All Deals
             </Link>
           </ScrollReveal>
 
@@ -362,10 +365,13 @@ function LandingPage() {
             {products.map((product) => (
               <ScrollReveal key={product.name}>
                 <div className="bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                  <div className={`relative h-44 ${product.headerBg}`}>
-                    <div className="absolute inset-0 flex items-center justify-center opacity-10">
-                      <Building2 size={64} className="text-white" />
-                    </div>
+                  <div className="relative h-44 overflow-hidden">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                     <div className={`absolute top-3 left-3 text-xs font-bold px-2.5 py-1 rounded-full ${product.tagClass}`}>
                       {product.tag}
                     </div>
@@ -404,7 +410,7 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* ───── HOW IT WORKS ───── */}
+      {/* How It Works */}
       <section className="py-24 bg-white" id="how">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal className="text-center mb-16">
@@ -412,26 +418,34 @@ function LandingPage() {
             <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mt-3">From Sign-Up to Returns<br />in 4 Simple Steps</h2>
           </ScrollReveal>
 
-          <div className="space-y-16">
+          <div className="space-y-12">
             {[
-              { step: "01", title: "Create Your Account", desc: "Sign up in minutes with your email, complete BVN/NIN verification, and upload your ID. Our KYC process is simple, secure, and fully digital.", checks: ["Email & Phone Verification", "BVN / NIN Check", "ID + Selfie Upload"], color: "bg-neon-tangerine" },
-              { step: "02", title: "Fund Your Wallet", desc: "Deposit funds via bank transfer, card, or mobile money. Your wallet balance is displayed in real-time. Diaspora investors can send in USD, GBP, or EUR.", checks: ["Bank Transfer · Card Payment", "USD · GBP · EUR accepted", "Instant wallet top-up"], color: "bg-dark-lavender" },
-              { step: "03", title: "Pick an Investment", desc: "Browse the marketplace, review project documents, and invest in real estate or structured products that match your goals and risk appetite.", checks: ["Fractional Real Estate", "Income Vault Products", "Full document access"], color: "bg-neon-tangerine" },
-              { step: "04", title: "Earn & Withdraw", desc: "Track your returns live on your dashboard. When distributions are paid, they land in your wallet instantly  withdraw anytime or reinvest to compound.", checks: ["Live ROI tracker", "Monthly statements", "Instant withdrawals"], color: "bg-dark-lavender" },
+              { step: "01", title: "Create Your Account", desc: "Sign up in minutes with your email, complete BVN and NIN verification, and upload your ID. Our KYC process is simple, secure, and fully digital.", checks: ["Email and Phone Verification", "BVN / NIN Check", "ID and Selfie Upload"], color: "bg-neon-tangerine" },
+              { step: "02", title: "Fund Your Wallet", desc: "Deposit funds via bank transfer, card, or mobile money. Your wallet balance is displayed in real time. Diaspora investors can send in USD, GBP, or EUR.", checks: ["Bank Transfer and Card Payment", "USD, GBP, and EUR Accepted", "Instant Wallet Top-Up"], color: "bg-dark-lavender" },
+              { step: "03", title: "Pick an Investment", desc: "Browse the marketplace, review project documents, and invest in real estate or structured products that match your goals.", checks: ["Fractional Real Estate", "Income Vault Products", "Full Document Access"], color: "bg-neon-tangerine" },
+              { step: "04", title: "Earn and Withdraw", desc: "Track your returns live on your dashboard. When distributions are paid, they land in your wallet instantly for withdrawal or reinvestment.", checks: ["Live ROI Tracker", "Monthly Statements", "Instant Withdrawals"], color: "bg-dark-lavender" },
             ].map((item, i) => (
               <ScrollReveal key={i}>
                 <div className="flex items-start gap-6">
-                  <div className={`w-14 h-14 rounded-full ${item.color} flex items-center justify-center flex-shrink-0 font-black text-white text-xl shadow-lg`}>
-                    {i + 1}
+                  <div className="relative flex-shrink-0">
+                    <div className={`w-14 h-14 rounded-full ${item.color} flex items-center justify-center font-black text-white text-xl shadow-lg relative z-10`}>
+                      {i + 1}
+                    </div>
+                    {i < 3 && (
+                      <div className="absolute top-14 left-1/2 -translate-x-1/2 w-0.5 h-12 bg-gray-200" />
+                    )}
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 pb-4">
                     <span className="text-neon-tangerine text-xs font-bold uppercase tracking-widest">Step {item.step}</span>
                     <h3 className="text-xl md:text-2xl font-bold text-gray-900 mt-1 mb-3">{item.title}</h3>
                     <p className="text-gray-600 text-sm leading-relaxed mb-4">{item.desc}</p>
                     <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-sm text-gray-600">
                       {item.checks.map((c) => (
                         <div key={c} className="flex items-center gap-2">
-                          <span className="text-green-500">✓</span> {c}
+                          <span className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                            <span className="text-green-600 text-xs">&#10003;</span>
+                          </span>
+                          {c}
                         </div>
                       ))}
                     </div>
@@ -443,7 +457,7 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* ───── TESTIMONIALS ───── */}
+      {/* Testimonials */}
       <section className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal className="text-center mb-14">
@@ -462,7 +476,7 @@ function LandingPage() {
                     </div>
                     <div>
                       <p className="text-gray-900 text-sm font-semibold">{t.name}</p>
-                      <p className="text-gray-500 text-xs">{t.location}</p>
+                      <p className="text-gray-500 text-xs">{t.location} <span className="text-gray-300">-</span> {t.tag}</p>
                     </div>
                   </div>
                 </div>
@@ -472,7 +486,7 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* ───── FAQ ───── */}
+      {/* FAQ */}
       <section className="py-24 bg-white" id="faq">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal className="text-center mb-14">
@@ -496,35 +510,33 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* ───── CTA ───── */}
-      <section className="py-20 bg-neon-tangerine">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      {/* CTA */}
+      <section className="py-20 bg-neon-tangerine relative overflow-hidden">
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-10 left-10 w-64 h-64 rounded-full bg-white" />
+          <div className="absolute bottom-10 right-10 w-96 h-96 rounded-full bg-white" />
+        </div>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
           <ScrollReveal>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-5">Your Wealth Journey<br />Starts Today</h2>
             <p className="text-white/80 text-lg mb-10 max-w-xl mx-auto">Join over 100 investors already building wealth through transparent, asset-backed investments in Nigeria's fastest-growing markets.</p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link to={ROUTES.REGISTER}>
-                <Button size="lg" className="border-2 border-gray-300 hover:border-neon-tangerine text-gray-700 hover:text-neon-tangerine font-medium px-8 py-4 rounded-xl transition-all text-base">
+                <Button size="lg" className="bg-white hover:bg-gray-100 text-neon-tangerine font-bold px-8 py-4 rounded-xl text-base shadow-lg shadow-black/10 transition-all">
                   Create Free Account <ArrowRight size={18} />
                 </Button>
               </Link>
               <Link to={ROUTES.CONTACT}>
-                <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white/10 font-medium px-10 py-4 rounded-xl text-base">
+                <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white/10 font-medium px-10 py-4 rounded-xl text-base transition-all">
                   Contact Us
                 </Button>
               </Link>
             </div>
-            <p className="text-white/60 text-xs mt-6">No lock-in fees · Cancel anytime · Full transparency</p>
+            <p className="text-white/60 text-xs mt-6">No lock-in fees. Cancel anytime. Full transparency.</p>
           </ScrollReveal>
         </div>
       </section>
 
-      <style>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-10px); }
-        }
-      `}</style>
     </div>
   );
 }

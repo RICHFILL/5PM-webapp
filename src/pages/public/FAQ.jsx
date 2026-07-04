@@ -18,9 +18,9 @@ const faqs = [
     category: "Investments",
     items: [
       { q: "What is the minimum investment amount?", a: "All investment products start from $7,000 USD or its NGN equivalent." },
-      { q: "How are my returns calculated?", a: "Returns target up to 3.5% monthly on your invested capital. They are fixed, predictable, and paid monthly — no market volatility, no guesswork." },
+      { q: "How are my returns calculated?", a: "Returns target up to 3.5% monthly on your invested capital. They are fixed, predictable, and paid monthly - no market volatility, no guesswork." },
       { q: "Can I withdraw my investment early?", a: "Early withdrawal terms depend on the specific investment product. Some products allow early withdrawal with penalties, while others require holding until maturity." },
-      { q: "What types of investments are available?", a: "We operate a professionally managed fund backed by real estate assets — residential developments, commercial properties, and strategic land holdings. All asset-backed and professionally managed." },
+      { q: "What types of investments are available?", a: "We operate a professionally managed fund backed by real estate assets - residential developments, commercial properties, and strategic land holdings. All asset-backed and professionally managed." },
     ],
   },
   {

@@ -10,35 +10,35 @@ const products = [
     description: "A professionally managed fixed-income product within our asset-backed fund, designed for investors seeking predictable monthly returns with capital preservation secured by real estate assets.",
     features: ["Monthly returns up to 3.5%", "Asset-backed capital preservation", "Position confirmed upon fund deployment"],
     roi: "Up to 3.5% monthly",
-    min: "₦10,000,000",
+    min: "N10,000,000",
     minUSD: "$7,000",
     duration: "Flexible",
-    color: "from-neon-tangerine",
     tag: "Managed Fund",
+    image: "/assets/products/vault.png",
   },
   {
     icon: Building2,
     name: "Fractional Real Estate",
-    description: "Own a fractional share of premium real estate assets — residential developments, commercial properties, and strategic land holdings — professionally managed within our fund portfolio.",
+    description: "Own a fractional share of premium real estate assets - residential developments, commercial properties, and strategic land holdings - professionally managed within our fund portfolio.",
     features: ["Physical asset-backed security", "Monthly return distributions", "Capital appreciation on exit"],
     roi: "Up to 3.5% monthly",
-    min: "₦10,000,000",
+    min: "N10,000,000",
     minUSD: "$7,000",
     duration: "Flexible",
-    color: "from-dark-lavender",
     tag: "Real Estate",
+    image: "/assets/products/realestate.png",
   },
   {
-    icon: TrendingUp,
+    icon: PiggyBank,
     name: "Wealth Plans",
-    description: "Diversified portfolio allocation within our managed fund, tailored to your financial goals — from steady monthly income to long-term capital appreciation through real estate assets.",
-    features: ["Professionally managed portfolio", "Risk-adjusted monthly returns", "Flexible tenure — your terms"],
+    description: "Diversified portfolio allocation within our managed fund, tailored to your financial goals - from steady monthly income to long-term capital appreciation through real estate assets.",
+    features: ["Professionally managed portfolio", "Risk-adjusted monthly returns", "Flexible tenure on your terms"],
     roi: "Up to 3.5% monthly",
-    min: "₦10,000,000",
+    min: "N10,000,000",
     minUSD: "$7,000",
     duration: "Flexible",
-    color: "from-neon-tangerine",
     tag: "Structured",
+    image: "/assets/products/wealth.png",
   },
 ];
 
@@ -51,7 +51,7 @@ const benefits = [
 function InvestmentOpportunities() {
   return (
     <div>
-      {/* ───── HERO ───── */}
+      {/* Hero */}
       <section className="bg-dark-lavender text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -67,7 +67,7 @@ function InvestmentOpportunities() {
             <div className="grid grid-cols-2 gap-3">
               {[
                 { value: "Up to 3.5%", label: "Monthly ROI" },
-                { value: "₦10M / $7K", label: "Minimum Investment" },
+                { value: "N10M / $7K", label: "Minimum Investment" },
                 { value: "100%", label: "Asset-Backed" },
                 { value: "Flexible", label: "Tenure" },
               ].map((s) => (
@@ -81,12 +81,26 @@ function InvestmentOpportunities() {
         </div>
       </section>
 
-      {/* ───── PRODUCTS ───── */}
+      {/* Products */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           {products.map((product) => (
             <div key={product.name} className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden">
-              <div className="grid md:grid-cols-3">
+              <div className="grid md:grid-cols-4">
+                {/* Image */}
+                <div className="relative h-48 md:h-auto overflow-hidden">
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/40 to-transparent md:bg-gradient-to-r md:from-black/30 md:to-transparent" />
+                  <div className="absolute bottom-4 left-4 md:hidden">
+                    <span className="text-xs font-bold text-white/80 uppercase tracking-wider bg-black/40 px-3 py-1 rounded-full">{product.tag}</span>
+                  </div>
+                </div>
+
+                {/* Content */}
                 <div className="p-8 md:p-10 md:col-span-2">
                   <div className="flex items-center gap-4 mb-4">
                     <div className="w-12 h-12 bg-neon-tangerine/10 rounded-xl flex items-center justify-center">
@@ -107,6 +121,8 @@ function InvestmentOpportunities() {
                     ))}
                   </ul>
                 </div>
+
+                {/* Sidebar */}
                 <div className="bg-gray-50 p-8 md:p-10 flex flex-col justify-between border-t md:border-t-0 md:border-l border-gray-200">
                   <div className="space-y-6">
                     <div>
@@ -137,7 +153,7 @@ function InvestmentOpportunities() {
         </div>
       </section>
 
-      {/* ───── BENEFITS ───── */}
+      {/* Benefits */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
@@ -158,7 +174,7 @@ function InvestmentOpportunities() {
         </div>
       </section>
 
-      {/* ───── CTA ───── */}
+      {/* CTA */}
       <section className="py-20 bg-dark-lavender">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-black text-white mb-4">Start Your Investment Journey</h2>

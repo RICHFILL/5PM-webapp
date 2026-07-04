@@ -200,14 +200,14 @@ export default function AdminKyc() {
                   <DocumentLink doc={selected.passportPhoto} label={docLabel(selected.passportPhoto.fieldname)} />
                 ) : (
                   <div className="bg-gray-50 rounded-xl p-3 text-sm text-gray-400 border border-gray-200 flex items-center gap-2">
-                    <span className="text-xs">Passport — Not uploaded</span>
+                    <span className="text-xs">Passport - Not uploaded</span>
                   </div>
                 )}
                 {selected.idDocument?.url ? (
                   <DocumentLink doc={selected.idDocument} label={selected.idDocument.idType ? `${selected.idDocument.idType} ID` : "ID Document"} />
                 ) : (
                   <div className="bg-gray-50 rounded-xl p-3 text-sm text-gray-400 border border-gray-200 flex items-center gap-2">
-                    <span className="text-xs">ID Document — Not uploaded</span>
+                    <span className="text-xs">ID Document - Not uploaded</span>
                   </div>
                 )}
               </div>

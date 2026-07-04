@@ -5,7 +5,7 @@ import { Button } from "../../components/common";
 
 const values = [
   { icon: Shield, title: "Trust & Integrity", description: "We prioritize transparency and ethical practices in every investment opportunity we offer." },
-  { icon: TrendingUp, title: "Financial Growth", description: "                We help our investors build sustainable wealth through a managed fund backed by real estate assets — residential, commercial, and land — with fixed, predictable returns paid monthly." },
+  { icon: TrendingUp, title: "Financial Growth", description: "                We help our investors build sustainable wealth through a managed fund backed by real estate assets - residential, commercial, and land - with fixed, predictable returns paid monthly." },
   { icon: Users, title: "Community Focused", description: "We believe in democratizing access to premium investment opportunities for all Nigerians." },
   { icon: Globe, title: "Global Standards", description: "Our platform operates with world-class security standards and regulatory compliance." },
 ];
@@ -29,7 +29,7 @@ function AboutUs() {
                 Building Nigeria's Most Trusted<br />Wealth Platform
               </h1>
               <p className="text-lg text-gray-300 max-w-xl leading-relaxed">
-                5PM NEXUS INVEST is a professionally managed fund targeting up to 3.5% monthly returns, with strict risk controls on every move. We channel investor capital into carefully selected real estate assets with verified revenue streams — residential developments, commercial properties, and strategic land holdings.
+                5PM NEXUS INVEST is a professionally managed fund targeting up to 3.5% monthly returns, with strict risk controls on every move. We channel investor capital into carefully selected real estate assets with verified revenue streams - residential developments, commercial properties, and strategic land holdings.
               </p>
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -59,10 +59,10 @@ function AboutUs() {
               5PM NEXUS INVEST was built with a simple belief: if your money isn't growing every month, it's falling behind. Banks pay negligible returns. Inflation eats the rest.
             </p>
             <p className="text-gray-600 leading-relaxed mb-6">
-              What started as a small team of passionate professionals has grown into a trusted investment platform serving investors across Nigeria and the diaspora. We run a fully managed fund — investors do not source deals, negotiate property transactions, or monitor markets. Our team handles every operational layer.
+              What started as a small team of passionate professionals has grown into a trusted investment platform serving investors across Nigeria and the diaspora. We run a fully managed fund - investors do not source deals, negotiate property transactions, or monitor markets. Our team handles every operational layer.
             </p>
             <p className="text-gray-600 leading-relaxed">
-              Today, we continue to uphold the highest standards of transparency and risk management — because our investors' trust is our most valuable asset. Every investor position is secured by documented real estate assets, verified by independent professionals, with title documentation maintained and available for review.
+              Today, we continue to uphold the highest standards of transparency and risk management - because our investors' trust is our most valuable asset. Every investor position is secured by documented real estate assets, verified by independent professionals, with title documentation maintained and available for review.
             </p>
           </div>
           <div className="mt-16 grid md:grid-cols-3 gap-8">
@@ -107,7 +107,7 @@ function AboutUs() {
               </div>
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Our Vision</h2>
               <p className="text-gray-600 leading-relaxed mb-4">
-                To become the most trusted managed fund in Nigeria's real estate investment space — where every investor can build sustainable wealth through asset-backed positions, transparent reporting, and predictable monthly returns.
+                To become the most trusted managed fund in Nigeria's real estate investment space - where every investor can build sustainable wealth through asset-backed positions, transparent reporting, and predictable monthly returns.
               </p>
               <p className="text-gray-600 leading-relaxed">
                 We envision a future where premium investment opportunities are no longer reserved for institutions but are accessible to every Nigerian with a smartphone.
