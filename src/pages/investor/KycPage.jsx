@@ -325,9 +325,12 @@ function KycPage() {
     const fetchStatus = async () => {
       try {
         const res = await kycApi.getStatus();
-        const s = res?.data?.status || res?.status || null;
+        const s = res?.kyc?.status || null;
         if (s) store.setStatus(s);
-      } catch {} finally { setLoading(false); }
+      } catch (e) {
+        if (e?.code !== "ERR_NETWORK") toast.error("Failed to load KYC status. Check your connection.");
+        else toast.error("Network error — is the backend server running?");
+      } finally { setLoading(false); }
     };
     fetchStatus();
   }, []);
