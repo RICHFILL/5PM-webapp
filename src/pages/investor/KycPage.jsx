@@ -173,74 +173,27 @@ function Step4Documents({ data, onChange, onPrev, onNext }) {
 }
 
 function Step5Selfie({ data, onChange, onNext, onPrev }) {
-  const videoRef = useRef(null);
-  const canvasRef = useRef(null);
   const fileInputRef = useRef(null);
-  const [stream, setStream] = useState(null);
-
-  useEffect(() => {
-    if (stream && videoRef.current) videoRef.current.srcObject = stream;
-    return () => {
-      if (videoRef.current?.srcObject) {
-        videoRef.current.srcObject.getTracks().forEach((t) => t.stop());
-      }
-    };
-  }, [stream]);
-
-  const startCamera = async () => {
-    try {
-      const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 640 } } });
-      if (videoRef.current) videoRef.current.srcObject = s;
-      setStream(s);
-    } catch { toast.error("Camera access denied. Please allow camera access or upload a photo."); }
-  };
-
-  const stopCamera = () => {
-    if (stream) { stream.getTracks().forEach((t) => t.stop()); setStream(null); }
-  };
-
-  const captureSelfie = () => {
-    if (!videoRef.current || !canvasRef.current) return;
-    canvasRef.current.width = videoRef.current.videoWidth;
-    canvasRef.current.height = videoRef.current.videoHeight;
-    canvasRef.current.getContext("2d").drawImage(videoRef.current, 0, 0);
-    canvasRef.current.toBlob((blob) => {
-      onChange(new File([blob], "selfie.jpg", { type: "image/jpeg" }));
-      stopCamera();
-    }, "image/jpeg");
-  };
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-gray-600">Take a live selfie to complete your identity verification.</p>
+      <p className="text-sm text-gray-600">Upload a clear photo of your face to complete identity verification.</p>
       {data ? (
         <div className="text-center">
           <img src={URL.createObjectURL(data)} alt="Selfie" className="w-48 h-48 object-cover rounded-2xl mx-auto border-2 border-green-500" />
-          <p className="text-sm text-green-600 mt-2 flex items-center justify-center gap-1"><Check size={16} /> Selfie captured</p>
-          <button type="button" onClick={() => { URL.revokeObjectURL?.(data); onChange(null); }} className="text-sm text-red-600 mt-2 hover:underline">Retake</button>
+          <p className="text-sm text-green-600 mt-2 flex items-center justify-center gap-1"><Check size={16} /> Photo uploaded</p>
+          <button type="button" onClick={() => { URL.revokeObjectURL?.(data); onChange(null); }} className="text-sm text-red-600 mt-2 hover:underline">Remove and re-upload</button>
         </div>
       ) : (
         <div className="text-center">
-          {stream ? (
-            <div>
-              <video ref={videoRef} autoPlay playsInline className="w-64 h-64 object-cover rounded-2xl mx-auto bg-black" />
-              <div className="flex gap-4 justify-center mt-4">
-                <Button type="button" onClick={captureSelfie}><Camera size={16} /> Capture</Button>
-                <Button type="button" variant="ghost" onClick={stopCamera}>Cancel</Button>
-              </div>
+          <button type="button" onClick={() => fileInputRef.current?.click()} className="w-full cursor-pointer">
+            <div className="w-48 h-48 mx-auto bg-gray-100 rounded-2xl flex flex-col items-center justify-center border-2 border-dashed border-gray-300 hover:border-neon-tangerine/60 transition-colors">
+              <Camera size={40} className="text-gray-400" />
+              <span className="text-sm font-medium text-gray-700 mt-3">Click to upload photo</span>
+              <span className="text-xs text-gray-500 mt-1">JPG, PNG accepted</span>
             </div>
-          ) : (
-            <div>
-              <div className="w-48 h-48 mx-auto bg-gray-100 rounded-2xl flex items-center justify-center border-2 border-dashed border-gray-300">
-                <Camera size={40} className="text-gray-400" />
-              </div>
-              <div className="flex gap-4 justify-center mt-4">
-                <Button type="button" onClick={startCamera}><Camera size={16} /> Open Camera</Button>
-                <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}><Upload size={16} /> Upload Photo</Button>
-                <input ref={fileInputRef} type="file" accept="image/*" onChange={(e) => onChange(e.target.files?.[0])} className="hidden" />
-              </div>
-            </div>
-          )}
+          </button>
+          <input ref={fileInputRef} type="file" accept="image/*" onChange={(e) => onChange(e.target.files?.[0])} className="hidden" />
         </div>
       )}
       <div className="flex justify-between pt-4">
