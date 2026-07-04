@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Check, Upload, Camera, ChevronLeft, ChevronRight, Shield, CheckCircle2, Clock, XCircle, AlertCircle } from "lucide-react";
+import { Check, Upload, Camera, ChevronLeft, ChevronRight, Shield, CheckCircle2, Clock, XCircle, AlertCircle, User, MapPin, CreditCard, FileText } from "lucide-react";
 import { Button, Input, Card, Badge, Skeleton } from "../../components/common";
 import { kycApi } from "../../services/api";
 import useKycStore from "../../store/kycStore";
@@ -15,7 +15,7 @@ function StepIndicator({ currentStep }) {
       {stepLabels.map((label, i) => (
         <div key={label} className="flex items-center gap-1 sm:gap-2 shrink-0">
           <div className={`flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-            i === currentStep ? "bg-neon-tangerine text-white" :
+            i === currentStep ? "bg-neon-tangerine text-white shadow-sm" :
             i < currentStep ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"
           }`}>
             {i < currentStep ? <Check size={12} /> : <span>{i + 1}</span>}
@@ -41,7 +41,11 @@ function Step1PersonalInfo({ data, onChange, onNext }) {
     onNext();
   };
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-5">
+      <div className="flex items-center gap-2 text-gray-700 mb-2">
+        <User size={18} className="text-neon-tangerine" />
+        <span className="text-sm font-semibold">Personal Information</span>
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Input label="First Name" value={data.firstName} onChange={(e) => { onChange({ ...data, firstName: e.target.value }); setErrors((p) => ({ ...p, firstName: "" })); }} error={errors.firstName} required />
         <Input label="Last Name" value={data.lastName} onChange={(e) => { onChange({ ...data, lastName: e.target.value }); setErrors((p) => ({ ...p, lastName: "" })); }} error={errors.lastName} required />
@@ -51,7 +55,7 @@ function Step1PersonalInfo({ data, onChange, onNext }) {
         <label className="block text-sm font-medium text-gray-700 mb-1.5">Gender</label>
         <div className="flex gap-4">
           {["Male", "Female"].map((g) => (
-            <label key={g} className="flex items-center gap-2 cursor-pointer">
+            <label key={g} className="flex items-center gap-2 cursor-pointer px-4 py-2.5 border border-gray-300 rounded-xl has-[:checked]:border-neon-tangerine has-[:checked]:bg-neon-tangerine/5 transition-colors">
               <input type="radio" name="gender" value={g.toLowerCase()} checked={data.gender === g.toLowerCase()} onChange={(e) => { onChange({ ...data, gender: e.target.value }); setErrors((p) => ({ ...p, gender: "" })); }}
                 className="text-neon-tangerine focus:ring-neon-tangerine" />
               <span className="text-sm text-gray-700">{g}</span>
@@ -60,7 +64,7 @@ function Step1PersonalInfo({ data, onChange, onNext }) {
         </div>
         {errors.gender && <p className="text-xs text-red-600 mt-1">{errors.gender}</p>}
       </div>
-      <div className="flex justify-end pt-4">
+      <div className="flex justify-end pt-4 border-t border-gray-100">
         <Button type="submit">Continue <ChevronRight size={16} /></Button>
       </div>
     </form>
@@ -80,7 +84,11 @@ function Step2Address({ data, onChange, onNext, onPrev }) {
     onNext();
   };
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-5">
+      <div className="flex items-center gap-2 text-gray-700 mb-2">
+        <MapPin size={18} className="text-neon-tangerine" />
+        <span className="text-sm font-semibold">Address Information</span>
+      </div>
       <Input label="Country" value={data.country} onChange={(e) => { onChange({ ...data, country: e.target.value }); setErrors((p) => ({ ...p, country: "" })); }} error={errors.country} placeholder="Nigeria" required />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Input label="State" value={data.state} onChange={(e) => { onChange({ ...data, state: e.target.value }); setErrors((p) => ({ ...p, state: "" })); }} error={errors.state} required />
@@ -89,10 +97,10 @@ function Step2Address({ data, onChange, onNext, onPrev }) {
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1.5">Address</label>
         <textarea value={data.address} onChange={(e) => { onChange({ ...data, address: e.target.value }); setErrors((p) => ({ ...p, address: "" })); }} rows={3} required
-          className="block w-full rounded-xl border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-neon-tangerine focus:border-neon-tangerine" />
+          className="block w-full rounded-xl border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-neon-tangerine focus:border-neon-tangerine transition-shadow" />
         {errors.address && <p className="text-xs text-red-600 mt-1">{errors.address}</p>}
       </div>
-      <div className="flex justify-between pt-4">
+      <div className="flex justify-between pt-4 border-t border-gray-100">
         <Button type="button" variant="ghost" onClick={onPrev}><ChevronLeft size={16} /> Back</Button>
         <Button type="submit">Continue <ChevronRight size={16} /></Button>
       </div>
@@ -111,14 +119,18 @@ function Step3Identity({ data, onChange, onNext, onPrev }) {
     onNext();
   };
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm text-blue-800">
-        <p className="font-semibold mb-1">Why we need this?</p>
+    <form onSubmit={handleSubmit} className="space-y-5">
+      <div className="flex items-center gap-2 text-gray-700 mb-2">
+        <CreditCard size={18} className="text-neon-tangerine" />
+        <span className="text-sm font-semibold">Identity Verification</span>
+      </div>
+      <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-800">
+        <p className="font-semibold mb-1">Why we need this</p>
         <p>Your BVN and NIN are required for identity verification as mandated by regulatory requirements. This information is encrypted and securely stored.</p>
       </div>
       <Input label="Bank Verification Number (BVN)" value={data.bvn} onChange={(e) => { const v = e.target.value.replace(/\D/g, "").slice(0, 11); onChange({ ...data, bvn: v }); setErrors((p) => ({ ...p, bvn: "" })); }} error={errors.bvn} placeholder="Enter 10-11 digit BVN" required maxLength={11} />
       <Input label="National Identification Number (NIN)" value={data.nin} onChange={(e) => { const v = e.target.value.replace(/\D/g, "").slice(0, 11); onChange({ ...data, nin: v }); setErrors((p) => ({ ...p, nin: "" })); }} error={errors.nin} placeholder="Enter 11-digit NIN" required maxLength={11} />
-      <div className="flex justify-between pt-4">
+      <div className="flex justify-between pt-4 border-t border-gray-100">
         <Button type="button" variant="ghost" onClick={onPrev}><ChevronLeft size={16} /> Back</Button>
         <Button type="submit">Continue <ChevronRight size={16} /></Button>
       </div>
@@ -137,7 +149,11 @@ function Step4Documents({ data, onChange, onPrev, onNext }) {
     { key: "utilityBill", label: "Utility Bill - proof of address (optional)", accept: "image/*,.pdf" },
   ];
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
+      <div className="flex items-center gap-2 text-gray-700 mb-2">
+        <FileText size={18} className="text-neon-tangerine" />
+        <span className="text-sm font-semibold">Upload Documents</span>
+      </div>
       <p className="text-sm text-gray-600">Upload clear, legible copies of the following documents. Accepted formats: JPG, PNG, PDF.</p>
       {documentFields.map(({ key, label, accept, required }) => (
         <div key={key} className="border-2 border-dashed border-gray-300 rounded-xl p-4 md:p-6 text-center hover:border-neon-tangerine/60 transition-colors">
@@ -164,7 +180,7 @@ function Step4Documents({ data, onChange, onPrev, onNext }) {
           )}
         </div>
       ))}
-      <div className="flex justify-between pt-4">
+      <div className="flex justify-between pt-4 border-t border-gray-100">
         <Button type="button" variant="ghost" onClick={onPrev}><ChevronLeft size={16} /> Back</Button>
         <Button type="button" onClick={onNext}>Continue <ChevronRight size={16} /></Button>
       </div>
@@ -176,11 +192,15 @@ function Step5Selfie({ data, onChange, onNext, onPrev }) {
   const fileInputRef = useRef(null);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
+      <div className="flex items-center gap-2 text-gray-700 mb-2">
+        <Camera size={18} className="text-neon-tangerine" />
+        <span className="text-sm font-semibold">Upload Photo</span>
+      </div>
       <p className="text-sm text-gray-600">Upload a clear photo of your face to complete identity verification.</p>
       {data ? (
         <div className="text-center">
-          <img src={URL.createObjectURL(data)} alt="Selfie" className="w-48 h-48 object-cover rounded-2xl mx-auto border-2 border-green-500" />
+          <img src={URL.createObjectURL(data)} alt="Selfie" className="w-48 h-48 object-cover rounded-2xl mx-auto border-2 border-green-500 shadow-sm" />
           <p className="text-sm text-green-600 mt-2 flex items-center justify-center gap-1"><Check size={16} /> Photo uploaded</p>
           <button type="button" onClick={() => { URL.revokeObjectURL?.(data); onChange(null); }} className="text-sm text-red-600 mt-2 hover:underline">Remove and re-upload</button>
         </div>
@@ -196,7 +216,7 @@ function Step5Selfie({ data, onChange, onNext, onPrev }) {
           <input ref={fileInputRef} type="file" accept="image/*" onChange={(e) => onChange(e.target.files?.[0])} className="hidden" />
         </div>
       )}
-      <div className="flex justify-between pt-4">
+      <div className="flex justify-between pt-4 border-t border-gray-100">
         <Button type="button" variant="ghost" onClick={onPrev}><ChevronLeft size={16} /> Back</Button>
         {data && <Button type="button" onClick={onNext}>Continue <ChevronRight size={16} /></Button>}
       </div>
@@ -222,29 +242,41 @@ function Step6Review({ store, onPrev, onSubmit, submitting }) {
         </div>
       </div>
       <div className="grid sm:grid-cols-2 gap-4">
-        <Card>
-          <p className="text-sm font-semibold text-gray-900 mb-2">Personal Info</p>
+        <Card className="p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <User size={16} className="text-neon-tangerine" />
+            <p className="text-sm font-semibold text-gray-900">Personal Info</p>
+          </div>
           <p className="text-sm text-gray-600">{info.firstName} {info.lastName}</p>
-          <p className="text-sm text-gray-600">{info.dob} &middot; {info.gender}</p>
+          <p className="text-sm text-gray-600">{info.dob} - {info.gender}</p>
         </Card>
-        <Card>
-          <p className="text-sm font-semibold text-gray-900 mb-2">Address</p>
+        <Card className="p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <MapPin size={16} className="text-neon-tangerine" />
+            <p className="text-sm font-semibold text-gray-900">Address</p>
+          </div>
           <p className="text-sm text-gray-600">{addr.city}, {addr.state}</p>
           <p className="text-sm text-gray-600">{addr.country}</p>
         </Card>
-        <Card>
-          <p className="text-sm font-semibold text-gray-900 mb-2">Identity</p>
+        <Card className="p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <CreditCard size={16} className="text-neon-tangerine" />
+            <p className="text-sm font-semibold text-gray-900">Identity</p>
+          </div>
           <p className="text-sm text-gray-600">BVN: ****{identity.bvn?.slice(-4)}</p>
           <p className="text-sm text-gray-600">NIN: ****{identity.nin?.slice(-4)}</p>
         </Card>
-        <Card>
-          <p className="text-sm font-semibold text-gray-900 mb-2">Documents</p>
+        <Card className="p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <FileText size={16} className="text-neon-tangerine" />
+            <p className="text-sm font-semibold text-gray-900">Documents</p>
+          </div>
           <p className="text-sm text-gray-600">Passport: {docs.passport?.name ? "Uploaded" : "Missing"}</p>
           <p className="text-sm text-gray-600">ID: {docs.governmentId?.name ? "Uploaded" : "Optional"}</p>
           <p className="text-sm text-gray-600">Utility: {docs.utilityBill?.name ? "Uploaded" : "Optional"}</p>
         </Card>
       </div>
-      <div className="flex justify-between pt-4">
+      <div className="flex justify-between pt-4 border-t border-gray-100">
         <Button type="button" variant="ghost" onClick={onPrev}><ChevronLeft size={16} /> Back</Button>
         <Button type="button" onClick={onSubmit} disabled={!allComplete || submitting}>
           {submitting ? "Submitting..." : "Submit KYC"} <ChevronRight size={16} />
@@ -265,7 +297,7 @@ function KycStatusPage({ status, onStartOver }) {
   const Icon = config.icon;
 
   return (
-    <Card className="text-center py-12">
+    <Card className="text-center py-12 px-6">
       <div className={`w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center ${
         status === KYC_STATUS.APPROVED ? "bg-green-100" : status === KYC_STATUS.REJECTED ? "bg-red-100" : "bg-amber-100"
       }`}>
@@ -289,6 +321,7 @@ function KycPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    store.reset();
     const fetchStatus = async () => {
       try {
         const res = await kycApi.getStatus();
