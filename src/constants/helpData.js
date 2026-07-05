@@ -180,7 +180,7 @@ export const articles = [
     summary: "Check if you qualify for an asset-backed loan.",
     content: `
       <h2>Loan Eligibility</h2>
-      <p>Asset-backed loans allow you to access credit using your investment portfolio as collateral.</p>
+      <p>5PM Nexus Loans allow you to access credit using your investment portfolio as collateral.</p>
       <h3>Eligibility Requirements</h3>
       <ul>
         <li>Active account with completed KYC</li>
