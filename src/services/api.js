@@ -409,6 +409,29 @@ export const tokenApi = {
     api.post(`/tokens/buy/${listingId}`).then((r) => r.data),
 };
 
+// --- Admin Auth ---
+export const adminAuthApi = {
+  register: (email, password, firstName, lastName) =>
+    api.post("/admin/auth/register-admin", { email, password, firstName, lastName }).then((r) => r.data),
+  verifyEmail: (email, code) =>
+    api.post("/admin/auth/verify-admin-email", { email, token: code }).then((r) => r.data),
+  resendVerification: (email) =>
+    api.post("/admin/auth/resend-admin-verification", { email }).then((r) => r.data),
+  forgotPassword: (email) =>
+    api.post("/admin/auth/admin-forgot-password", { email }).then((r) => r.data),
+  resendForgotPassword: (email) =>
+    api.post("/admin/auth/admin-resend-forgot-password", { email }).then((r) => r.data),
+  resetPassword: (token, password) =>
+    api.post("/admin/auth/admin-reset-password", { token, password }).then((r) => r.data),
+  refreshToken: () => api.post("/admin/auth/admin-refresh-token").then((r) => r.data),
+  changePassword: (currentPassword, newPassword) =>
+    api
+      .post("/admin/auth/change-password", { currentPassword, newPassword })
+      .then((r) => r.data),
+  logout: () => api.post("/admin/auth/admin-logout").then((r) => r.data),
+  createUser: (data) => api.post("/admin/auth/create-user", data).then((r) => r.data),
+};
+
 // --- Admin Settings ---
 export const adminKycSettingsApi = {
   getMode: () => api.get("/admin/settings/kyc").then((r) => r.data),

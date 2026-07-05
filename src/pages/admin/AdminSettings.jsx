@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { Settings, Shield, Globe, Bell, AlertCircle, CheckCircle, Save } from "lucide-react";
-import { adminKycSettingsApi, adminSettingsApi } from "../../services/api";
+import { Settings, Shield, Globe, Bell, AlertCircle, CheckCircle, Save, Lock, Eye, EyeOff } from "lucide-react";
+import { adminAuthApi, adminKycSettingsApi, adminSettingsApi } from "../../services/api";
 import { Card, Skeleton, Button, Toggle, Input } from "../../components/common";
 import toast from "react-hot-toast";
+import useAuthStore from "../../store/authStore";
 
 const NOTIFICATION_EVENTS = [
   { key: "deposit_approved", label: "Deposit Approved" },
@@ -16,6 +17,7 @@ const NOTIFICATION_EVENTS = [
 ];
 
 export default function AdminSettings() {
+  const logout = useAuthStore((s) => s.logout);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [kycSaving, setKycSaving] = useState(false);
@@ -25,6 +27,10 @@ export default function AdminSettings() {
   const [platform, setPlatform] = useState({ site_name: "", support_email: "", contact_phone: "" });
   const [notifications, setNotifications] = useState({});
   const [platformDirty, setPlatformDirty] = useState(false);
+
+  const [passwordForm, setPasswordForm] = useState({ current: "", new: "", confirm: "" });
+  const [showPasswords, setShowPasswords] = useState({ current: false, new: false, confirm: false });
+  const [passwordSaving, setPasswordSaving] = useState(false);
 
   const fetch = async () => {
     setLoading(true);
@@ -81,6 +87,32 @@ export default function AdminSettings() {
     } catch (err) {
       toast.error(err?.response?.data?.message || "Failed to save");
     } finally { setSaving(false); }
+  };
+
+  const handleChangePassword = async () => {
+    if (!passwordForm.current || !passwordForm.new || !passwordForm.confirm) {
+      toast.error("Please fill in all password fields");
+      return;
+    }
+    if (passwordForm.new !== passwordForm.confirm) {
+      toast.error("New passwords do not match");
+      return;
+    }
+    if (passwordForm.new.length < 8) {
+      toast.error("Password must be at least 8 characters");
+      return;
+    }
+    setPasswordSaving(true);
+    try {
+      await adminAuthApi.changePassword(passwordForm.current, passwordForm.new);
+      toast.success("Password changed successfully. Logging out...");
+      setTimeout(() => {
+        logout();
+        window.location.href = "/admin/login";
+      }, 1500);
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to change password");
+    } finally { setPasswordSaving(false); }
   };
 
   const handleNotificationToggle = async (key) => {
@@ -193,6 +225,75 @@ export default function AdminSettings() {
                   />
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      <Card>
+        <div className="flex items-start gap-4">
+          <div className="w-12 h-12 rounded-xl bg-red-500/20 flex items-center justify-center shrink-0">
+            <Lock size={24} className="text-red-600/80" />
+          </div>
+          <div className="flex-1 space-y-4">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">Change Password</h2>
+              <p className="text-sm text-gray-500">Update your admin account password.</p>
+            </div>
+            <div className="space-y-3">
+              <div className="relative">
+                <Input
+                  label="Current Password"
+                  type={showPasswords.current ? "text" : "password"}
+                  value={passwordForm.current}
+                  onChange={(e) => setPasswordForm({ ...passwordForm, current: e.target.value })}
+                  placeholder="Enter current password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPasswords({ ...showPasswords, current: !showPasswords.current })}
+                  className="absolute right-3 top-[38px] text-gray-400 hover:text-gray-600"
+                >
+                  {showPasswords.current ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+              <div className="relative">
+                <Input
+                  label="New Password"
+                  type={showPasswords.new ? "text" : "password"}
+                  value={passwordForm.new}
+                  onChange={(e) => setPasswordForm({ ...passwordForm, new: e.target.value })}
+                  placeholder="Enter new password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPasswords({ ...showPasswords, new: !showPasswords.new })}
+                  className="absolute right-3 top-[38px] text-gray-400 hover:text-gray-600"
+                >
+                  {showPasswords.new ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+              <div className="relative">
+                <Input
+                  label="Confirm New Password"
+                  type={showPasswords.confirm ? "text" : "password"}
+                  value={passwordForm.confirm}
+                  onChange={(e) => setPasswordForm({ ...passwordForm, confirm: e.target.value })}
+                  placeholder="Confirm new password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPasswords({ ...showPasswords, confirm: !showPasswords.confirm })}
+                  className="absolute right-3 top-[38px] text-gray-400 hover:text-gray-600"
+                >
+                  {showPasswords.confirm ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+            </div>
+            <div className="flex justify-end pt-2">
+              <Button onClick={handleChangePassword} disabled={passwordSaving} size="sm">
+                <Lock size={14} /> {passwordSaving ? "Changing..." : "Change Password"}
+              </Button>
             </div>
           </div>
         </div>
