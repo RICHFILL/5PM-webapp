@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { ArrowUpRight, ArrowDownLeft, Filter, CheckCircle2, Copy } from "lucide-react";
+import { ArrowUpRight, ArrowDownLeft, Filter, CheckCircle2, Copy, History } from "lucide-react";
 import { dashboardApi, userApi, walletApi, depositApi } from "../../services/api";
 import useAuthStore from "../../store/authStore";
 import useWalletStore from "../../store/walletStore";
@@ -8,10 +8,31 @@ import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/co
 const CURRENCIES = [
   { value: "NGN", label: "NGN", symbol: "₦", format: (v) => "₦" + Math.abs(v || 0).toLocaleString("en-NG") },
   { value: "USD", label: "USD", symbol: "$", format: (v) => "$" + Math.abs(v || 0).toLocaleString("en-US", { minimumFractionDigits: 2 }) },
-  { value: "USDT", label: "USDT", symbol: "₮", format: (v) => "₮" + Math.abs(v || 0).toLocaleString("en-US", { minimumFractionDigits: 2 }) },
+  { value: "USDT", label: "USDT", symbol: "USDT", format: (v) => "USDT " + Math.abs(v || 0).toLocaleString("en-US", { minimumFractionDigits: 2 }) },
 ];
 
+const CURRENCY_STYLE = {
+  NGN: { badge: "bg-emerald-100 text-emerald-700", dot: "bg-emerald-500" },
+  USD: { badge: "bg-blue-100 text-blue-700", dot: "bg-blue-500" },
+  USDT: { badge: "bg-purple-100 text-purple-700", dot: "bg-purple-500" },
+};
+
 const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }) : "--";
+
+const formatTimeAgo = (dateStr) => {
+  if (!dateStr) return "";
+  const now = Date.now();
+  const date = new Date(dateStr).getTime();
+  const diffMs = now - date;
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+  if (diffMins < 1) return "Just now";
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return formatDate(dateStr);
+};
 
 const FILTERS = [
   { label: "All", value: "all" },
@@ -393,44 +414,58 @@ export default function Wallet() {
           <Skeleton.Table rows={5} />
         ) : filteredTransactions.length > 0 ? (
           <div className="overflow-x-auto -mx-6">
-            <table className="w-full text-sm min-w-[500px] px-6">
+            <table className="w-full text-sm min-w-[600px]">
               <thead>
-                <tr className="text-xs text-gray-400 border-b border-gray-100">
-                  <th className="text-left pb-3 font-semibold uppercase tracking-[0.18em] px-6">Date</th>
-                  <th className="text-left pb-3 font-semibold uppercase tracking-[0.18em] px-6">Description</th>
-                  <th className="text-right pb-3 font-semibold uppercase tracking-[0.18em] px-6">Amount</th>
-                  <th className="text-right pb-3 font-semibold uppercase tracking-[0.18em] px-6">Status</th>
+                <tr className="text-[11px] text-gray-400 border-b border-gray-100">
+                  <th className="text-left pb-3 font-semibold uppercase tracking-[0.15em] px-6">Date</th>
+                  <th className="text-left pb-3 font-semibold uppercase tracking-[0.15em] px-6">Description</th>
+                  <th className="text-center pb-3 font-semibold uppercase tracking-[0.15em] px-3">Currency</th>
+                  <th className="text-right pb-3 font-semibold uppercase tracking-[0.15em] px-6">Amount</th>
+                  <th className="text-right pb-3 font-semibold uppercase tracking-[0.15em] px-6">Status</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredTransactions.map((txn, i) => {
                   const isDebit = txn.type === "withdrawal";
-                  const cur = CURRENCIES.find((c) => c.value === (txn.currency || "NGN")) || CURRENCIES[0];
+                  const currency = (txn.currency || "NGN").toUpperCase();
+                  const cur = CURRENCIES.find((c) => c.value === currency) || CURRENCIES[0];
+                  const style = CURRENCY_STYLE[currency] || CURRENCY_STYLE.NGN;
+                  const status = (txn.status || "").toLowerCase();
                   return (
-                    <tr key={txn.id || i} className="border-b border-gray-100 last:border-0">
-                      <td className="py-3 text-gray-500 whitespace-nowrap px-6">{formatDate(txn.date || txn.createdAt)}</td>
-                      <td className="py-3 px-6">
+                    <tr key={txn.id || i} className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors">
+                      <td className="py-3.5 text-gray-500 whitespace-nowrap px-6 text-xs">
+                        <span title={formatDate(txn.date || txn.createdAt)}>
+                          {formatTimeAgo(txn.date || txn.createdAt)}
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-6">
                         <div className="flex items-center gap-3">
-                          <div className={`w-7 h-7 rounded-md flex items-center justify-center shrink-0 ${
+                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
                             isDebit ? "bg-red-50" : "bg-green-50"
                           }`}>
                             {isDebit ? (
-                              <ArrowUpRight size={14} className="text-red-500" />
+                              <ArrowUpRight size={15} className="text-red-500" />
                             ) : (
-                              <ArrowDownLeft size={14} className="text-green-500" />
+                              <ArrowDownLeft size={15} className="text-green-500" />
                             )}
                           </div>
                           <div>
-                            <span className="text-gray-700">{txn.description || txn.type || "Transaction"}</span>
-                            {txn.currency && <span className="text-xs text-gray-400 ml-2">({txn.currency})</span>}
+                            <span className="text-sm font-medium text-gray-800 capitalize">
+                              {(txn.description || txn.type || "Transaction").replace(/_/g, " ")}
+                            </span>
                           </div>
                         </div>
                       </td>
-                      <td className={`py-3 text-right font-semibold whitespace-nowrap px-6 ${isDebit ? "text-red-600" : "text-gray-900"}`}>
-                        {cur.format(txn.amount)}
+                      <td className="py-3.5 px-3 text-center">
+                        <span className={`inline-block text-[11px] font-bold px-2 py-0.5 rounded ${style.badge}`}>
+                          {currency}
+                        </span>
                       </td>
-                      <td className="py-3 text-right whitespace-nowrap px-6">
-                        <Badge variant={txn.status === "Success" ? "success" : txn.status === "Pending" ? "warning" : txn.status === "Failed" ? "danger" : "default"}>
+                      <td className={`py-3.5 text-right font-semibold whitespace-nowrap px-6 text-sm ${isDebit ? "text-red-600" : "text-gray-900"}`}>
+                        {isDebit ? "-" : "+"}{cur.format(txn.amount)}
+                      </td>
+                      <td className="py-3.5 text-right whitespace-nowrap px-6">
+                        <Badge variant={status === "completed" || status === "success" ? "success" : status === "pending" || status === "processing" ? "warning" : status === "failed" || status === "rejected" ? "danger" : "default"}>
                           {txn.status || "Unknown"}
                         </Badge>
                       </td>
@@ -440,7 +475,15 @@ export default function Wallet() {
               </tbody>
             </table>
           </div>
-        ) : <p className="text-center text-gray-500 py-8">No {activeFilter !== "all" ? `${activeFilter} ` : ""}records found.</p>}
+        ) : (
+          <div className="flex flex-col items-center py-16">
+            <div className="w-14 h-14 rounded-full bg-gray-50 flex items-center justify-center mb-4">
+              <History size={24} className="text-gray-300" />
+            </div>
+            <p className="text-gray-400 text-sm font-medium">No transactions found</p>
+            <p className="text-gray-300 text-xs mt-1">Deposit funds to get started</p>
+          </div>
+        )}
       </Card>
 
       <DepositModal isOpen={showDeposit} onClose={() => setShowDeposit(false)} onDepositComplete={fetchData} />
