@@ -43,9 +43,9 @@ const menuItems = [
   { label: 'My Tokens', icon: Award, path: '/tokens' },
   { label: 'AI Analytics', icon: Brain, path: '/analytics' },
   { label: 'Support', icon: MessageSquare, path: '/support' },
-  { label: 'Help Centre', icon: FileText, path: '/help' },
+  { label: 'Help Centre', icon: FileText, path: '/help-centre' },
   { label: 'Profile', icon: User, path: '/profile' },
-  { label: 'Terms & Conditions', icon: FileText, path: '/terms' },
+  // { label: 'Terms & Conditions', icon: FileText, path: '/terms' },
 ];
 
 function DashboardLayout({ children }) {

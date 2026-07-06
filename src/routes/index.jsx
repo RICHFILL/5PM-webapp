@@ -63,6 +63,8 @@ const ReitPools = lazy(() => import('../pages/investor/ReitPools'));
 const MyTokens = lazy(() => import('../pages/investor/MyTokens'));
 const TokenMarketplace = lazy(() => import('../pages/investor/TokenMarketplace'));
 const AIAnalytics = lazy(() => import('../pages/investor/AIAnalytics'));
+const HelpCentre = lazy(() => import('../pages/investor/HelpCentre'));
+const HelpArticle = lazy(() => import('../pages/investor/HelpArticle'));
 
 // Admin pages
 const AdminDashboard = lazy(() => import('../pages/admin/AdminDashboard'));
@@ -236,6 +238,8 @@ function AppRoutes() {
         <Route path="/reit" element={<ProtectedRoute><ReitPools /></ProtectedRoute>} />
         <Route path="/tokens" element={<ProtectedRoute><MyTokens /></ProtectedRoute>} />
         <Route path="/tokens/marketplace" element={<ProtectedRoute><TokenMarketplace /></ProtectedRoute>} />
+        <Route path="/help-centre" element={<ProtectedRoute><HelpCentre /></ProtectedRoute>} />
+        <Route path="/help-centre/:id" element={<ProtectedRoute><HelpArticle /></ProtectedRoute>} />
 
         {/* Admin routes */}
         <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
