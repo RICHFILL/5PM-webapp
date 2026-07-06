@@ -193,18 +193,14 @@ export default function AdminKyc() {
               </div>
             </div>
 
-            {/* Address */}
-            {selected.addressProof && (selected.addressProof.address || selected.addressProof.city) && (
-              <div>
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1.5"><MapPin size={14} /> Address</p>
-                <div className="bg-gray-50 rounded-xl p-4 space-y-2">
-                  {selected.addressProof.address && <div className="flex justify-between text-sm"><span className="text-gray-600">Address</span><span className="font-semibold text-right max-w-[60%]">{selected.addressProof.address}</span></div>}
-                  {selected.addressProof.city && <div className="flex justify-between text-sm"><span className="text-gray-600">City</span><span className="font-semibold">{selected.addressProof.city}</span></div>}
-                  {selected.addressProof.state && <div className="flex justify-between text-sm"><span className="text-gray-600">State</span><span className="font-semibold">{selected.addressProof.state}</span></div>}
-                  {selected.addressProof.country && <div className="flex justify-between text-sm"><span className="text-gray-600">Country</span><span className="font-semibold">{selected.addressProof.country}</span></div>}
-                </div>
+            {/* Date of Birth & Gender */}
+            <div>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1.5"><User size={14} /> Personal Details</p>
+              <div className="bg-gray-50 rounded-xl p-4 space-y-2">
+                <div className="flex justify-between text-sm"><span className="text-gray-600">Date of Birth</span><span className="font-semibold">{selected.dateOfBirth || "--"}</span></div>
+                <div className="flex justify-between text-sm"><span className="text-gray-600">Gender</span><span className="font-semibold capitalize">{selected.gender || "--"}</span></div>
               </div>
-            )}
+            </div>
 
             {/* Uploaded Documents */}
             <div>
@@ -222,6 +218,13 @@ export default function AdminKyc() {
                 ) : (
                   <div className="bg-gray-50 rounded-xl p-3 text-sm text-gray-400 border border-gray-200 flex items-center gap-2">
                     <span className="text-xs">ID Document - Not uploaded</span>
+                  </div>
+                )}
+                {selected.addressProof?.url ? (
+                  <DocumentLink doc={selected.addressProof} label={docLabel(selected.addressProof.fieldname)} />
+                ) : (
+                  <div className="bg-gray-50 rounded-xl p-3 text-sm text-gray-400 border border-gray-200 flex items-center gap-2">
+                    <span className="text-xs">Utility Bill - Not uploaded</span>
                   </div>
                 )}
               </div>
