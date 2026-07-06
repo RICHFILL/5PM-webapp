@@ -20,6 +20,14 @@ const docLabel = (fieldname) => {
   return labels[fieldname] || fieldname || "Document";
 };
 
+const parseDocField = (val) => {
+  if (!val) return null;
+  if (typeof val === 'string') {
+    try { return JSON.parse(val); } catch { return null; }
+  }
+  return val;
+};
+
 function DocumentLink({ doc, label }) {
   if (!doc?.url) return null;
   return (
@@ -143,7 +151,13 @@ export default function AdminKyc() {
                   <Badge variant={statusVariant(r.status)}>{r.status || "pending"}</Badge>
                 </td>
                 <td className="px-6 py-4 text-right">
-                  <Button size="sm" onClick={() => setSelected(r)} disabled={r.status === "approved" || r.status === "rejected"}>
+                  <Button size="sm" onClick={() => setSelected({
+                    ...r,
+                    passportPhoto: parseDocField(r.passportPhoto),
+                    idDocument: parseDocField(r.idDocument),
+                    addressProof: parseDocField(r.addressProof),
+                    selfie: parseDocField(r.selfie),
+                  })} disabled={r.status === "approved" || r.status === "rejected"}>
                     Review
                   </Button>
                 </td>

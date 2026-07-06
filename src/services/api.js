@@ -333,6 +333,10 @@ export const adminWealthApi = {
     api.patch(`/wealth-plans/${id}`, data).then((r) => r.data),
   createCooperative: (data) =>
     api.post("/cooperatives", data).then((r) => r.data),
+  updateCooperative: (id, data) =>
+    api.put(`/cooperatives/${id}`, data).then((r) => r.data),
+  deleteCooperative: (id) =>
+    api.delete(`/cooperatives/${id}`).then((r) => r.data),
   getCooperatives: () => api.get("/cooperatives").then((r) => r.data),
 };
 

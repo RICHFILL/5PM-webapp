@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Search, Plus, AlertCircle } from "lucide-react";
+import { Search, Plus, AlertCircle, Edit3, Trash2 } from "lucide-react";
 import { adminWealthApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Input, Modal } from "../../components/common";
 import toast from "react-hot-toast";
@@ -14,8 +14,11 @@ export default function AdminCooperatives() {
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(defaultForm);
   const [saving, setSaving] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   const fetch = async () => {
     setLoading(true);
@@ -32,30 +35,70 @@ export default function AdminCooperatives() {
 
   useEffect(() => { fetch(); }, []);
 
-  const handleCreate = async () => {
+  const openCreate = () => {
+    setEditing(null);
+    setForm(defaultForm);
+    setShowModal(true);
+  };
+
+  const openEdit = (c) => {
+    setEditing(c);
+    setForm({
+      name: c.name || "",
+      registrationNumber: c.registrationNumber || "",
+      email: c.email || "",
+      phone: c.phone || "",
+      address: c.address || "",
+      contactPersonName: c.contactPerson?.name || "",
+      contactPersonPhone: c.contactPerson?.phone || "",
+      contactPersonEmail: c.contactPerson?.email || "",
+    });
+    setShowModal(true);
+  };
+
+  const handleSave = async () => {
     if (!form.name) return;
     setSaving(true);
+    const payload = {
+      name: form.name,
+      registrationNumber: form.registrationNumber || null,
+      email: form.email || null,
+      phone: form.phone || null,
+      address: form.address || null,
+      contactPerson: {
+        name: form.contactPersonName || null,
+        phone: form.contactPersonPhone || null,
+        email: form.contactPersonEmail || null,
+      },
+    };
     try {
-      await adminWealthApi.createCooperative({
-        name: form.name,
-        registrationNumber: form.registrationNumber || null,
-        email: form.email || null,
-        phone: form.phone || null,
-        address: form.address || null,
-        contactPerson: {
-          name: form.contactPersonName || null,
-          phone: form.contactPersonPhone || null,
-          email: form.contactPersonEmail || null,
-        },
-      });
+      if (editing) {
+        await adminWealthApi.updateCooperative(editing.id, payload);
+        toast.success("Cooperative updated");
+      } else {
+        await adminWealthApi.createCooperative(payload);
+        toast.success("Cooperative created");
+      }
       setShowModal(false);
       setForm(defaultForm);
-      toast.success("Cooperative created");
+      setEditing(null);
       fetch();
     } catch (err) {
-      toast.error(err?.response?.data?.message || "Failed to create cooperative");
-    }
-    finally { setSaving(false); }
+      toast.error(err?.response?.data?.message || "Failed to save cooperative");
+    } finally { setSaving(false); }
+  };
+
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    try {
+      await adminWealthApi.deleteCooperative(deleteTarget.id);
+      toast.success("Cooperative deleted");
+      setDeleteTarget(null);
+      fetch();
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to delete cooperative");
+    } finally { setDeleting(false); }
   };
 
   const filtered = cooperatives.filter((c) => {
@@ -71,7 +114,7 @@ export default function AdminCooperatives() {
     <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-4 md:space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-xl md:text-2xl font-bold text-gray-900">Cooperatives ({cooperatives.length})</h1>
-        <Button onClick={() => setShowModal(true)} size="sm"><Plus size={16} /> Add Cooperative</Button>
+        <Button onClick={openCreate} size="sm"><Plus size={16} /> Add Cooperative</Button>
       </div>
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
@@ -96,6 +139,7 @@ export default function AdminCooperatives() {
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Phone</th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Created</th>
+              <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
@@ -107,6 +151,16 @@ export default function AdminCooperatives() {
                 <td className="px-6 py-4 text-gray-600">{c.phone || "--"}</td>
                 <td className="px-6 py-4"><Badge variant={c.status === "active" ? "success" : "default"}>{c.status || "active"}</Badge></td>
                 <td className="px-6 py-4 text-gray-500">{formatDate(c.createdAt)}</td>
+                <td className="px-6 py-4 text-right">
+                  <div className="flex gap-2 justify-end">
+                    <Button size="sm" variant="outline" onClick={() => openEdit(c)}>
+                      <Edit3 size={14} />
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => setDeleteTarget(c)}>
+                      <Trash2 size={14} className="text-red-500" />
+                    </Button>
+                  </div>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -115,7 +169,9 @@ export default function AdminCooperatives() {
       </Card>
       </div>
 
-      <Modal isOpen={showModal} onClose={() => { setShowModal(false); setForm(defaultForm); }} title="Add Cooperative" size="lg">
+      {/* Create / Edit Modal */}
+      <Modal isOpen={showModal} onClose={() => { setShowModal(false); setEditing(null); setForm(defaultForm); }}
+        title={editing ? "Edit Cooperative" : "Add Cooperative"} size="lg">
         <div className="space-y-4">
           <Input label="Cooperative Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. Staff Cooperative Society" />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -135,8 +191,25 @@ export default function AdminCooperatives() {
             </div>
           </div>
           <div className="flex gap-3 justify-end pt-2">
-            <Button variant="outline" onClick={() => { setShowModal(false); setForm(defaultForm); }}>Cancel</Button>
-            <Button onClick={handleCreate} disabled={saving || !form.name}>{saving ? "Creating..." : "Create Cooperative"}</Button>
+            <Button variant="outline" onClick={() => { setShowModal(false); setEditing(null); setForm(defaultForm); }}>Cancel</Button>
+            <Button onClick={handleSave} disabled={saving || !form.name}>
+              {saving ? "Saving..." : editing ? "Update Cooperative" : "Create Cooperative"}
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal isOpen={!!deleteTarget} onClose={() => setDeleteTarget(null)} title="Delete Cooperative" size="sm">
+        <div className="space-y-4">
+          <p className="text-sm text-gray-600">
+            Are you sure you want to delete <strong>{deleteTarget?.name}</strong>? This action cannot be undone.
+          </p>
+          <div className="flex gap-3 justify-end">
+            <Button variant="outline" onClick={() => setDeleteTarget(null)}>Cancel</Button>
+            <Button variant="danger" onClick={handleDelete} disabled={deleting}>
+              {deleting ? "Deleting..." : "Delete"}
+            </Button>
           </div>
         </div>
       </Modal>
