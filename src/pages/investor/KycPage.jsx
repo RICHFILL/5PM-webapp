@@ -145,9 +145,10 @@ function Step4Documents({ data, onChange, onPrev, onNext }) {
   };
   const documentFields = [
     { key: "passport", label: "Passport Photograph", accept: "image/*", required: true },
-    { key: "governmentId", label: "Government-Issued ID (optional)", accept: "image/*,.pdf" },
-    { key: "utilityBill", label: "Utility Bill - proof of address (optional)", accept: "image/*,.pdf" },
+    { key: "governmentId", label: "Government-Issued ID", accept: "image/*,.pdf", required: true },
+    { key: "utilityBill", label: "Utility Bill - proof of address", accept: "image/*,.pdf", required: true },
   ];
+  const allDocsUploaded = documentFields.every(({ key }) => data[key]);
   return (
     <div className="space-y-5">
       <div className="flex items-center gap-2 text-gray-700 mb-2">
@@ -182,8 +183,9 @@ function Step4Documents({ data, onChange, onPrev, onNext }) {
       ))}
       <div className="flex justify-between pt-4 border-t border-gray-100">
         <Button type="button" variant="ghost" onClick={onPrev}><ChevronLeft size={16} /> Back</Button>
-        <Button type="button" onClick={onNext}>Continue <ChevronRight size={16} /></Button>
+        <Button type="button" onClick={onNext} disabled={!allDocsUploaded}>Continue <ChevronRight size={16} /></Button>
       </div>
+      {!allDocsUploaded && <p className="text-xs text-red-500 text-right">Upload all required documents to continue</p>}
     </div>
   );
 }
@@ -229,7 +231,7 @@ function Step6Review({ store, onPrev, onSubmit, submitting }) {
   const addr = store.addressInfo || {};
   const identity = store.identityInfo || {};
   const docs = store.documents || {};
-  const allComplete = info.firstName && info.lastName && addr.country && addr.address && identity.bvn && identity.nin && (docs.passport || docs.governmentId);
+  const allComplete = info.firstName && info.lastName && addr.country && addr.address && identity.bvn && identity.nin && docs.passport && docs.governmentId && docs.utilityBill && store.selfie;
   return (
     <div className="space-y-6">
       <div className="bg-neon-tangerine/10 border border-neon-tangerine/30 rounded-xl p-4">
@@ -272,8 +274,9 @@ function Step6Review({ store, onPrev, onSubmit, submitting }) {
             <p className="text-sm font-semibold text-gray-900">Documents</p>
           </div>
           <p className="text-sm text-gray-600">Passport: {docs.passport?.name ? "Uploaded" : "Missing"}</p>
-          <p className="text-sm text-gray-600">ID: {docs.governmentId?.name ? "Uploaded" : "Optional"}</p>
-          <p className="text-sm text-gray-600">Utility: {docs.utilityBill?.name ? "Uploaded" : "Optional"}</p>
+          <p className="text-sm text-gray-600">ID: {docs.governmentId?.name ? "Uploaded" : "Missing"}</p>
+          <p className="text-sm text-gray-600">Utility: {docs.utilityBill?.name ? "Uploaded" : "Missing"}</p>
+          <p className="text-sm text-gray-600">Selfie: {store.selfie ? "Uploaded" : "Missing"}</p>
         </Card>
       </div>
       <div className="flex justify-between pt-4 border-t border-gray-100">

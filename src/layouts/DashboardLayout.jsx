@@ -61,6 +61,7 @@ function DashboardLayout({ children }) {
 
   const needsVerification = user && !user.isVerified && !(
     location.pathname.startsWith('/verify-email') ||
+    location.pathname.startsWith('/kyc') ||
     location.pathname.startsWith('/login') ||
     location.pathname.startsWith('/register')
   );
