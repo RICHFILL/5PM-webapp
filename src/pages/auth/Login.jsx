@@ -13,6 +13,20 @@ function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const passwordError = password && (
+    password.length < 12
+      ? "At least 12 characters required"
+      : !/[a-z]/.test(password)
+        ? "Needs a lowercase letter"
+        : !/[A-Z]/.test(password)
+          ? "Needs an uppercase letter"
+          : !/[0-9]/.test(password)
+            ? "Needs a number"
+            : !/[!@#$%^&*]/.test(password)
+              ? "Needs a special character (!@#$%^&*)"
+              : ""
+  );
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -75,7 +89,7 @@ function Login() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-neon-tangerine focus:border-transparent outline-none"
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-neon-tangerine focus:border-transparent outline-none ${passwordError ? "border-red-300" : "border-gray-300"}`}
             />
             <button
               type="button"
@@ -85,6 +99,7 @@ function Login() {
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           </div>
+          {passwordError && <p className="text-red-500 text-xs mt-1">{passwordError}</p>}
         </div>
         <div className="flex items-center justify-end">
           <Link to="/forgot-password" className="text-sm text-neon-tangerine hover:text-neon-tangerine/80 font-medium">
