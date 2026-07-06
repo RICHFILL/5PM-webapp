@@ -132,7 +132,7 @@ export const articles = [
       <h3>What is a REIT Pool?</h3>
       <p>A REIT (Real Estate Investment Trust) Pool is a collection of income-generating real estate assets. By purchasing shares, you gain exposure to a diversified property portfolio.</p>
       <h3>How It Works</h3>
-      <p>Each pool has a share price, total shares available, and an annual yield. You can buy shares in open pools and earn returns based on the pool's performance.</p>
+      <p>Each pool has a share price, total shares available, and a monthly yield. You can buy shares in open pools and earn returns based on the pool's performance.</p>
     `,
     views: 1430,
     updatedAt: "2026-06-29",

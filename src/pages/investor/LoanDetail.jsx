@@ -57,7 +57,7 @@ export default function LoanDetail() {
               </div>
               <h1 className="text-2xl md:text-3xl font-bold text-white mt-1">{formatNaira(loan.amount)}</h1>
               <p className="text-purple-200 text-sm mt-1">
-                {loan.term} months &middot; {loan.interestRate}% p.a.
+                {loan.term} months &middot; {loan.interestRate}% monthly
               </p>
             </div>
             <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center backdrop-blur-sm">

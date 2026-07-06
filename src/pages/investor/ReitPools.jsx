@@ -71,8 +71,8 @@ export default function ReitPools() {
                     <p className="text-sm font-bold text-gray-900">{formatNaira(pool.sharePrice)}</p>
                   </div>
                   <div className="bg-slate-50 rounded-lg p-3 text-center">
-                    <p className="text-xs text-gray-500">Annual Yield</p>
-                    <p className="text-sm font-bold text-purple-600">{pool.annualYield}%</p>
+                    <p className="text-xs text-gray-500">Monthly Yield</p>
+                    <p className="text-sm font-bold text-purple-600">{pool.monthlyYield ?? pool.annualYield}%</p>
                   </div>
                   <div className="bg-slate-50 rounded-lg p-3 text-center">
                     <p className="text-xs text-gray-500">Available</p>

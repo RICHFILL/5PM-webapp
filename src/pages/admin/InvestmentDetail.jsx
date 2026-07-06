@@ -108,7 +108,7 @@ export default function InvestmentDetail() {
 
   const infoCards = [
     { label: "Investment Amount", value: formatCurrency(investment?.amount), icon: CircleDollarSign },
-    { label: "Interest Rate (p.a.)", value: `${investment?.interestRatePerAnnum ?? 0}%`, icon: TrendingUp },
+    { label: "Interest Rate (monthly)", value: `${investment?.interestRatePerAnnum ?? 0}%`, icon: TrendingUp },
     { label: "Interest Earned", value: formatCurrency(investment?.interestEarned), icon: FileText },
     { label: "Monthly Repayment", value: formatCurrency(investment?.expectedMonthlyRepayment), icon: CalendarDays },
     { label: "Payout Upon Expiration", value: formatCurrency(investment?.payoutUponExpiration), icon: CalendarDays },

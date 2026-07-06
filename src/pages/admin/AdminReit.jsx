@@ -7,7 +7,7 @@ import { formatNaira } from '../../utils/format';
 
 const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }) : "--";
 
-const defaultForm = { name: "", description: "", totalShares: "", sharePrice: "", annualYield: "3.5" };
+const defaultForm = { name: "", description: "", totalShares: "", sharePrice: "", monthlyYield: "3.5" };
 
 export default function AdminReit() {
   const [pools, setPools] = useState([]);
@@ -41,7 +41,7 @@ export default function AdminReit() {
       await adminReitApi.createPool({
         name: form.name, description: form.description,
         totalShares: parseFloat(form.totalShares), sharePrice: parseFloat(form.sharePrice),
-        annualYield: parseFloat(form.annualYield),
+        monthlyYield: parseFloat(form.monthlyYield),
       });
       setShowModal(false); setForm(defaultForm);
       toast.success("Pool created");
@@ -106,7 +106,7 @@ export default function AdminReit() {
                 <td className="px-6 py-4 font-medium text-gray-900">{p.name}</td>
                 <td className="px-6 py-4 font-semibold text-gray-900">{formatNaira(p.sharePrice)}</td>
                 <td className="px-6 py-4 text-gray-600">{p.availableShares} / {p.totalShares}</td>
-                <td className="px-6 py-4 text-purple-600 font-semibold">{p.annualYield}%</td>
+                <td className="px-6 py-4 text-purple-600 font-semibold">{p.monthlyYield ?? p.annualYield}%</td>
                 <td className="px-6 py-4"><Badge variant={p.status === "open" ? "success" : "default"}>{p.status}</Badge></td>
                 <td className="px-6 py-4 text-gray-500">{formatDate(p.createdAt)}</td>
                 <td className="px-6 py-4">
@@ -126,7 +126,7 @@ export default function AdminReit() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <Input label="Total Shares" type="number" value={form.totalShares} onChange={(e) => setForm({ ...form, totalShares: e.target.value })} />
             <Input label="Share Price (Ã¢â€šÂ¦)" type="number" value={form.sharePrice} onChange={(e) => setForm({ ...form, sharePrice: e.target.value })} />
-            <Input label="Annual Yield (%)" type="number" value={form.annualYield} onChange={(e) => setForm({ ...form, annualYield: e.target.value })} />
+            <Input label="Monthly Yield (%)" type="number" value={form.monthlyYield} onChange={(e) => setForm({ ...form, monthlyYield: e.target.value })} />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>

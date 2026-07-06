@@ -352,6 +352,7 @@ export const adminCampaignApi = {
   createCampaign: (data) => api.post("/campaigns", data).then((r) => r.data),
   updateCampaign: (id, data) =>
     api.patch(`/campaigns/${id}`, data).then((r) => r.data),
+  deleteCampaign: (id) => api.delete(`/campaigns/${id}`).then((r) => r.data),
 };
 
 // --- Property Updates ---

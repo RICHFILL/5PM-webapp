@@ -59,7 +59,7 @@ export default function AdminDistributions() {
     setSaving(true);
     try {
       await adminApi.createDistribution({
-        investment: form.investmentId,
+        investmentId: form.investmentId,
         amount: parseFloat(form.amount),
         type: form.type,
       });

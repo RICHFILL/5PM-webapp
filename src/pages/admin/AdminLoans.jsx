@@ -13,6 +13,7 @@ const statusVariant = (s) => {
     case "pending": return "warning";
     case "repaid": return "info";
     case "defaulted": return "danger";
+    case "rejected": return "danger";
     default: return "default";
   }
 };
@@ -25,6 +26,7 @@ export default function AdminLoans() {
   const [statusFilter, setStatusFilter] = useState("");
   const [actionLoan, setActionLoan] = useState(null);
   const [actionType, setActionType] = useState("");
+  const [rejectReason, setRejectReason] = useState("");
   const [repayAmount, setRepayAmount] = useState("");
   const [saving, setSaving] = useState(false);
 
@@ -49,8 +51,8 @@ export default function AdminLoans() {
       setActionLoan(null);
       toast.success(`Loan ${status}`);
       fetch();
-    } catch {
-      toast.error("Failed to update loan");
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to update loan");
     } finally { setSaving(false); }
   };
 
@@ -85,7 +87,7 @@ export default function AdminLoans() {
             className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:border-neon-tangerine outline-none text-sm" />
         </div>
         <div className="flex gap-2 overflow-x-auto">
-          {["", "pending", "active", "repaid", "defaulted"].map((s) => (
+          {["", "pending", "active", "repaid", "defaulted", "rejected"].map((s) => (
             <button key={s} onClick={() => setStatusFilter(s)}
               className={`px-3 py-2 text-xs font-medium rounded-lg transition-colors ${statusFilter === s ? "bg-neon-tangerine text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
               {s || "All"}
@@ -129,7 +131,7 @@ export default function AdminLoans() {
                     {l.status === "pending" && (
                       <>
                         <Button size="sm" onClick={() => { setActionLoan(l); setActionType("approve"); }}>Approve</Button>
-                        <Button size="sm" variant="outline" onClick={() => handleApprove(l.id, "defaulted")}>Reject</Button>
+                        <Button size="sm" variant="outline" onClick={() => { setActionLoan(l); setActionType("reject"); setRejectReason(""); }}>Reject</Button>
                       </>
                     )}
                     {l.status === "active" && (
@@ -147,13 +149,22 @@ export default function AdminLoans() {
 
       {actionLoan && (
         <Modal isOpen={true} onClose={() => setActionLoan(null)}
-          title={actionType === "approve" ? "Approve Loan" : "Record Repayment"} size="sm">
+          title={actionType === "approve" ? "Approve Loan" : actionType === "reject" ? "Reject Loan" : "Record Repayment"} size="sm">
           {actionType === "approve" ? (
             <div className="space-y-4">
               <p className="text-sm text-gray-600">Approve loan of {formatNaira(actionLoan.amount)} for {actionLoan.borrower?.firstName}?</p>
               <div className="flex gap-3 justify-end">
                 <Button variant="outline" onClick={() => setActionLoan(null)}>Cancel</Button>
                 <Button onClick={() => handleApprove(actionLoan.id, "active")} disabled={saving}>Approve & Generate Schedule</Button>
+              </div>
+            </div>
+          ) : actionType === "reject" ? (
+            <div className="space-y-4">
+              <p className="text-sm text-gray-600">Reject loan of {formatNaira(actionLoan.amount)} for {actionLoan.borrower?.firstName}?</p>
+              <Input label="Rejection Reason (optional)" value={rejectReason} onChange={(e) => setRejectReason(e.target.value)} placeholder="e.g. Insufficient collateral" />
+              <div className="flex gap-3 justify-end">
+                <Button variant="outline" onClick={() => setActionLoan(null)}>Cancel</Button>
+                <Button onClick={() => handleApprove(actionLoan.id, "rejected")} disabled={saving} variant="danger">Reject Loan</Button>
               </div>
             </div>
           ) : (

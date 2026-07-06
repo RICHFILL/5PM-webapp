@@ -3,7 +3,7 @@ import { Search, Wallet, DollarSign, AlertCircle } from "lucide-react";
 import { adminApi } from "../../services/api";
 import { Card, Skeleton, Badge, Pagination } from "../../components/common";
 import toast from "react-hot-toast";
-import { formatNaira } from '../../utils/format';
+import { formatCurrency } from '../../utils/format';
 
 const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }) : "--";
 
@@ -41,7 +41,9 @@ export default function AdminWallets() {
 
   useEffect(() => { fetch(); }, [page]);
 
-  const totalBalance = wallets.reduce((sum, w) => sum + (Number(w.balance) || 0), 0);
+  const totalNgn = wallets.reduce((sum, w) => sum + (Number(w.balance) || 0), 0);
+  const totalUsd = wallets.reduce((sum, w) => sum + (Number(w.usdBalance) || 0), 0);
+  const totalUsdt = wallets.reduce((sum, w) => sum + (Number(w.usdtBalance) || 0), 0);
 
   if (loading) {
     return <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-4 md:space-y-6"><Skeleton className="h-8 w-48" /><Skeleton className="h-24 w-full" /><Skeleton.Table rows={6} /></div>;
@@ -50,9 +52,19 @@ export default function AdminWallets() {
   return (
     <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-4 md:space-y-6">
       <h1 className="text-xl md:text-2xl font-bold text-gray-900">Wallet Management</h1>
-      <div className="bg-neon-tangerine rounded-xl p-6 text-white">
-        <p className="text-sm text-cyan-100 mb-1">Total Wallet Balance</p>
-        <p className="text-2xl md:text-3xl font-bold">{formatNaira(totalBalance)}</p>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="bg-emerald-500 rounded-xl p-5 text-white">
+          <p className="text-sm text-emerald-100 mb-1">Total NGN Balance</p>
+          <p className="text-xl md:text-2xl font-bold">{formatCurrency(totalNgn, "NGN")}</p>
+        </div>
+        <div className="bg-blue-500 rounded-xl p-5 text-white">
+          <p className="text-sm text-blue-100 mb-1">Total USD Balance</p>
+          <p className="text-xl md:text-2xl font-bold">{formatCurrency(totalUsd, "USD")}</p>
+        </div>
+        <div className="bg-purple-500 rounded-xl p-5 text-white">
+          <p className="text-sm text-purple-100 mb-1">Total USDT Balance</p>
+          <p className="text-xl md:text-2xl font-bold">{formatCurrency(totalUsdt, "USDT")}</p>
+        </div>
       </div>
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
@@ -68,13 +80,14 @@ export default function AdminWallets() {
       )}
       <Card className="p-0 overflow-hidden">
         <div className="overflow-x-auto -mx-6">
-        <table className="w-full min-w-[600px] text-sm">
+        <table className="w-full min-w-[800px] text-sm">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">User</th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Email</th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Balance</th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Currency</th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">NGN</th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">USD</th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">USDT</th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Last Updated</th>
             </tr>
           </thead>
@@ -85,9 +98,14 @@ export default function AdminWallets() {
                   <span className="font-medium text-gray-900">{w.user?.firstName} {w.user?.lastName}</span>
                 </td>
                 <td className="px-6 py-4 text-gray-600">{w.user?.email}</td>
-                <td className="px-6 py-4 font-bold text-gray-900">{formatNaira(w.balance || 0)}</td>
                 <td className="px-6 py-4">
-                  <Badge variant={w.currency === "USD" ? "info" : w.currency === "USDT" ? "brand" : "default"}>{w.currency || "NGN"}</Badge>
+                  <Badge variant="default">{formatCurrency(w.balance || 0, "NGN")}</Badge>
+                </td>
+                <td className="px-6 py-4">
+                  <Badge variant="info">{formatCurrency(w.usdBalance || 0, "USD")}</Badge>
+                </td>
+                <td className="px-6 py-4">
+                  <Badge variant="brand">{formatCurrency(w.usdtBalance || 0, "USDT")}</Badge>
                 </td>
                 <td className="px-6 py-4 text-gray-500">{formatDate(w.updatedAt)}</td>
               </tr>

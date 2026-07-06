@@ -1,5 +1,5 @@
 ﻿import { useState, useEffect } from "react";
-import { Search, Target, Plus, AlertCircle } from "lucide-react";
+import { Search, Target, Plus, AlertCircle, Edit3, Trash2 } from "lucide-react";
 import { adminCampaignApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
 import toast from "react-hot-toast";
@@ -26,8 +26,10 @@ export default function AdminCampaigns() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(defaultForm);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(null);
 
   const fetch = async () => {
     setLoading(true);
@@ -48,21 +50,58 @@ export default function AdminCampaigns() {
     if (!form.title || !form.targetAmount) return;
     setSaving(true);
     try {
-      await adminCampaignApi.createCampaign({
-        title: form.title,
-        description: form.description,
-        targetAmount: parseFloat(form.targetAmount),
-        minInvestment: form.minInvestment ? parseFloat(form.minInvestment) : 0,
-        deadline: form.deadline || null,
-        status: form.status,
-      });
+      if (editing) {
+        await adminCampaignApi.updateCampaign(editing.id, {
+          title: form.title,
+          description: form.description,
+          targetAmount: parseFloat(form.targetAmount),
+          minInvestment: form.minInvestment ? parseFloat(form.minInvestment) : 0,
+          deadline: form.deadline || null,
+          status: form.status,
+        });
+        toast.success("Campaign updated");
+      } else {
+        await adminCampaignApi.createCampaign({
+          title: form.title,
+          description: form.description,
+          targetAmount: parseFloat(form.targetAmount),
+          minInvestment: form.minInvestment ? parseFloat(form.minInvestment) : 0,
+          deadline: form.deadline || null,
+          status: form.status,
+        });
+        toast.success("Campaign created");
+      }
       setShowModal(false);
+      setEditing(null);
       setForm(defaultForm);
-      toast.success("Campaign created");
       fetch();
     } catch {
-      toast.error("Failed to create campaign");
+      toast.error(editing ? "Failed to update campaign" : "Failed to create campaign");
     } finally { setSaving(false); }
+  };
+
+  const handleEdit = (campaign) => {
+    setEditing(campaign);
+    setForm({
+      title: campaign.title || "",
+      description: campaign.description || "",
+      targetAmount: campaign.targetAmount?.toString() || "",
+      minInvestment: campaign.minInvestment?.toString() || "",
+      deadline: campaign.deadline ? campaign.deadline.split("T")[0] : "",
+      status: campaign.status || "draft",
+    });
+    setShowModal(true);
+  };
+
+  const handleDelete = async (id) => {
+    setDeleting(id);
+    try {
+      await adminCampaignApi.deleteCampaign(id);
+      toast.success("Campaign deleted");
+      fetch();
+    } catch {
+      toast.error("Failed to delete campaign");
+    } finally { setDeleting(null); }
   };
 
   const filtered = campaigns.filter((c) =>
@@ -77,7 +116,7 @@ export default function AdminCampaigns() {
     <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-4 md:space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-xl md:text-2xl font-bold text-gray-900">Crowdfunding Campaigns ({campaigns.length})</h1>
-        <Button onClick={() => setShowModal(true)} size="sm"><Plus size={16} /> Create Campaign</Button>
+        <Button onClick={() => { setEditing(null); setForm(defaultForm); setShowModal(true); }} size="sm"><Plus size={16} /> Create Campaign</Button>
       </div>
 
       <div className="flex items-center gap-4">
@@ -115,6 +154,7 @@ export default function AdminCampaigns() {
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Deadline</th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Created</th>
+              <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
@@ -136,6 +176,14 @@ export default function AdminCampaigns() {
                   <td className="px-6 py-4"><Badge variant={statusVariant(c.status)}>{c.status || "draft"}</Badge></td>
                   <td className="px-6 py-4 text-gray-500">{c.deadline ? formatDate(c.deadline) : "--"}</td>
                   <td className="px-6 py-4 text-gray-500">{formatDate(c.createdAt)}</td>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex gap-2 justify-end">
+                      <Button size="sm" variant="ghost" onClick={() => handleEdit(c)}><Edit3 size={14} /></Button>
+                      <Button size="sm" variant="ghost" onClick={() => { if (window.confirm("Delete this campaign?")) handleDelete(c.id); }} disabled={deleting === c.id}>
+                        <Trash2 size={14} className="text-red-500" />
+                      </Button>
+                    </div>
+                  </td>
                 </tr>
               );
             })}
@@ -145,7 +193,7 @@ export default function AdminCampaigns() {
       </Card>
       </div>
 
-      <Modal isOpen={showModal} onClose={() => { setShowModal(false); setForm(defaultForm); }} title="Create Campaign" size="lg">
+      <Modal isOpen={showModal} onClose={() => { setShowModal(false); setEditing(null); setForm(defaultForm); }} title={editing ? "Edit Campaign" : "Create Campaign"} size="lg">
         <div className="space-y-4">
           <Input label="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Campaign name" />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -169,9 +217,9 @@ export default function AdminCampaigns() {
               className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-neon-tangerine focus:ring-2 focus:ring-neon-tangerine/30 outline-none resize-none" placeholder="Campaign description" />
           </div>
           <div className="flex gap-3 justify-end pt-2">
-            <Button variant="outline" onClick={() => { setShowModal(false); setForm(defaultForm); }}>Cancel</Button>
+            <Button variant="outline" onClick={() => { setShowModal(false); setEditing(null); setForm(defaultForm); }}>Cancel</Button>
             <Button onClick={handleSave} disabled={saving || !form.title || !form.targetAmount}>
-              {saving ? "Creating..." : "Create Campaign"}
+              {saving ? "Saving..." : editing ? "Update Campaign" : "Create Campaign"}
             </Button>
           </div>
         </div>

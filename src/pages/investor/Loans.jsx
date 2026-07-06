@@ -45,10 +45,13 @@ export default function Loans() {
 
   const handleApply = async () => {
     if (!form.amount || !form.term) return;
+    const amount = parseFloat(form.amount);
+    if (amount < 5000) { toast.error("Minimum loan amount is ₦5,000"); return; }
+    if (amount > 10000000) { toast.error("Maximum loan amount is ₦10,000,000"); return; }
     setSaving(true);
     try {
       await loanApi.applyLoan({
-        amount: parseFloat(form.amount),
+        amount,
         term: parseInt(form.term),
         interestRate: parseFloat(form.interestRate),
         purpose: form.purpose,
@@ -128,7 +131,7 @@ export default function Loans() {
                       </div>
                       <div className="flex items-center gap-3 text-xs text-gray-500">
                         <span className="flex items-center gap-1"><Calendar size={12} /> {loan.term} months</span>
-                        <span className="flex items-center gap-1"><Percent size={12} /> {loan.interestRate}% p.a.</span>
+                        <span className="flex items-center gap-1"><Percent size={12} /> {loan.interestRate}% monthly</span>
                       </div>
                       {loan.purpose && <p className="text-xs text-gray-400 mt-0.5">{loan.purpose}</p>}
                     </div>
@@ -175,14 +178,14 @@ export default function Loans() {
             <AlertCircle size={14} className="shrink-0 mt-0.5" />
             <span>Loan applications are subject to review and approval based on your investment portfolio and KYC status.</span>
           </div>
-          <Input label="Loan Amount (₦)" type="number" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} placeholder="e.g. 500000" />
+          <Input label="Loan Amount (₦)" type="number" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} placeholder="e.g. 500000" helperText="Min: ₦5,000 | Max: ₦10,000,000" />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input label="Term (months)" type="number" value={form.term} onChange={(e) => setForm({ ...form, term: e.target.value })} placeholder="e.g. 12" />
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Interest Rate</label>
               <div className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-700 text-sm flex items-center gap-2">
                 <Percent size={14} className="text-gray-400" />
-                <span>{form.interestRate}% p.a.</span>
+                <span>{form.interestRate}% monthly</span>
               </div>
               <p className="text-xs text-gray-500 mt-1">Interest rates are determined by the loan product and cannot be modified.</p>
             </div>
