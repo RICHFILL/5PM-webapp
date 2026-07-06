@@ -157,7 +157,7 @@ export default function AdminKyc() {
                     idDocument: parseDocField(r.idDocument),
                     addressProof: parseDocField(r.addressProof),
                     selfie: parseDocField(r.selfie),
-                  })} disabled={r.status === "approved" || r.status === "rejected"}>
+                  })}>
                     Review
                   </Button>
                 </td>
@@ -188,8 +188,8 @@ export default function AdminKyc() {
             <div>
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1.5"><CreditCard size={14} /> Identity Information</p>
               <div className="bg-gray-50 rounded-xl p-4 space-y-2">
-                <div className="flex justify-between text-sm"><span className="text-gray-600">BVN</span><span className="font-semibold font-mono">{selected.bvn ? `****${selected.bvn.slice(-4)}` : "--"}</span></div>
-                <div className="flex justify-between text-sm"><span className="text-gray-600">NIN</span><span className="font-semibold font-mono">{selected.nin ? `****${selected.nin.slice(-4)}` : "--"}</span></div>
+                <div className="flex justify-between text-sm"><span className="text-gray-600">BVN</span><span className="font-semibold font-mono">{selected.bvn ? `${selected.bvn}` : "--"}</span></div>
+                <div className="flex justify-between text-sm"><span className="text-gray-600">NIN</span><span className="font-semibold font-mono">{selected.nin ? `${selected.nin}` : "--"}</span></div>
               </div>
             </div>
 
