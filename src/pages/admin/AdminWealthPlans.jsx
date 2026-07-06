@@ -122,7 +122,7 @@ export default function AdminWealthPlans() {
               <p className="text-sm text-gray-600">{selectedPlan.planUser?.firstName} {selectedPlan.planUser?.lastName}</p>
               <p className="text-xs text-gray-500">Monthly: {formatNaira(selectedPlan.monthlyContribution)}</p>
             </div>
-            <Input label="Amount (Ã¢â€šÂ¦)" type="number" value={contributionForm.amount} onChange={(e) => setContributionForm({ ...contributionForm, amount: e.target.value })} placeholder="e.g. 50000" />
+            <Input label="Amount (₦)" type="number" value={contributionForm.amount} onChange={(e) => setContributionForm({ ...contributionForm, amount: e.target.value })} placeholder="e.g. 50000" />
             <Input label="Reference (Optional)" value={contributionForm.reference} onChange={(e) => setContributionForm({ ...contributionForm, reference: e.target.value })} placeholder="Payment reference" />
             <div className="flex gap-3 justify-end pt-2">
               <Button variant="outline" onClick={() => { setShowContribute(false); setContributionForm({ amount: "", reference: "" }); }}>Cancel</Button>

@@ -125,7 +125,7 @@ export default function AdminReit() {
           <Input label="Pool Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <Input label="Total Shares" type="number" value={form.totalShares} onChange={(e) => setForm({ ...form, totalShares: e.target.value })} />
-            <Input label="Share Price (Ã¢â€šÂ¦)" type="number" value={form.sharePrice} onChange={(e) => setForm({ ...form, sharePrice: e.target.value })} />
+            <Input label="Share Price (₦)" type="number" value={form.sharePrice} onChange={(e) => setForm({ ...form, sharePrice: e.target.value })} />
             <Input label="Monthly Yield (%)" type="number" value={form.monthlyYield} onChange={(e) => setForm({ ...form, monthlyYield: e.target.value })} />
           </div>
           <div>
@@ -143,7 +143,7 @@ export default function AdminReit() {
       <Modal isOpen={!!distribPool} onClose={() => setDistribPool(null)} title="Record Distribution" size="sm">
         <div className="space-y-4">
           <p className="text-sm text-gray-600">Pool: {distribPool?.name}</p>
-          <Input label="Amount (Ã¢â€šÂ¦)" type="number" value={distribAmount} onChange={(e) => setDistribAmount(e.target.value)} />
+          <Input label="Amount (₦)" type="number" value={distribAmount} onChange={(e) => setDistribAmount(e.target.value)} />
           <div className="flex gap-3 justify-end">
             <Button variant="outline" onClick={() => setDistribPool(null)}>Cancel</Button>
             <Button onClick={handleDistribute} disabled={saving || !distribAmount}>Record</Button>

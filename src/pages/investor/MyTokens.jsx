@@ -93,7 +93,7 @@ export default function MyTokens() {
             <p className="text-sm font-semibold">{listToken?.tokenId} - {listToken?.units} units available</p>
           </div>
           <Input label="Units to Sell" type="number" value={listUnits} onChange={(e) => setListUnits(e.target.value)} placeholder="e.g. 5" max={listToken?.units} />
-          <Input label="Asking Price (Ã¢â€šÂ¦)" type="number" value={listPrice} onChange={(e) => setListPrice(e.target.value)} placeholder="e.g. 500000" />
+          <Input label="Asking Price (₦)" type="number" value={listPrice} onChange={(e) => setListPrice(e.target.value)} placeholder="e.g. 500000" />
           <div className="flex gap-3 justify-end pt-2">
             <Button variant="outline" onClick={() => setListToken(null)}>Cancel</Button>
             <Button onClick={handleList} disabled={saving || !listPrice || !listUnits}>List for Sale</Button>

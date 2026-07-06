@@ -179,7 +179,7 @@ export default function CampaignDetail() {
               <div className="flex justify-between text-sm"><span className="text-gray-600">Campaign</span><span className="font-semibold">{campaign.title}</span></div>
               <div className="flex justify-between text-sm"><span className="text-gray-600">Min Investment</span><span className="font-semibold">{formatNaira(campaign.minInvestment)}</span></div>
             </div>
-            <Input label="Amount (Ã¢â€šÂ¦)" type="number" value={amount} onChange={(e) => setAmount(e.target.value)}
+            <Input label="Amount (₦)" type="number" value={amount} onChange={(e) => setAmount(e.target.value)}
               placeholder="Enter amount" min={campaign.minInvestment} />
             {investError && <p className="text-sm text-red-600 flex items-center gap-1"><AlertCircle size={14} />{investError}</p>}
             <div className="flex gap-3 justify-end pt-2">

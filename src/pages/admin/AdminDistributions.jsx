@@ -186,7 +186,7 @@ export default function AdminDistributions() {
               </div>
             )}
           </div>
-          <Input label="Amount (Ã¢â€šÂ¦)" type="number" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} placeholder="e.g. 50000" />
+          <Input label="Amount (₦)" type="number" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} placeholder="e.g. 50000" />
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
             <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}

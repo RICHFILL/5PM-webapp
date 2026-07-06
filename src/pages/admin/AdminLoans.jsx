@@ -169,7 +169,7 @@ export default function AdminLoans() {
             </div>
           ) : (
             <div className="space-y-4">
-              <Input label="Repayment Amount (Ã¢â€šÂ¦)" type="number" value={repayAmount} onChange={(e) => setRepayAmount(e.target.value)} placeholder="Enter amount" />
+              <Input label="Repayment Amount (₦)" type="number" value={repayAmount} onChange={(e) => setRepayAmount(e.target.value)} placeholder="Enter amount" />
               <div className="flex gap-3 justify-end">
                 <Button variant="outline" onClick={() => setActionLoan(null)}>Cancel</Button>
                 <Button onClick={() => handleRepay(actionLoan.id)} disabled={saving || !repayAmount}>Record</Button>
