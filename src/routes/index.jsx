@@ -41,6 +41,8 @@ const PropertyDetail = lazy(() => import('../pages/investor/PropertyDetail'));
 const Portfolio = lazy(() => import('../pages/investor/Portfolio'));
 const Reports = lazy(() => import('../pages/investor/Reports'));
 const Notifications = lazy(() => import('../pages/investor/Notifications'));
+const InvestorHelpCentre = lazy(() => import('../pages/investor/HelpCentre'));
+const InvestorHelpCentreArticle = lazy(() => import('../pages/investor/HelpArticle'));
 
 // Investor pages: Wealth Plans
 const WealthPlans = lazy(() => import('../pages/investor/WealthPlans'));
@@ -238,8 +240,8 @@ function AppRoutes() {
         <Route path="/reit" element={<ProtectedRoute><ReitPools /></ProtectedRoute>} />
         <Route path="/tokens" element={<ProtectedRoute><MyTokens /></ProtectedRoute>} />
         <Route path="/tokens/marketplace" element={<ProtectedRoute><TokenMarketplace /></ProtectedRoute>} />
-        <Route path="/help-centre" element={<ProtectedRoute><HelpCentre /></ProtectedRoute>} />
-        <Route path="/help-centre/:id" element={<ProtectedRoute><HelpArticle /></ProtectedRoute>} />
+        <Route path="/help-centre" element={<ProtectedRoute><InvestorHelpCentre /></ProtectedRoute>} />
+        <Route path="/help-centre/:id" element={<ProtectedRoute><InvestorHelpCentreArticle /></ProtectedRoute>} />
 
         {/* Admin routes */}
         <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
