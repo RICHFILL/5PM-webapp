@@ -10,14 +10,21 @@ function VerifyEmail() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [verified, setVerified] = useState(false);
+  const [resent, setResent] = useState(false);
 
   const getEmail = () => {
     const stateEmail = location.state?.email;
     if (stateEmail) return stateEmail;
     try {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
-      return user.email || '';
-    } catch { return ''; }
+      if (user.email) return user.email;
+    } catch { }
+    const stored = localStorage.getItem('verifyEmail');
+    if (stored) {
+      localStorage.removeItem('verifyEmail');
+      return stored;
+    }
+    return '';
   };
 
   const email = getEmail();
@@ -43,9 +50,11 @@ function VerifyEmail() {
   const handleResend = async () => {
     if (!email) return;
     setError("");
+    setResent(false);
     setLoading(true);
     try {
       await authApi.resendVerification(email);
+      setResent(true);
     } catch (err) {
       setError(err.message || "Failed to resend code");
     } finally { setLoading(false); }
@@ -61,7 +70,7 @@ function VerifyEmail() {
     try {
       await authApi.verifyEmail(email, token);
       setVerified(true);
-      setTimeout(() => navigate("/dashboard"), 2000);
+      setTimeout(() => navigate("/login"), 2000);
     } catch (err) {
       setError(err.message || "Invalid or expired verification code");
     } finally { setLoading(false); }
@@ -74,7 +83,7 @@ function VerifyEmail() {
           <CheckCircle2 className="text-green-600" size={32} />
         </div>
         <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">Email Verified!</h2>
-        <p className="text-gray-600">Redirecting to your dashboard...</p>
+        <p className="text-gray-600">Redirecting to login...</p>
       </div>
     );
   }
@@ -94,6 +103,7 @@ function VerifyEmail() {
       </div>
 
       {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">{error}</div>}
+      {resent && <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6">Verification code resent successfully!</div>}
 
       <form onSubmit={handleSubmit}>
         <div className="flex gap-3 justify-center mb-8">

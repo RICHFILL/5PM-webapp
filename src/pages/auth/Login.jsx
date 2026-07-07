@@ -44,6 +44,7 @@ function Login() {
       window.location.href = redirectTo;
     } catch (err) {
       if (err.response?.status === 403 && err.response?.data?.message?.toLowerCase().includes('not verified')) {
+        localStorage.setItem('verifyEmail', email);
         window.location.href = '/verify-email';
         return;
       }
