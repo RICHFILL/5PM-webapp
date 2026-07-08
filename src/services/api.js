@@ -177,6 +177,18 @@ export const adminApi = {
   assignUserRole: (id, role) =>
     api.patch(`/admin/users/${id}/role`, { role }).then((r) => r.data),
   deleteUser: (id) => api.delete(`/admin/users/${id}`).then((r) => r.data),
+  createUser: (data) =>
+    api.post("/admin/users", data).then((r) => r.data),
+  importUsers: (formData) =>
+    api.post("/admin/users/import", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    }).then((r) => r.data),
+  downloadTemplate: () =>
+    api.get("/admin/users/template", { responseType: "blob" }).then((r) => {
+      const url = URL.createObjectURL(new Blob([r.data], { type: "text/csv" }));
+      const a = document.createElement("a"); a.href = url; a.download = "user-import-template.csv"; a.click();
+      URL.revokeObjectURL(url);
+    }),
   getKycRequests: (params) => {
     const q = new URLSearchParams(params).toString();
     return api.get(`/admin/kyc?${q}`).then((r) => r.data);
