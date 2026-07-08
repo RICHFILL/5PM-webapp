@@ -65,8 +65,8 @@ const ReitPools = lazy(() => import('../pages/investor/ReitPools'));
 const MyTokens = lazy(() => import('../pages/investor/MyTokens'));
 const TokenMarketplace = lazy(() => import('../pages/investor/TokenMarketplace'));
 const AIAnalytics = lazy(() => import('../pages/investor/AIAnalytics'));
-const HelpCentre = lazy(() => import('../pages/investor/HelpCentre'));
-const HelpArticle = lazy(() => import('../pages/investor/HelpArticle'));
+// const HelpCentre = lazy(() => import('../pages/investor/HelpCentre'));
+// const HelpArticle = lazy(() => import('../pages/investor/HelpArticle'));
 
 // Admin pages
 const AdminDashboard = lazy(() => import('../pages/admin/AdminDashboard'));

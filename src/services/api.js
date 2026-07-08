@@ -467,6 +467,7 @@ export const adminSettingsApi = {
   getAll: () => api.get("/admin/settings").then((r) => r.data),
   update: (key, value) =>
     api.put(`/admin/settings/${key}`, { value }).then((r) => r.data),
+  getProviders: () => api.get("/admin/settings/providers").then((r) => r.data),
 };
 
 // --- Help Centre ---
