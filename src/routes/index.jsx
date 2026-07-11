@@ -4,6 +4,7 @@ import useAuthStore from '../store/authStore';
 import { AuthLayout, DashboardLayout, AdminLayout, PublicLayout } from '../layouts';
 import { Spinner } from '../components/common';
 import KycGuard from '../components/KycGuard';
+import AdminImportUsers from '../pages/admin/AdminImportUsers';
 
 // Public pages
 const LandingPage = lazy(() => import('../pages/public/LandingPage'));
@@ -269,6 +270,7 @@ function AppRoutes() {
         <Route path="/admin/withdrawals" element={<AdminRoute><AdminWithdrawals /></AdminRoute>} />
         <Route path="/admin/audit-logs" element={<AdminRoute><AdminAuditLogs /></AdminRoute>} />
         <Route path="/admin/settings" element={<AdminRoute><AdminSettings /></AdminRoute>} />
+        <Route path="/admin/import-users" element={<AdminRoute><AdminImportUsers /></AdminRoute>} />
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to={isAuthenticated ? '/dashboard' : '/'} replace />} />
