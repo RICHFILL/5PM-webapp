@@ -45,6 +45,7 @@ export const ROUTES = {
   ADMIN_PROPERTIES: '/admin/properties',
   ADMIN_DISTRIBUTIONS: '/admin/distributions',
   ADMIN_REPORTS: '/admin/reports',
+  ADMIN_INVESTMENT_PRODUCTS: '/admin/investment-products',
 };
 
 export const KYC_STEPS = [

@@ -25,6 +25,7 @@ import {
   Landmark,
   ArrowUpDown,
   ClipboardList,
+  Package,
   Settings,
 } from 'lucide-react';
 import useAuthStore from '../store/authStore';
@@ -37,6 +38,7 @@ const adminMenuItems = [
   { label: 'KYC Management', icon: Shield, path: '/admin/kyc' },
   { label: 'Wallet Management', icon: Wallet, path: '/admin/wallets' },
   { label: 'Investments', icon: TrendingUp, path: '/admin/investments' },
+  { label: 'Investment Products', icon: Package, path: '/admin/investment-products' },
   { label: 'Properties', icon: Building2, path: '/admin/properties' },
   { label: 'Distributions', icon: Gift, path: '/admin/distributions' },
   { label: 'Crowdfunding', icon: Target, path: '/admin/campaigns' },

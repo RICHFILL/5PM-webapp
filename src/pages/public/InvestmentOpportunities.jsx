@@ -1,46 +1,12 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, TrendingUp, Building2, PiggyBank, Clock, Shield, CheckCircle } from "lucide-react";
-import { Button } from "../../components/common";
+import {
+  ArrowRight, TrendingUp, TrendingDown, Building2, PiggyBank,
+  Clock, Shield, CheckCircle, AlertCircle
+} from "lucide-react";
+import { Button, Skeleton } from "../../components/common";
 import { ROUTES } from "../../constants";
-
-const products = [
-  {
-    icon: PiggyBank,
-    name: "Nexus Income Vault",
-    description: "A professionally managed fixed-income product within our asset-backed fund, designed for investors seeking predictable monthly returns with capital preservation secured by real estate assets.",
-    features: ["Monthly returns up to 3.5%", "Asset-backed capital preservation", "Position confirmed upon fund deployment"],
-    roi: "Up to 3.5% monthly",
-    min: "N10,000,000",
-    minUSD: "$7,000",
-    duration: "Flexible",
-    tag: "Managed Fund",
-    image: "/assets/products/vault.png",
-  },
-  {
-    icon: Building2,
-    name: "Fractional Real Estate",
-    description: "Own a fractional share of premium real estate assets - residential developments, commercial properties, and strategic land holdings - professionally managed within our fund portfolio.",
-    features: ["Physical asset-backed security", "Monthly return distributions", "Capital appreciation on exit"],
-    roi: "Up to 3.5% monthly",
-    min: "N10,000,000",
-    minUSD: "$7,000",
-    duration: "Flexible",
-    tag: "Real Estate",
-    image: "/assets/products/realestate.png",
-  },
-  {
-    icon: PiggyBank,
-    name: "Wealth Plans",
-    description: "Diversified portfolio allocation within our managed fund, tailored to your financial goals - from steady monthly income to long-term capital appreciation through real estate assets.",
-    features: ["Professionally managed portfolio", "Risk-adjusted monthly returns", "Flexible tenure on your terms"],
-    roi: "Up to 3.5% monthly",
-    min: "N10,000,000",
-    minUSD: "$7,000",
-    duration: "Flexible",
-    tag: "Structured",
-    image: "/assets/products/wealth.png",
-  },
-];
+import { investmentApi } from "../../services/api";
 
 const benefits = [
   { icon: Shield, title: "Asset-Backed Security", description: "Every investment is secured by tangible assets, reducing counterparty risk." },
@@ -48,7 +14,40 @@ const benefits = [
   { icon: Clock, title: "Flexible Tenure", description: "Choose investment durations that match your financial planning needs." },
 ];
 
+const tagIcons = {
+  "Managed Fund": PiggyBank,
+  "Real Estate": Building2,
+  "Structured": TrendingUp,
+  "Fixed Income": TrendingDown,
+};
+
 function InvestmentOpportunities() {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const res = await investmentApi.getOpportunities({ status: "active" });
+        const items = Array.isArray(res) ? res : res?.data ?? [];
+        setProducts(items);
+      } catch {
+        setError("Failed to load investment opportunities");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetch();
+  }, []);
+
+  const formatNaira = (val) => {
+    const num = Number(val);
+    if (num >= 1_000_000) return `N${(num / 1_000_000).toFixed(0)}M`;
+    if (num >= 1_000) return `N${(num / 1_000).toFixed(0)}K`;
+    return `N${num.toLocaleString()}`;
+  };
+
   return (
     <div>
       {/* Hero */}
@@ -66,8 +65,8 @@ function InvestmentOpportunities() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               {[
-                { value: "Up to 3.5%", label: "Monthly ROI" },
-                { value: "N10M / $7K", label: "Minimum Investment" },
+                { value: products.length > 0 ? `${products[0]?.expectedROI || 3.5}%` : "Up to 3.5%", label: "Monthly ROI" },
+                { value: products.length > 0 ? formatNaira(products.reduce((min, p) => Math.min(min, Number(p.minimumInvestment)), Infinity)) : "N10M", label: "Minimum Investment" },
                 { value: "100%", label: "Asset-Backed" },
                 { value: "Flexible", label: "Tenure" },
               ].map((s) => (
@@ -84,72 +83,103 @@ function InvestmentOpportunities() {
       {/* Products */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-          {products.map((product) => (
-            <div key={product.name} className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden">
-              <div className="grid md:grid-cols-4">
-                {/* Image */}
-                <div className="relative h-48 md:h-auto overflow-hidden">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-r from-black/40 to-transparent md:bg-gradient-to-r md:from-black/30 md:to-transparent" />
-                  <div className="absolute bottom-4 left-4 md:hidden">
-                    <span className="text-xs font-bold text-white/80 uppercase tracking-wider bg-black/40 px-3 py-1 rounded-full">{product.tag}</span>
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="p-8 md:p-10 md:col-span-2">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="w-12 h-12 bg-neon-tangerine/10 rounded-xl flex items-center justify-center">
-                      <product.icon className="text-neon-tangerine" size={24} />
-                    </div>
-                    <div>
-                      <h2 className="text-xl md:text-2xl font-bold text-gray-900">{product.name}</h2>
-                      <span className="text-xs font-semibold text-neon-tangerine uppercase tracking-wider">{product.tag}</span>
-                    </div>
-                  </div>
-                  <p className="text-gray-600 leading-relaxed mb-6">{product.description}</p>
-                  <ul className="space-y-3">
-                    {product.features.map((f) => (
-                      <li key={f} className="flex items-center gap-3 text-sm text-gray-700">
-                        <CheckCircle size={16} className="text-neon-tangerine shrink-0" />
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Sidebar */}
-                <div className="bg-gray-50 p-8 md:p-10 flex flex-col justify-between border-t md:border-t-0 md:border-l border-gray-200">
-                  <div className="space-y-6">
-                    <div>
-                      <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Target ROI</p>
-                      <p className="text-2xl font-black text-neon-tangerine mt-1">{product.roi}</p>
-                    </div>
-                    <div className="w-full h-px bg-gray-200" />
-                    <div>
-                      <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Minimum Investment</p>
-                      <p className="text-lg font-bold text-gray-900 mt-1">{product.min}</p>
-                      <p className="text-sm text-gray-500 mt-0.5">{product.minUSD}</p>
-                    </div>
-                    <div className="w-full h-px bg-gray-200" />
-                    <div>
-                      <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Tenure</p>
-                      <p className="text-lg font-bold text-gray-900 mt-1">{product.duration}</p>
-                    </div>
-                  </div>
-                  <Link to={ROUTES.REGISTER} className="mt-8 block">
-                    <Button className="w-full bg-neon-tangerine hover:bg-neon-tangerine/80 text-white">
-                      Invest Now <ArrowRight size={16} />
-                    </Button>
-                  </Link>
-                </div>
-              </div>
+          {loading ? (
+            <div className="space-y-8">
+              <Skeleton className="h-64 w-full rounded-2xl" />
+              <Skeleton className="h-64 w-full rounded-2xl" />
+              <Skeleton className="h-64 w-full rounded-2xl" />
             </div>
-          ))}
+          ) : error ? (
+            <div className="flex items-center gap-3 bg-red-50 border border-red-200 rounded-xl p-6 text-sm text-red-700">
+              <AlertCircle size={20} />
+              <span>{error}</span>
+            </div>
+          ) : products.length === 0 ? (
+            <div className="text-center py-20">
+              <p className="text-gray-500 text-lg">No investment opportunities available at this time.</p>
+              <p className="text-gray-400 mt-2">Check back soon for new products.</p>
+            </div>
+          ) : (
+            products.map((product) => {
+              const Icon = tagIcons[product.tag] || PiggyBank;
+              return (
+                <div key={product.id} className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden">
+                  <div className="grid md:grid-cols-4">
+                    {/* Image */}
+                    <div className="relative h-48 md:h-auto overflow-hidden bg-gray-100">
+                      {product.image ? (
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="absolute inset-0 w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <Icon className="text-gray-300" size={64} />
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-r from-black/40 to-transparent md:bg-gradient-to-r md:from-black/30 md:to-transparent" />
+                      <div className="absolute bottom-4 left-4 md:hidden">
+                        <span className="text-xs font-bold text-white/80 uppercase tracking-wider bg-black/40 px-3 py-1 rounded-full">{product.tag || "Investment"}</span>
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    <div className="p-8 md:p-10 md:col-span-2">
+                      <div className="flex items-center gap-4 mb-4">
+                        <div className="w-12 h-12 bg-neon-tangerine/10 rounded-xl flex items-center justify-center">
+                          <Icon className="text-neon-tangerine" size={24} />
+                        </div>
+                        <div>
+                          <h2 className="text-xl md:text-2xl font-bold text-gray-900">{product.name}</h2>
+                          {product.tag && (
+                            <span className="text-xs font-semibold text-neon-tangerine uppercase tracking-wider">{product.tag}</span>
+                          )}
+                        </div>
+                      </div>
+                      <p className="text-gray-600 leading-relaxed mb-6">{product.description}</p>
+                      {product.features && product.features.length > 0 && (
+                        <ul className="space-y-3">
+                          {product.features.map((f, i) => (
+                            <li key={i} className="flex items-center gap-3 text-sm text-gray-700">
+                              <CheckCircle size={16} className="text-neon-tangerine shrink-0" />
+                              {f}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+
+                    {/* Sidebar */}
+                    <div className="bg-gray-50 p-8 md:p-10 flex flex-col justify-between border-t md:border-t-0 md:border-l border-gray-200">
+                      <div className="space-y-6">
+                        <div>
+                          <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Target ROI</p>
+                          <p className="text-2xl font-black text-neon-tangerine mt-1">{product.roiDisplay || `${product.expectedROI}%`}</p>
+                        </div>
+                        <div className="w-full h-px bg-gray-200" />
+                        <div>
+                          <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Minimum Investment</p>
+                          <p className="text-lg font-bold text-gray-900 mt-1">{formatNaira(product.minimumInvestment)}</p>
+                          {product.minUSD && <p className="text-sm text-gray-500 mt-0.5">{product.minUSD}</p>}
+                        </div>
+                        <div className="w-full h-px bg-gray-200" />
+                        <div>
+                          <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Tenure</p>
+                          <p className="text-lg font-bold text-gray-900 mt-1">{product.duration} months</p>
+                        </div>
+                      </div>
+                      <Link to={ROUTES.REGISTER} className="mt-8 block">
+                        <Button className="w-full bg-neon-tangerine hover:bg-neon-tangerine/80 text-white">
+                          Invest Now <ArrowRight size={16} />
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
       </section>
 

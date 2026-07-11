@@ -91,6 +91,7 @@ const AdminDeposits = lazy(() => import('../pages/admin/AdminDeposits'));
 const AdminWithdrawals = lazy(() => import('../pages/admin/AdminWithdrawals'));
 const AdminAuditLogs = lazy(() => import('../pages/admin/AdminAuditLogs'));
 const InvestmentDetail = lazy(() => import('../pages/admin/InvestmentDetail'));
+const AdminInvestmentProducts = lazy(() => import('../pages/admin/AdminInvestmentProducts'));
 const AdminSettings = lazy(() => import('../pages/admin/AdminSettings'));
 
 function Loading() {
@@ -249,6 +250,7 @@ function AppRoutes() {
         <Route path="/admin/kyc" element={<AdminRoute><AdminKyc /></AdminRoute>} />
         <Route path="/admin/wallets" element={<AdminRoute><AdminWallets /></AdminRoute>} />
         <Route path="/admin/reports" element={<AdminRoute><AdminReports /></AdminRoute>} />
+        <Route path="/admin/investment-products" element={<AdminRoute><AdminInvestmentProducts /></AdminRoute>} />
         <Route path="/admin/investments" element={<AdminRoute><AdminInvestments /></AdminRoute>} />
         <Route path="/admin/investments/:id" element={<AdminRoute><InvestmentDetail /></AdminRoute>} />
         <Route path="/admin/properties" element={<AdminRoute><AdminProperties /></AdminRoute>} />

@@ -468,6 +468,24 @@ export const adminAuthApi = {
     api.post("/admin/auth/create-user", data).then((r) => r.data),
 };
 
+// --- Admin Investment Products ---
+export const adminProductApi = {
+  getAll: (params) => {
+    const q = new URLSearchParams(params).toString();
+    return api.get(`/investment-products?${q}`).then((r) => r.data);
+  },
+  getById: (id) => api.get(`/investment-products/${id}`).then((r) => r.data),
+  create: (formData) =>
+    api.post("/investment-products", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    }).then((r) => r.data),
+  update: (id, formData) =>
+    api.patch(`/investment-products/${id}`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    }).then((r) => r.data),
+  archive: (id) => api.delete(`/investment-products/${id}`).then((r) => r.data),
+};
+
 // --- Admin Settings ---
 export const adminKycSettingsApi = {
   getMode: () => api.get("/admin/settings/kyc").then((r) => r.data),

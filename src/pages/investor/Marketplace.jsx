@@ -6,7 +6,7 @@ import useAuthStore from "../../store/authStore";
 import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
 import { formatNaira } from '../../utils/format';
 
-const formatROI = (roi) => "3.5%";
+const formatROI = (roi) => roi || "3.5%";
 
 function InvestModal({ isOpen, onClose, product }) {
   const { user } = useAuthStore();
@@ -15,7 +15,7 @@ function InvestModal({ isOpen, onClose, product }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const minAmount = product?.minInvestment || 0;
+  const minAmount = product?.minimumInvestment || product?.minInvestment || 0;
 
   const handleInvest = async (e) => {
     e.preventDefault();
@@ -26,13 +26,8 @@ function InvestModal({ isOpen, onClose, product }) {
     setLoading(true); setError("");
     try {
       await investmentApi.createInvestment({
-        user: user._id,
-        project: product.name || product.projectName,
+        productId: product.id,
         amount: Number(amount),
-        interestRatePerAnnum: product.roi || product.interestRatePerAnnum,
-        tenure: product.tenure || product.duration,
-        repaymentStructure: product.repaymentStructure || "interest only",
-        startDate: new Date().toISOString(),
       });
       setStep("confirmation");
     } catch (err) {
@@ -45,9 +40,9 @@ function InvestModal({ isOpen, onClose, product }) {
       {step === "form" ? (
         <form onSubmit={handleInvest} className="space-y-4">
           <div className="bg-neon-tangerine/10 rounded-xl p-4 space-y-2">
-            <div className="flex justify-between text-sm"><span className="text-gray-600">Expected ROI</span><span className="font-semibold">{formatROI(product?.roi)}</span></div>
+            <div className="flex justify-between text-sm"><span className="text-gray-600">Expected ROI</span><span className="font-semibold">{formatROI(product?.roiDisplay || product?.expectedROI)}</span></div>
             <div className="flex justify-between text-sm"><span className="text-gray-600">Minimum Investment</span><span className="font-semibold">{formatNaira(minAmount)}</span></div>
-            <div className="flex justify-between text-sm"><span className="text-gray-600">Duration</span><span className="font-semibold">{product?.tenure || product?.duration || "--"} months</span></div>
+            <div className="flex justify-between text-sm"><span className="text-gray-600">Duration</span><span className="font-semibold">{product?.duration || product?.tenure || "--"} months</span></div>
           </div>
           <Input label="Investment Amount (NGN)" type="number" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder={`Min ${formatNaira(minAmount)}`} required min={minAmount} />
           {error && <p className="text-sm text-red-600 flex items-center gap-1"><AlertCircle size={14} />{error}</p>}
@@ -133,15 +128,15 @@ export default function Marketplace() {
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <TrendingUp size={16} className="text-neon-tangerine" />
-                    <span>ROI: <strong className="text-gray-900">{formatROI(product.roi)}</strong></span>
+                    <span>ROI: <strong className="text-gray-900">{formatROI(product.roiDisplay || product.expectedROI)}</strong></span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <DollarSign size={16} className="text-neon-tangerine" />
-                    <span>Min: <strong className="text-gray-900">{formatNaira(product.minInvestment || product.minimumInvestment)}</strong></span>
+                    <span>Min: <strong className="text-gray-900">{formatNaira(product.minimumInvestment || product.minInvestment)}</strong></span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Clock size={16} className="text-neon-tangerine" />
-                    <span>Duration: <strong className="text-gray-900">{product.tenure || product.duration || "--"} months</strong></span>
+                    <span>Duration: <strong className="text-gray-900">{product.duration || product.tenure || "--"} months</strong></span>
                   </div>
                 </div>
               </div>
