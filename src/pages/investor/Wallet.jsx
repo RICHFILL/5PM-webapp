@@ -4,6 +4,7 @@ import { dashboardApi, userApi, walletApi, depositApi } from "../../services/api
 import useAuthStore from "../../store/authStore";
 import useWalletStore from "../../store/walletStore";
 import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
+import { getGreeting } from "../../utils/greetings";
 
 const CURRENCIES = [
   { value: "NGN", label: "NGN", symbol: "₦", format: (v) => "₦" + Math.abs(v || 0).toLocaleString("en-NG") },
@@ -362,7 +363,7 @@ export default function Wallet() {
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
       <div className="mb-4">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Good morning, {user?.firstName}</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">{getGreeting()}, {user?.firstName}</h1>
         <p className="text-gray-600">Manage your wallet and transactions</p>
       </div>
 

@@ -5,6 +5,7 @@ import { userApi, propertyApi } from "../../services/api";
 import useAuthStore from "../../store/authStore";
 import { Card, Skeleton, Badge } from "../../components/common";
 import { formatCurrencyAmount } from "../../utils/currency";
+import { getGreeting } from "../../utils/greetings";
 
 export default function MyInvestments() {
   const navigate = useNavigate();
@@ -140,7 +141,7 @@ export default function MyInvestments() {
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-4 md:space-y-6">
       <div className="mb-4 md:mb-8">
         <h1 className="text-xl md:text-3xl font-bold text-gray-900">
-          Good morning, {localUser?.firstName}
+          {getGreeting()}, {localUser?.firstName}
         </h1>
         <p className="text-gray-600 text-sm md:text-base">
           Welcome back to your investment dashboard

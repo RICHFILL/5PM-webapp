@@ -6,6 +6,7 @@ import useAuthStore from "../../store/authStore";
 import { Card, Skeleton } from "../../components/common";
 import WithdrawalRequestModal from "../../components/WithdrawalRequestModal";
 import { PortfolioGrowthChart, InvestmentPerformanceChart, ReturnHistoryChart } from "../../components/charts";
+import { getGreeting } from "../../utils/greetings";
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -134,7 +135,7 @@ function Dashboard() {
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto">
       <div className="mb-6 md:mb-8">
-        <h1 className="text-xl md:text-3xl font-bold text-gray-900">Good morning, {user?.firstName}</h1>
+        <h1 className="text-xl md:text-3xl font-bold text-gray-900">{getGreeting()}, {user?.firstName}</h1>
         <p className="text-gray-600 text-sm md:text-base">Welcome back to your investment dashboard</p>
       </div>
 
