@@ -109,8 +109,11 @@ function PublicRoute({ children }) {
 }
 
 function ProtectedRoute({ children, requiredRole, kycGate = true }) {
-  const { isAuthenticated, user } = useAuthStore();
-  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  const { isAuthenticated, user, logout } = useAuthStore();
+  if (!isAuthenticated) {
+    logout();
+    return <Navigate to="/login" replace />
+  };
   if (requiredRole && user?.role !== requiredRole) return <Navigate to="/dashboard" replace />;
   if (kycGate) return <DashboardLayout><KycGuard>{children}</KycGuard></DashboardLayout>;
   return <DashboardLayout>{children}</DashboardLayout>;

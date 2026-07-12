@@ -25,7 +25,8 @@ api.interceptors.response.use(
       localStorage.removeItem("authToken");
       localStorage.removeItem("accessToken");
       localStorage.removeItem("user");
-      window.location.href = "/login";
+      console.log("Unauthorized access - logging out user and redirecting to login page.", error.response);
+      // window.location.href = "/login";
     }
     if (error.response?.status === 403) {
       error.message = error.response?.data?.message || error.message;
