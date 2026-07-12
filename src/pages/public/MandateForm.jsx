@@ -21,6 +21,7 @@ const initialState = {
   investmentAmount: "",
   preferredTenor: "",
   interestRateRange: "",
+  repaymentOption: "",
   effectiveDate: "",
   preferredBorrowerCompany: "",
   otherPreference: "",
@@ -73,6 +74,7 @@ const STEPS = [
       "investmentAmount",
       "preferredTenor",
       "interestRateRange",
+      "repaymentOption",
       "effectiveDate",
     ],
   },
@@ -535,6 +537,23 @@ export default function InvestmentMandateForm() {
               className={inputClass}
             />
             {errors.interestRateRange && (
+              <p className="text-xs text-red-500 mt-1">Required</p>
+            )}
+          </Field>
+
+          <Field label="Repayment Option" required>
+            <select
+              value={form.repaymentOption}
+              onChange={update("repaymentOption")}
+              className={inputClass}
+            >
+              <option value="">Select an option</option>
+              <option value="Monthly">Monthly</option>
+              <option value="Quarterly">Quarterly</option>
+              <option value="Bi-annual">Bi-annual</option>
+              <option value="Yearly">Yearly</option>
+            </select>
+            {errors.repaymentOption && (
               <p className="text-xs text-red-500 mt-1">Required</p>
             )}
           </Field>
