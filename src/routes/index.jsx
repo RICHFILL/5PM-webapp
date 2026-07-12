@@ -5,6 +5,7 @@ import { AuthLayout, DashboardLayout, AdminLayout, PublicLayout } from '../layou
 import { Spinner } from '../components/common';
 import KycGuard from '../components/KycGuard';
 import AdminImportUsers from '../pages/admin/AdminImportUsers';
+import InvestmentMandateForm from '../pages/public/MandateForm';
 
 // Public pages
 const LandingPage = lazy(() => import('../pages/public/LandingPage'));
@@ -134,6 +135,7 @@ function AppRoutes() {
         <Route path="/opportunities" element={<PublicRoute><InvestmentOpportunities /></PublicRoute>} />
         <Route path="/how-it-works" element={<PublicRoute><HowItWorks /></PublicRoute>} />
         <Route path="/contact" element={<PublicRoute><ContactUs /></PublicRoute>} />
+        <Route path="/mandate-form" element={<PublicRoute><InvestmentMandateForm /></PublicRoute>} />
         <Route path="/faq" element={<PublicRoute><FAQ /></PublicRoute>} />
         <Route path="/help" element={<PublicRoute><HelpCentre /></PublicRoute>} />
         <Route path="/help/:id" element={<PublicRoute><HelpArticle /></PublicRoute>} />
