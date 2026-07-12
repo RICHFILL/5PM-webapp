@@ -86,11 +86,11 @@ export default function InvestDetail() {
           </div>
           <div className="bg-slate-50 rounded-xl p-4">
             <div className="flex items-center gap-2 text-xs text-gray-500 mb-1"><Percent size={14} />Interest Rate</div>
-            <p className="text-lg font-bold text-gray-900">{investment.interestRatePerAnnum ?? investment.roi}% monthly</p>
+            <p className="text-lg font-bold text-gray-900">3.5% monthly</p>
           </div>
           <div className="bg-slate-50 rounded-xl p-4">
             <div className="flex items-center gap-2 text-xs text-gray-500 mb-1"><Clock size={14} />Tenure</div>
-            <p className="text-lg font-bold text-gray-900">{investment.tenure || 0} months</p>
+            <p className="text-lg font-bold text-gray-900">{investment.tenure || 12} months</p>
           </div>
           <div className="bg-slate-50 rounded-xl p-4">
             <div className="flex items-center gap-2 text-xs text-gray-500 mb-1"><Calendar size={14} />Start Date</div>
