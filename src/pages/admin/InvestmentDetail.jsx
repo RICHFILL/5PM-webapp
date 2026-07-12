@@ -187,7 +187,7 @@ export default function InvestmentDetail() {
     },
     {
       label: "Interest Earned",
-      value: formatCurrency(investment?.interestEarned),
+      value: formatCurrency(Number(investment?.interestEarned)-Number(investment?.amount)),
       icon: FileText,
     },
     {
