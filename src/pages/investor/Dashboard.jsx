@@ -158,12 +158,12 @@ function Dashboard() {
             </div>
             <div className="bg-white/10 rounded-lg px-3 py-2 md:px-4 md:py-2.5 backdrop-blur-sm">
               <p className="text-white/60 text-xs md:text-sm font-medium mb-1">Total Due</p>
-              <p className="text-sm md:text-base font-bold">{formatCurrency(0)}</p>
+              <p className="text-sm md:text-base font-bold">{formatCurrency(totalInvested || 0)}</p>
             </div>
-            <div className="bg-white/10 rounded-lg px-3 py-2 md:px-4 md:py-2.5 backdrop-blur-sm">
+            {/* <div className="bg-white/10 rounded-lg px-3 py-2 md:px-4 md:py-2.5 backdrop-blur-sm">
               <p className="text-white/60 text-xs md:text-sm font-medium mb-1">Balance Left</p>
               <p className="text-sm md:text-base font-bold">{formatCurrency(paymentTotals.balanceLeft)}</p>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
