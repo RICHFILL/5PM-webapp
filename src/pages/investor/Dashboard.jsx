@@ -135,8 +135,9 @@ function Dashboard() {
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto">
       <div className="mb-6 md:mb-8">
-        <h1 className="text-xl md:text-3xl font-bold text-gray-900">{getGreeting()}, {user?.firstName}</h1>
-        <p className="text-gray-600 text-sm md:text-base">Welcome back to your investment dashboard</p>
+        <h3 className="text-lg md:text-xl font-bold text-gray-900">{getGreeting()}, {user?.firstName+" "+user?.lastName}</h3>
+        <p className="text-gray-600 text-sm md:text-base">Complete your KYC to access your investment features</p>
+        {/* <p className="text-gray-600 text-sm md:text-base">Welcome back to your investment dashboard</p> */}
       </div>
 
       <div className="bg-dark-lavender rounded-2xl text-white px-4 py-6 md:px-7 md:py-8 mb-6 md:mb-8 shadow-lg">
