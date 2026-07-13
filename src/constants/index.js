@@ -1,5 +1,5 @@
 export const API_BASE_URL =
-  import.meta.env.VITE_API_URL || 'http://localhost:5056/api/v1';//'https://backend-api.5pmnexus.com/api/v1'//'https://maroon-hummingbird-953551.hostingersite.com/api/v1';
+  import.meta.env.VITE_API_URL || 'https://backend-api.5pmnexus.com/api/v1'//'https://maroon-hummingbird-953551.hostingersite.com/api/v1';
 //'http://localhost:5056/api/v1';
 
 export const ROUTES = {
