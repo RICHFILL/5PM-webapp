@@ -21,7 +21,7 @@ function VerifyEmail() {
     } catch { }
     const stored = localStorage.getItem('verifyEmail');
     if (stored) {
-      localStorage.removeItem('verifyEmail');
+      // localStorage.removeItem('verifyEmail');
       return stored;
     }
     return '';
