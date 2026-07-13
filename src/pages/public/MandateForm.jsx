@@ -115,6 +115,59 @@ function Field({ label, required, children }) {
 const inputClass =
   "w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 outline-none";
 
+// Human-readable labels for error messages / summaries, keyed by form field.
+const FIELD_LABELS = {
+  title: "Title",
+  titleOther: "Title (please specify)",
+  surname: "Surname",
+  givenName: "Given Name",
+  middleName: "Given Names (Middle)",
+  dob: "Date of Birth",
+  mobile1: "Primary Mobile Number",
+  email: "Email Address",
+  homeAddress: "Home Address",
+  bvn: "BVN",
+  idName: "Name of the ID",
+  idNumber: "ID Number",
+  idIssueDate: "ID Issue Date",
+  idExpiryDate: "ID Expiry Date",
+  investmentAmount: "Amount of Investment",
+  preferredTenor: "Preferred Tenor",
+  interestRateRange: "Interest Rates (Range)",
+  repaymentOption: "Repayment Option",
+  effectiveDate: "Effective Date",
+  bank1Name: "Bank Name",
+  bank1AccountName: "Account Name",
+  bank1AccountNumber: "Account Number",
+  bank1NotifyPhone: "Transaction Notification Phone",
+  bank1NotifyEmail: "Transaction Notification Email",
+  signatureName: "Signature",
+  signatureDate: "Signature Date",
+  confirmations: "Declaration checkboxes",
+};
+
+// Shown at the top of a step when it has validation errors, so the user
+// doesn't have to hunt through the form to find what's missing.
+function ErrorSummary({ errors }) {
+  const entries = Object.entries(errors);
+  if (entries.length === 0) return null;
+  return (
+    <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3">
+      <p className="text-sm font-semibold text-red-700 mb-1">
+        Please fix the following before continuing:
+      </p>
+      <ul className="list-disc list-inside space-y-0.5">
+        {entries.map(([key, message]) => (
+          <li key={key} className="text-xs text-red-600">
+            {FIELD_LABELS[key] || key}
+            {message && message !== "Required" ? ` — ${message}` : ""}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 export default function InvestmentMandateForm() {
   const [form, setForm] = useState(initialState);
   const [photo, setPhoto] = useState(null);
@@ -133,6 +186,12 @@ export default function InvestmentMandateForm() {
     setForm((f) => ({ ...f, [key]: value }));
   };
 
+  // Applies a red border/ring to a field once it has a validation error,
+  // so the person can see exactly where the problem is, not just read
+  // about it in a summary.
+  const fieldClass = (key) =>
+    inputClass + (errors[key] ? " border-red-400 ring-2 ring-red-100" : "");
+
   const validateStep = (index) => {
     const s = STEPS[index];
     const errs = {};
@@ -145,9 +204,9 @@ export default function InvestmentMandateForm() {
     if (
       s.key === "preferences" &&
       form.investmentAmount &&
-      Number(form.investmentAmount) < 10000000
+      Number(form.investmentAmount) < 5000000
     ) {
-      errs.investmentAmount = "Minimum investment is ₦10,000,000";
+      errs.investmentAmount = "Minimum investment is ₦5,000,000";
     }
     if (
       s.key === "declaration" &&
@@ -156,12 +215,16 @@ export default function InvestmentMandateForm() {
       errs.confirmations = "Both confirmations must be checked";
     }
     setErrors(errs);
-    return Object.keys(errs).length === 0;
+    return errs;
   };
 
   const goNext = () => {
-    if (!validateStep(stepIndex)) {
-      toast.error("Please fill in all required fields before continuing");
+    const errs = validateStep(stepIndex);
+    if (Object.keys(errs).length > 0) {
+      const fieldNames = Object.keys(errs)
+        .map((k) => FIELD_LABELS[k] || k)
+        .join(", ");
+      toast.error(`Please fix: ${fieldNames}`);
       return;
     }
     setErrors({});
@@ -186,8 +249,12 @@ export default function InvestmentMandateForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateStep(stepIndex)) {
-      toast.error("Please fill in all required fields");
+    const errs = validateStep(stepIndex);
+    if (Object.keys(errs).length > 0) {
+      const fieldNames = Object.keys(errs)
+        .map((k) => FIELD_LABELS[k] || k)
+        .join(", ");
+      toast.error(`Please fix: ${fieldNames}`);
       return;
     }
     setSubmitting(true);
@@ -248,11 +315,13 @@ export default function InvestmentMandateForm() {
               <span
                 className={
                   "w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold transition-colors " +
-                  (i < stepIndex
-                    ? "bg-orange-500 text-white"
-                    : i === stepIndex
-                      ? "bg-orange-500 text-white ring-4 ring-orange-100"
-                      : "bg-gray-200 text-gray-500")
+                  (i === stepIndex && Object.keys(errors).length > 0
+                    ? "bg-red-500 text-white ring-4 ring-red-100"
+                    : i < stepIndex
+                      ? "bg-orange-500 text-white"
+                      : i === stepIndex
+                        ? "bg-orange-500 text-white ring-4 ring-orange-100"
+                        : "bg-gray-200 text-gray-500")
                 }
               >
                 {i + 1}
@@ -281,6 +350,8 @@ export default function InvestmentMandateForm() {
         </p>
       </div>
 
+      <ErrorSummary errors={errors} />
+
       {/* Step 1: Personal Information */}
       {step.key === "personal" && (
         <section>
@@ -308,7 +379,7 @@ export default function InvestmentMandateForm() {
                   placeholder="Please specify"
                   value={form.titleOther}
                   onChange={update("titleOther")}
-                  className={inputClass + " flex-1 min-w-[160px]"}
+                  className={fieldClass("titleOther") + " flex-1 min-w-[160px]"}
                 />
               )}
             </div>
@@ -322,7 +393,7 @@ export default function InvestmentMandateForm() {
               type="text"
               value={form.surname}
               onChange={update("surname")}
-              className={inputClass}
+              className={fieldClass("surname")}
             />
             {errors.surname && (
               <p className="text-xs text-red-500 mt-1">Required</p>
@@ -334,7 +405,7 @@ export default function InvestmentMandateForm() {
               type="text"
               value={form.givenName}
               onChange={update("givenName")}
-              className={inputClass}
+              className={fieldClass("givenName")}
             />
             {errors.givenName && (
               <p className="text-xs text-red-500 mt-1">Required</p>
@@ -346,7 +417,7 @@ export default function InvestmentMandateForm() {
               type="text"
               value={form.middleName}
               onChange={update("middleName")}
-              className={inputClass}
+              className={fieldClass("middleName")}
             />
             {errors.middleName && (
               <p className="text-xs text-red-500 mt-1">Required</p>
@@ -358,7 +429,7 @@ export default function InvestmentMandateForm() {
               type="date"
               value={form.dob}
               onChange={update("dob")}
-              className={inputClass}
+              className={fieldClass("dob")}
             />
             {errors.dob && (
               <p className="text-xs text-red-500 mt-1">Required</p>
@@ -372,7 +443,7 @@ export default function InvestmentMandateForm() {
                 placeholder="Primary"
                 value={form.mobile1}
                 onChange={update("mobile1")}
-                className={inputClass}
+                className={fieldClass("mobile1")}
               />
               <input
                 type="tel"
@@ -394,7 +465,7 @@ export default function InvestmentMandateForm() {
               type="email"
               value={form.email}
               onChange={update("email")}
-              className={inputClass}
+              className={fieldClass("email")}
             />
             {errors.email && (
               <p className="text-xs text-red-500 mt-1">Required</p>
@@ -406,7 +477,7 @@ export default function InvestmentMandateForm() {
               rows={2}
               value={form.homeAddress}
               onChange={update("homeAddress")}
-              className={inputClass}
+              className={fieldClass("homeAddress")}
             />
             {errors.homeAddress && (
               <p className="text-xs text-red-500 mt-1">Required</p>
@@ -419,7 +490,7 @@ export default function InvestmentMandateForm() {
               maxLength={11}
               value={form.bvn}
               onChange={update("bvn")}
-              className={inputClass}
+              className={fieldClass("bvn")}
             />
             {errors.bvn && (
               <p className="text-xs text-red-500 mt-1">Required</p>
@@ -450,7 +521,7 @@ export default function InvestmentMandateForm() {
                 placeholder="e.g. National ID, Passport, Driver's Licence"
                 value={form.idName}
                 onChange={update("idName")}
-                className={inputClass}
+                className={fieldClass("idName")}
               />
             </Field>
             <Field label="ID Number" required>
@@ -458,7 +529,7 @@ export default function InvestmentMandateForm() {
                 type="text"
                 value={form.idNumber}
                 onChange={update("idNumber")}
-                className={inputClass}
+                className={fieldClass("idNumber")}
               />
             </Field>
             <Field label="Issue Date" required>
@@ -466,7 +537,7 @@ export default function InvestmentMandateForm() {
                 type="date"
                 value={form.idIssueDate}
                 onChange={update("idIssueDate")}
-                className={inputClass}
+                className={fieldClass("idIssueDate")}
               />
             </Field>
             <Field label="Expiry Date" required>
@@ -474,18 +545,10 @@ export default function InvestmentMandateForm() {
                 type="date"
                 value={form.idExpiryDate}
                 onChange={update("idExpiryDate")}
-                className={inputClass}
+                className={fieldClass("idExpiryDate")}
               />
             </Field>
           </div>
-          {(errors.idName ||
-            errors.idNumber ||
-            errors.idIssueDate ||
-            errors.idExpiryDate) && (
-            <p className="text-xs text-red-500 mt-1">
-              Please complete all identification fields
-            </p>
-          )}
         </section>
       )}
 
@@ -497,16 +560,16 @@ export default function InvestmentMandateForm() {
           </h2>
 
           <Field
-            label="Amount of Investment (minimum ₦10,000,000, multiples of ₦100,000 thereafter)"
+            label="Amount of Investment (minimum ₦5,000,000, multiples of ₦100,000 thereafter)"
             required
           >
             <input
               type="number"
               step="100000"
-              min="10000000"
+              min="5000000"
               value={form.investmentAmount}
               onChange={update("investmentAmount")}
-              className={inputClass}
+              className={fieldClass("investmentAmount")}
             />
             {errors.investmentAmount && (
               <p className="text-xs text-red-500 mt-1">
@@ -521,7 +584,7 @@ export default function InvestmentMandateForm() {
               placeholder="e.g. 12 months"
               value={form.preferredTenor}
               onChange={update("preferredTenor")}
-              className={inputClass}
+              className={fieldClass("preferredTenor")}
             />
             {errors.preferredTenor && (
               <p className="text-xs text-red-500 mt-1">Required</p>
@@ -534,7 +597,7 @@ export default function InvestmentMandateForm() {
               placeholder="e.g. 3.5% - 4.0% monthly"
               value={form.interestRateRange}
               onChange={update("interestRateRange")}
-              className={inputClass}
+              className={fieldClass("interestRateRange")}
             />
             {errors.interestRateRange && (
               <p className="text-xs text-red-500 mt-1">Required</p>
@@ -545,7 +608,7 @@ export default function InvestmentMandateForm() {
             <select
               value={form.repaymentOption}
               onChange={update("repaymentOption")}
-              className={inputClass}
+              className={fieldClass("repaymentOption")}
             >
               <option value="">Select an option</option>
               <option value="Monthly">Monthly</option>
@@ -563,7 +626,7 @@ export default function InvestmentMandateForm() {
               type="date"
               value={form.effectiveDate}
               onChange={update("effectiveDate")}
-              className={inputClass}
+              className={fieldClass("effectiveDate")}
             />
             {errors.effectiveDate && (
               <p className="text-xs text-red-500 mt-1">Required</p>
@@ -603,7 +666,7 @@ export default function InvestmentMandateForm() {
                   type="text"
                   value={form.bank1Name}
                   onChange={update("bank1Name")}
-                  className={inputClass}
+                  className={fieldClass("bank1Name")}
                 />
               </Field>
               <Field label="Account Name" required>
@@ -611,7 +674,7 @@ export default function InvestmentMandateForm() {
                   type="text"
                   value={form.bank1AccountName}
                   onChange={update("bank1AccountName")}
-                  className={inputClass}
+                  className={fieldClass("bank1AccountName")}
                 />
               </Field>
               <Field label="Account Number" required>
@@ -619,7 +682,7 @@ export default function InvestmentMandateForm() {
                   type="text"
                   value={form.bank1AccountNumber}
                   onChange={update("bank1AccountNumber")}
-                  className={inputClass}
+                  className={fieldClass("bank1AccountNumber")}
                 />
               </Field>
               <div />
@@ -628,7 +691,7 @@ export default function InvestmentMandateForm() {
                   type="tel"
                   value={form.bank1NotifyPhone}
                   onChange={update("bank1NotifyPhone")}
-                  className={inputClass}
+                  className={fieldClass("bank1NotifyPhone")}
                 />
               </Field>
               <Field label="Transaction Notification (Email Address)" required>
@@ -636,7 +699,7 @@ export default function InvestmentMandateForm() {
                   type="email"
                   value={form.bank1NotifyEmail}
                   onChange={update("bank1NotifyEmail")}
-                  className={inputClass}
+                  className={fieldClass("bank1NotifyEmail")}
                 />
               </Field>
             </div>
@@ -772,7 +835,7 @@ export default function InvestmentMandateForm() {
                 type="text"
                 value={form.signatureName}
                 onChange={update("signatureName")}
-                className={inputClass}
+                className={fieldClass("signatureName")}
               />
               {errors.signatureName && (
                 <p className="text-xs text-red-500 mt-1">Required</p>
@@ -783,7 +846,7 @@ export default function InvestmentMandateForm() {
                 type="date"
                 value={form.signatureDate}
                 onChange={update("signatureDate")}
-                className={inputClass}
+                className={fieldClass("signatureDate")}
               />
               {errors.signatureDate && (
                 <p className="text-xs text-red-500 mt-1">Required</p>

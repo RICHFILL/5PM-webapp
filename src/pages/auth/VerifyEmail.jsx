@@ -11,23 +11,17 @@ function VerifyEmail() {
   const [loading, setLoading] = useState(false);
   const [verified, setVerified] = useState(false);
   const [resent, setResent] = useState(false);
-
-  const getEmail = () => {
+  const [email] = useState(() => {
     const stateEmail = location.state?.email;
     if (stateEmail) return stateEmail;
-    try {
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-      if (user.email) return user.email;
-    } catch { }
-    const stored = localStorage.getItem('verifyEmail');
-    if (stored) {
-      // localStorage.removeItem('verifyEmail');
-      return stored;
-    }
-    return '';
-  };
 
-  const email = getEmail();
+    try {
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      if (user.email) return user.email;
+    } catch {}
+
+    return localStorage.getItem("verifyEmail") || "";
+  });
 
   const handleChange = (index, value) => {
     if (value.length > 1) return;

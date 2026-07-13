@@ -363,7 +363,7 @@ export default function Wallet() {
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
       <div className="mb-4">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">{getGreeting()}, {user?.firstName}</h1>
+        <h3 className="text-lg md:text-xl font-bold text-gray-900">{getGreeting()}, {user?.firstName+" "+user?.lastName}</h3>
         <p className="text-gray-600">Manage your wallet and transactions</p>
       </div>
 
