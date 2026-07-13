@@ -4,10 +4,13 @@ import { ArrowLeft, MapPin, Home, TrendingUp, Users, CheckCircle2, AlertCircle, 
 import { propertyApi, propertyUpdateApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
 import { formatNaira } from '../../utils/format';
+import useAuth from "../../hooks/useAuth";
+import AgreementSigningModal from "../../components/agreement/AgreementSigningModal";
 
 
 export default function PropertyDetail() {
   const { id } = useParams();
+  const {user} = useAuth();
   const [property, setProperty] = useState(null);
   const [loading, setLoading] = useState(true);
   const [updates, setUpdates] = useState([]);
@@ -17,6 +20,11 @@ export default function PropertyDetail() {
   const [purchaseLoading, setPurchaseLoading] = useState(false);
   const [purchaseError, setPurchaseError] = useState("");
   const [requestMessage, setRequestMessage] = useState("");
+  const [showAgreement, setShowAgreement] = useState(false);
+  const [signaturePayload, setSignaturePayload] = useState(null);
+
+  const investorName = `${user?.firstName || ""} ${user?.lastName || ""}`.trim() || "Investor";
+
 
   const normalizeProperty = (p) => ({
     ...p,
@@ -68,6 +76,35 @@ export default function PropertyDetail() {
     } catch (err) {
       setPurchaseError(err?.response?.data?.message || err.message || "Request failed");
     } finally { setPurchaseLoading(false); }
+  };
+
+  const handleAgreementConfirm = async (payload) => {
+    setSignaturePayload(payload);
+    setPurchaseLoading(true);
+    setPurchaseError("");
+    try {
+      if (isRequestMode) {
+        await propertyApi.requestInvestment(id, {
+          desiredUnits: units,
+          message: requestMessage,
+          agreement: payload,
+        });
+        setPurchaseStep("requestConfirmation");
+      } else {
+        await propertyApi.purchaseUnit(id, {
+          units,
+          totalAmount: totalCost,
+          agreement: payload,
+        });
+        setPurchaseStep("confirmation");
+      }
+      setShowAgreement(false);
+    } catch (err) {
+      setPurchaseError(err?.response?.data?.message || err.message || "Submission failed");
+      setShowAgreement(false);
+    } finally {
+      setPurchaseLoading(false);
+    }
   };
 
   if (loading) {
@@ -267,7 +304,7 @@ export default function PropertyDetail() {
 
             {purchaseError && <p className="text-sm text-red-600 flex items-center gap-1"><AlertCircle size={14} />{purchaseError}</p>}
 
-            <Button className="w-full" onClick={isRequestMode ? handleRequestInvestment : handlePurchase} disabled={purchaseLoading || units < 1 || units > maxUnits}>
+            <Button className="w-full" onClick={() => setShowAgreement(true)} disabled={purchaseLoading || units < 1 || units > maxUnits}>
               {purchaseLoading ? (isRequestMode ? "Submitting..." : "Processing...") : isRequestMode ? `Submit Request for ${units} Unit${units > 1 ? "s" : ""}` : `Purchase ${units} Unit${units > 1 ? "s" : ""}`}
             </Button>
           </div>
@@ -291,6 +328,19 @@ export default function PropertyDetail() {
           </div>
         )}
       </Modal>
+
+      <AgreementSigningModal
+        isOpen={showAgreement}
+        onClose={() => setShowAgreement(false)}
+        onConfirm={handleAgreementConfirm}
+        investorName={investorName}
+        principalAmount={totalCost}
+        currency="NGN"
+        tenorMonths={property.tenure}
+        monthlyRatePercent={property.expectedROI}
+        propertyName={property.name || property.title}
+        submitting={purchaseLoading}
+      />
     </div>
   );
 }

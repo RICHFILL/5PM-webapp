@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
@@ -19,6 +19,8 @@ import {
 } from "../../components/common";
 import toast from "react-hot-toast";
 import { currencySymbol } from "../../utils/currency";
+import html2canvas from "html2canvas";
+import InvestmentCertificate from "../../components/certificate/InvestmentCertificate";
 
 export default function InvestmentDetail() {
   const { id } = useParams();
@@ -39,6 +41,8 @@ export default function InvestmentDetail() {
     dueDate: "",
   });
   const [savingPayment, setSavingPayment] = useState(false);
+    const certificateRef = useRef(null);
+    const [downloading, setDownloading] = useState(false);
 
   const fetchInvestment = useCallback(async () => {
     try {
@@ -177,7 +181,7 @@ export default function InvestmentDetail() {
   const infoCards = [
     {
       label: "Investment Amount",
-      value: formatCurrency(investment?.amount),
+      value: formatCurrency(investment?.amount, investment?.currency),
       icon: CircleDollarSign,
     },
     {
@@ -208,6 +212,23 @@ export default function InvestmentDetail() {
       icon: CalendarDays,
     },
   ];
+
+  const handleDownloadCertificate = async () => {
+    if (!certificateRef.current) return;
+    setDownloading(true);
+    try {
+      const canvas = await html2canvas(certificateRef.current, {
+        scale: 2,
+        backgroundColor: "#fff",
+      });
+      const link = document.createElement("a");
+      link.download = `certificate-${investment.refNumber || id}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
@@ -245,6 +266,26 @@ export default function InvestmentDetail() {
                     investment?.project?.projectName ||
                     "--"}
                 </h2>
+              </div>
+              
+              <button
+                onClick={handleDownloadCertificate}
+                disabled={downloading}
+                className="px-4 py-2 rounded-lg bg-neon-tangerine text-white text-sm font-semibold hover:opacity-90 disabled:opacity-50"
+              >
+                {downloading ? "Generating..." : "Download Certificate"}
+              </button>
+
+              {/* Off-screen, only used for capture */}
+              <div style={{ position: "fixed", top: 0, left: "-9999px" }}>
+                <InvestmentCertificate
+                  ref={certificateRef}
+                  investment={investment}
+                  investorName={
+                    ((investment.investor.firstName || "") + " " + (investment.investor.lastName || "")).trim() || investment.user?.fullName
+                  }
+                  companyName="5PM Nexus Invest"
+                />
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 rounded-2xl bg-white/10 p-5 backdrop-blur-sm">
