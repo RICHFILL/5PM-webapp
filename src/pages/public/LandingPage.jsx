@@ -75,6 +75,14 @@ const testimonials = [
     initials: "CE",
     avatarBg: "bg-blue-500",
   },
+  {
+    name: "Project Update",
+    location: "Lagos",
+    tag: "Update",
+    text: "This is the project I took you to see while it was still under construction the last time you visited. I’m happy to let you know that it has now been completed, thanks in part to your investment and support. Thank you once again for believing in us and being part of this journey.",
+    initials: "PU",
+    avatarBg: "bg-green-500",
+  },
 ];
 
 const faqs = [
@@ -84,7 +92,7 @@ const faqs = [
   },
   {
     q: "How does the investment process work?",
-    a: "Our process is simple: we acquire strategically located land below market value, perfect the title and approvals, develop the necessary infrastructure, sell the plots individually, pay investors from the sales proceeds, and retain the remaining profit as the company's earnings."
+    a: "We identify and acquire high-potential real estate opportunities, including prime land and distressed or undervalued properties, at attractive prices. Depending on the opportunity, we perfect titles and approvals, develop infrastructure, renovate, reposition, or redevelop the asset to unlock its full market value. The property is then sold or otherwise monetised at a premium, and investors are paid from the proceeds in accordance with the terms of their investment."
   },
   {
     q: "Is my investment secured?",

@@ -31,7 +31,7 @@ const faqs = [
     items: [
       {
         q: "How does 5PM NEXUS INVEST work?",
-        a: "We acquire strategically located land below market value, perfect the title and approvals, develop the required infrastructure, sell the plots individually, pay investors from the sales proceeds, and retain the remaining profit as the company's earnings.",
+        a: "We identify and acquire high-potential real estate opportunities, including prime land and distressed or undervalued properties, at attractive prices. Depending on the opportunity, we perfect titles and approvals, develop infrastructure, renovate, reposition, or redevelop the asset to unlock its full market value. The property is then sold or otherwise monetised at a premium, and investors are paid from the proceeds in accordance with the terms of their investment.",
       },
       {
         q: "What is the minimum investment amount?",
