@@ -59,7 +59,7 @@ export const KYC_STEPS = [
 
 export const KYC_STATUS = {
   PENDING: 'pending',
-  UNDER_REVIEW: 'under-review',
+  UNDER_REVIEW: 'under_review',
   APPROVED: 'approved',
   REJECTED: 'rejected',
 };

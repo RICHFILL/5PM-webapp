@@ -126,7 +126,9 @@ export default function AdminSettings() {
         support_email: all.support_email?.email || "",
         contact_phone: all.contact_phone?.phone || "",
       });
-      setNotifications(all.email_notifications || {});
+      const raw = all.email_notifications;
+      const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+      setNotifications(parsed && typeof parsed === 'object' ? parsed : {});
 
       const maint = all.maintenance_mode || {};
       setMaintenanceMode(maint.enabled || false);
@@ -242,7 +244,8 @@ export default function AdminSettings() {
   };
 
   const handleNotificationToggle = async (key) => {
-    const updated = { ...notifications, [key]: !notifications[key] };
+    const current = typeof notifications === 'object' && !Array.isArray(notifications) ? notifications : {};
+    const updated = { ...current, [key]: !current[key] };
     setNotifications(updated);
     try {
       await adminSettingsApi.update("email_notifications", updated);

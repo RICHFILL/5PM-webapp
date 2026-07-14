@@ -78,11 +78,34 @@ const testimonials = [
 ];
 
 const faqs = [
-  { q: "What is 5PM NEXUS INVEST?", a: "5PM NEXUS INVEST is a professionally managed fund targeting up to 3.5% monthly returns, with strict risk controls on every move. Every position is secured by real estate assets: residential developments, commercial properties, and strategic land holdings." },
-  { q: "Is my investment safe?", a: "Every investment is tied to real, tangible assets with strict risk controls on every capital deployment decision. We maintain capital reserves, avoid overleveraged positions, and provide full document access to every investor." },
-  { q: "Can I invest from outside Nigeria?", a: "Absolutely. 5PM NEXUS INVEST is built for the diaspora. You can fund your position in USD, GBP, or EUR. Full KYC and account management is available remotely." },
-  { q: "What is the minimum investment amount?", a: "All investment products start from N10,000,000 or $7,000 USD." },
-  { q: "How are returns paid out?", a: "Returns are paid monthly directly into your wallet. You will receive a notification and can withdraw to your bank account or reinvest immediately on your terms." },
+  {
+    q: "What is 5PM NEXUS INVEST?",
+    a: "5PM NEXUS INVEST is a real estate investment platform that allows investors to participate in carefully selected land acquisition and development projects. We acquire land below market value, secure all legal approvals, develop the infrastructure, sell the plots at a premium, and distribute returns to investors before taking our own profit."
+  },
+  {
+    q: "How does the investment process work?",
+    a: "Our process is simple: we acquire strategically located land below market value, perfect the title and approvals, develop the necessary infrastructure, sell the plots individually, pay investors from the sales proceeds, and retain the remaining profit as the company's earnings."
+  },
+  {
+    q: "Is my investment secured?",
+    a: "Yes. Every investment is backed by tangible real estate assets. Each project is supported by verified land documentation, legal approvals, and a structured development plan before it is offered to investors."
+  },
+  {
+    q: "Who gets paid first?",
+    a: "Investors are paid first from the proceeds generated through the sale of developed plots. The company's profit is realized only after investor obligations have been fulfilled."
+  },
+  {
+    q: "Can I invest from outside Nigeria?",
+    a: "Yes. Nigerians in the diaspora and international investors can participate in eligible projects, subject to the required KYC and onboarding process."
+  },
+  {
+    q: "What is the minimum investment amount?",
+    a: "The minimum investment amount depends on the specific project or investment package. Please contact our investment team for the current offering and entry requirements."
+  },
+  {
+    q: "How do I track my investment?",
+    a: "Investors receive regular updates on project progress, development milestones, and sales performance. Relevant documentation and investment reports are also made available throughout the investment cycle."
+  },
 ];
 
 function ScrollReveal({ children, className = "" }) {
@@ -522,7 +545,7 @@ function LandingPage() {
             <p className="text-white/80 text-lg mb-10 max-w-xl mx-auto">Join over 100 investors already building wealth through transparent, asset-backed investments in Nigeria's fastest-growing markets.</p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link to={ROUTES.REGISTER}>
-                <Button size="lg" className="bg-white hover:bg-gray-100 text-neon-tangerine font-bold px-8 py-4 rounded-xl text-base shadow-lg shadow-black/10 transition-all">
+                <Button size="lg" className="bg-white hover:bg-gray-100 font-bold px-8 py-4 rounded-xl text-base text-yellow-700 shadow-lg shadow-black/10 transition-all">
                   Create Free Account <ArrowRight size={18} />
                 </Button>
               </Link>

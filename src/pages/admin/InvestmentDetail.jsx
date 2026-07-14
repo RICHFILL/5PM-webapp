@@ -4,9 +4,22 @@ import {
   ArrowLeft,
   CalendarDays,
   CircleDollarSign,
-  FileText,
   TrendingUp,
   Plus,
+  DollarSign,
+  Mail,
+  Phone,
+  Receipt,
+  Percent,
+  Banknote,
+  Download,
+  Building2,
+  Hash,
+  ShieldCheck,
+  AlertTriangle,
+  CheckCircle2,
+  Clock,
+  Copy,
 } from "lucide-react";
 import { adminApi, investmentApi } from "../../services/api";
 import {
@@ -17,10 +30,59 @@ import {
   Modal,
   Input,
 } from "../../components/common";
+import AmountUpdateModal from "../../components/common/AmountUpdateModal";
 import toast from "react-hot-toast";
 import { currencySymbol } from "../../utils/currency";
 import html2canvas from "html2canvas";
 import InvestmentCertificate from "../../components/certificate/InvestmentCertificate";
+
+function InfoRow({ label, value, highlight }) {
+  return (
+    <div className="flex items-center justify-between py-2.5 px-4 rounded-lg even:bg-gray-50/80">
+      <span className="text-sm text-gray-500">{label}</span>
+      <span className={`text-sm font-medium text-right ${highlight ? "text-neon-tangerine" : "text-gray-900"}`}>
+        {value}
+      </span>
+    </div>
+  );
+}
+
+function StatCard({ icon: Icon, label, value, color, bg }) {
+  return (
+    <div className="group rounded-2xl border border-gray-200 bg-white p-5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
+      <div className={`inline-flex rounded-xl ${bg} p-2.5 ring-1 ring-inset ring-black/5`}>
+        <Icon className={`h-5 w-5 ${color}`} />
+      </div>
+      <p className="mt-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">{label}</p>
+      <p className="mt-1.5 text-xl font-bold text-gray-900 tabular-nums">{value}</p>
+    </div>
+  );
+}
+
+const formatDate = (date) =>
+  date
+    ? new Date(date).toLocaleDateString("en-NG", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
+    : "\u2014";
+
+const formatDateShort = (date) =>
+  date
+    ? new Date(date).toLocaleDateString("en-NG", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      })
+    : "\u2014";
+
+const statusMeta = {
+  active: { variant: "success", icon: CheckCircle2, label: "Active" },
+  pending: { variant: "warning", icon: Clock, label: "Pending" },
+  completed: { variant: "info", icon: ShieldCheck, label: "Completed" },
+  cancelled: { variant: "danger", icon: AlertTriangle, label: "Cancelled" },
+};
 
 export default function InvestmentDetail() {
   const { id } = useParams();
@@ -41,8 +103,9 @@ export default function InvestmentDetail() {
     dueDate: "",
   });
   const [savingPayment, setSavingPayment] = useState(false);
-    const certificateRef = useRef(null);
-    const [downloading, setDownloading] = useState(false);
+  const certificateRef = useRef(null);
+  const [downloading, setDownloading] = useState(false);
+  const [amountModalOpen, setAmountModalOpen] = useState(false);
 
   const fetchInvestment = useCallback(async () => {
     try {
@@ -82,36 +145,19 @@ export default function InvestmentDetail() {
     fetchInvestmentPayments();
   }, [fetchInvestment, fetchInvestmentPayments]);
 
-  // Currency-aware — the investment's own currency drives how every
-  // figure on this page (and its payment records) is formatted, since
-  // an investment can now be NGN or USD.
   const investmentCurrency = investment?.currency || "NGN";
-  const formatCurrency = (amount) => {
-    const locale = investmentCurrency === "USD" ? "en-US" : "en-NG";
-    return new Intl.NumberFormat(locale, {
-      style: "currency",
-      currency: investmentCurrency,
-      minimumFractionDigits: 0,
-    }).format(amount || 0);
-  };
-  const formatDate = (date) =>
-    date
-      ? new Date(date).toLocaleDateString("en-NG", {
-          day: "numeric",
-          month: "long",
-          year: "numeric",
-        })
-      : "--";
-  const getStatusBadge = (status) => {
-    switch (status) {
-      case "active":
-        return "warning";
-      case "completed":
-        return "success";
-      default:
-        return "default";
-    }
-  };
+  const formatCurrency = useCallback(
+    (amount) => {
+      const locale = investmentCurrency === "USD" ? "en-US" : "en-NG";
+      return new Intl.NumberFormat(locale, {
+        style: "currency",
+        currency: investmentCurrency,
+        minimumFractionDigits: 2,
+      }).format(amount || 0);
+    },
+    [investmentCurrency],
+  );
+
   const handleRecordPayment = async () => {
     if (!paymentForm.amount) return;
     setSavingPayment(true);
@@ -132,87 +178,6 @@ export default function InvestmentDetail() {
     }
   };
 
-  const getPaymentBadge = (status) => {
-    switch ((status || "").toLowerCase()) {
-      case "verified":
-        return "success";
-      case "pending":
-        return "warning";
-      case "failed":
-        return "danger";
-      default:
-        return "default";
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
-        <Skeleton className="h-8 w-48" />
-        <Skeleton.Card />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Skeleton.Card />
-          <Skeleton.Card />
-          <Skeleton.Card />
-        </div>
-      </div>
-    );
-  }
-
-  if (!investment) {
-    return (
-      <div className="p-4 md:p-8 max-w-7xl mx-auto">
-        <button
-          onClick={() => navigate("/admin/investments")}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span className="text-sm font-medium">Back to Investments</span>
-        </button>
-        <Card>
-          <p className="text-lg font-semibold text-gray-900">
-            Investment not found
-          </p>
-        </Card>
-      </div>
-    );
-  }
-
-  const infoCards = [
-    {
-      label: "Investment Amount",
-      value: formatCurrency(investment?.amount, investment?.currency),
-      icon: CircleDollarSign,
-    },
-    {
-      label: "Interest Rate (monthly)",
-      value: `${investment?.interestRatePerAnnum ?? 0}%`,
-      icon: TrendingUp,
-    },
-    {
-      label: "Interest Earned",
-      value: formatCurrency(Number(investment?.interestEarned)-Number(investment?.amount)),
-      icon: FileText,
-    },
-    {
-      label: "Monthly Repayment",
-      value: formatCurrency(investment?.expectedMonthlyRepayment),
-      icon: CalendarDays,
-    },
-    {
-      label: "Payout Upon Expiration",
-      value: formatCurrency(investment?.payoutUponExpiration),
-      icon: CalendarDays,
-    },
-    {
-      label: "Monthly Repayment Date",
-      value: investment?.expectedMonthlyRepaymentDate
-        ? formatDate(investment.expectedMonthlyRepaymentDate)
-        : "--",
-      icon: CalendarDays,
-    },
-  ];
-
   const handleDownloadCertificate = async () => {
     if (!certificateRef.current) return;
     setDownloading(true);
@@ -230,203 +195,375 @@ export default function InvestmentDetail() {
     }
   };
 
-  return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
-      <button
-        onClick={() => navigate("/admin/investments")}
-        className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        <span className="text-sm font-medium">Back to Investments</span>
-      </button>
+  const getPaymentBadge = (status) => {
+    switch ((status || "").toLowerCase()) {
+      case "verified":
+        return "success";
+      case "pending":
+        return "warning";
+      case "failed":
+        return "danger";
+      default:
+        return "default";
+    }
+  };
 
-      <section className="rounded-3xl bg-dark-lavender text-white overflow-hidden">
-        <div className="p-4 md:p-8">
-          <div className="flex flex-col gap-4 md:gap-8 lg:flex-row lg:items-start lg:justify-between">
-            <div className="space-y-5">
-              <div className="flex items-center gap-3">
-                <Badge variant={getStatusBadge(investment?.status)}>
-                  {(investment?.status || "--").toUpperCase()}
-                </Badge>
-                <Badge
-                  variant={investmentCurrency === "USD" ? "info" : "default"}
-                >
-                  {investmentCurrency}
-                </Badge>
-                <span className="text-sm text-cyan-100">
-                  Reference: {investment?.refNumber || "--"}
+  if (loading) {
+    return (
+      <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
+        <div className="flex items-center gap-3">
+          <Skeleton className="h-5 w-5 rounded" />
+          <Skeleton className="h-5 w-40" />
+        </div>
+        <Skeleton.Card />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Skeleton.Card />
+          <Skeleton.Card />
+          <Skeleton.Card />
+        </div>
+      </div>
+    );
+  }
+
+  if (!investment) {
+    return (
+      <div className="p-4 md:p-8 max-w-7xl mx-auto">
+        <button
+          onClick={() => navigate("/admin/investments")}
+          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 group"
+        >
+          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+          <span className="text-sm font-medium">Back to Investments</span>
+        </button>
+        <Card>
+          <div className="text-center py-8">
+            <AlertTriangle size={40} className="mx-auto text-gray-300 mb-3" />
+            <p className="text-lg font-semibold text-gray-900">Investment not found</p>
+            <p className="text-sm text-gray-500 mt-1">The investment you are looking for does not exist or has been removed.</p>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
+  const inv = investment;
+  const statusInfo = statusMeta[inv.status] || statusMeta.pending;
+  const StatusIcon = statusInfo.icon;
+  const investorName = [inv.investor?.firstName, inv.investor?.lastName].filter(Boolean).join(" ") || inv.user?.fullName || "\u2014";
+  const investorInitials = (inv.investor?.firstName?.[0] || "") + (inv.investor?.lastName?.[0] || "") || "?";
+
+  const metrics = [
+    { label: "Investment Amount", value: formatCurrency(inv.amount), icon: CircleDollarSign, color: "text-emerald-600", bg: "bg-emerald-50" },
+    { label: "Interest Rate", value: `${inv.interestRatePerAnnum || 0}%`, icon: Percent, color: "text-blue-600", bg: "bg-blue-50" },
+    { label: "Interest Earned", value: formatCurrency(inv.interestEarned), icon: TrendingUp, color: "text-violet-600", bg: "bg-violet-50" },
+    { label: "Monthly Repayment", value: formatCurrency(inv.expectedMonthlyRepayment), icon: Banknote, color: "text-amber-600", bg: "bg-amber-50" },
+    { label: "Payout at Expiry", value: formatCurrency(inv.payoutUponExpiration), icon: Receipt, color: "text-rose-600", bg: "bg-rose-50" },
+    {
+      label: inv.expectedMonthlyRepaymentDate ? "Next Payment" : "Expected Returns",
+      value: inv.expectedMonthlyRepaymentDate ? formatDate(inv.expectedMonthlyRepaymentDate) : formatCurrency(inv.expectedReturns),
+      icon: CalendarDays,
+      color: "text-cyan-600",
+      bg: "bg-cyan-50",
+    },
+  ];
+
+  return (
+    <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6 animate-in fade-in duration-300">
+
+      <nav className="flex items-center gap-2 text-sm text-gray-500">
+        <button
+          onClick={() => navigate("/admin/investments")}
+          className="hover:text-gray-900 transition-colors font-medium"
+        >
+          Investments
+        </button>
+        <span className="text-gray-300">/</span>
+        <span className="text-gray-900 font-medium truncate">{inv.refNumber || "Detail"}</span>
+      </nav>
+
+      <section className="rounded-3xl bg-gradient-to-br from-dark-lavender via-dark-lavender to-indigo-900 text-white overflow-hidden shadow-xl">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-indigo-500/10 rounded-full translate-y-1/2 -translate-x-1/2 blur-2xl pointer-events-none" />
+        <div className="relative p-6 md:p-8">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+            <div className="space-y-5 flex-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${
+                  statusInfo.variant === "success" ? "bg-emerald-500/15 text-emerald-300" :
+                  statusInfo.variant === "warning" ? "bg-amber-500/15 text-amber-300" :
+                  statusInfo.variant === "info" ? "bg-blue-500/15 text-blue-300" :
+                  "bg-gray-500/15 text-gray-300"
+                }`}>
+                  <StatusIcon size={12} />
+                  {statusInfo.label}
                 </span>
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-white/10">
+                  {inv.currency || "NGN"}
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-white/10">
+                  <Hash size={11} />
+                  {inv.refNumber || "\u2014"}
+                </span>
+                {inv.repaymentStructure && (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-white/10">
+                    {inv.repaymentStructure}
+                  </span>
+                )}
               </div>
+
               <div>
-                <p className="text-sm uppercase tracking-[0.25em] text-cyan-100">
-                  Investment Record
-                </p>
-                <h2 className="mt-2 text-2xl md:text-3xl font-bold capitalize">
-                  {investment?.projectData?.projectName ||
-                    investment?.project?.projectName ||
-                    "--"}
+                <p className="text-xs uppercase tracking-[0.2em] text-cyan-100/60">Investment Record</p>
+                <h2 className="mt-1.5 text-2xl md:text-3xl font-bold capitalize">
+                  {inv.projectData?.projectName || inv.project?.projectName || "General Investment"}
                 </h2>
               </div>
-              
-              <button
-                onClick={handleDownloadCertificate}
-                disabled={downloading}
-                className="px-4 py-2 rounded-lg bg-neon-tangerine text-white text-sm font-semibold hover:opacity-90 disabled:opacity-50"
-              >
-                {downloading ? "Generating..." : "Download Certificate"}
-              </button>
 
-              {/* Off-screen, only used for capture */}
+              <div className="flex flex-wrap gap-3">
+                <button
+                  onClick={handleDownloadCertificate}
+                  disabled={downloading}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-neon-tangerine text-white text-sm font-semibold hover:opacity-90 disabled:opacity-50 transition-all shadow-lg shadow-neon-tangerine/25 active:scale-[0.98]"
+                >
+                  <Download size={15} />
+                  {downloading ? "Generating..." : "Certificate"}
+                </button>
+                <button
+                  onClick={() => setAmountModalOpen(true)}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/10 text-white text-sm font-semibold hover:bg-white/20 transition-all border border-white/10 active:scale-[0.98]"
+                >
+                  <DollarSign size={15} />
+                  Edit Amount
+                </button>
+              </div>
+
               <div style={{ position: "fixed", top: 0, left: "-9999px" }}>
                 <InvestmentCertificate
                   ref={certificateRef}
-                  investment={investment}
-                  investorName={
-                    ((investment.investor.firstName || "") + " " + (investment.investor.lastName || "")).trim() || investment.user?.fullName
-                  }
+                  investment={inv}
+                  investorName={investorName}
                   companyName="5PM Nexus Invest"
                 />
               </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 rounded-2xl bg-white/10 p-5 backdrop-blur-sm">
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 rounded-2xl bg-white/10 p-4 backdrop-blur-sm min-w-[280px]">
               <div>
-                <p className="text-xs uppercase tracking-wide text-cyan-100">
-                  Interest Rate
-                </p>
-                <p className="mt-2 text-xl md:text-2xl font-bold">
-                  {investment?.interestRatePerAnnum || 0}%
-                </p>
+                <p className="text-[10px] uppercase tracking-wider text-cyan-100/50">Rate</p>
+                <p className="mt-1 text-lg font-bold tabular-nums">{inv.interestRatePerAnnum || 0}%</p>
               </div>
               <div>
-                <p className="text-xs uppercase tracking-wide text-cyan-100">
-                  Duration
-                </p>
-                <p className="mt-2 text-xl md:text-2xl font-bold">
-                  {investment?.tenure || 0} mo
-                </p>
+                <p className="text-[10px] uppercase tracking-wider text-cyan-100/50">Duration</p>
+                <p className="mt-1 text-lg font-bold">{inv.tenure ? `${inv.tenure}mo` : "\u2014"}</p>
               </div>
               <div>
-                <p className="text-xs uppercase tracking-wide text-cyan-100">
-                  Start
-                </p>
-                <p className="mt-2 text-sm font-semibold">
-                  {formatDate(investment?.startDate)}
-                </p>
+                <p className="text-[10px] uppercase tracking-wider text-cyan-100/50">Start</p>
+                <p className="mt-1 text-sm font-semibold">{formatDateShort(inv.startDate)}</p>
               </div>
               <div>
-                <p className="text-xs uppercase tracking-wide text-cyan-100">
-                  End
-                </p>
-                <p className="mt-2 text-sm font-semibold">
-                  {formatDate(investment?.endDate)}
-                </p>
+                <p className="text-[10px] uppercase tracking-wider text-cyan-100/50">End</p>
+                <p className="mt-1 text-sm font-semibold">{formatDateShort(inv.endDate)}</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {infoCards.map((card) => {
-          const Icon = card.icon;
-          return (
-            <div
-              key={card.label}
-              className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm"
-            >
-              <div className="inline-flex rounded-xl border border-gray-200 bg-gray-50 p-3">
-                <Icon className="h-5 w-5 text-gray-600" />
+      <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+        {metrics.map((m) => (
+          <StatCard key={m.label} {...m} />
+        ))}
+      </section>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 space-y-6">
+          <Card>
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <h3 className="text-base font-semibold text-gray-900">Investment Details</h3>
+                <p className="text-xs text-gray-500 mt-0.5">Full record breakdown</p>
               </div>
-              <p className="mt-4 text-sm text-gray-500">{card.label}</p>
-              <p className="mt-2 text-xl md:text-2xl font-bold text-gray-900">
-                {card.value}
+              <span className="text-xs text-gray-400 tabular-nums">
+                ID: {inv.id?.slice(0, 8)}...
+                <button
+                  onClick={() => { navigator.clipboard.writeText(inv.id); toast.success("ID copied"); }}
+                  className="ml-1 text-gray-400 hover:text-gray-600 inline-flex"
+                >
+                  <Copy size={12} />
+                </button>
+              </span>
+            </div>
+            <div className="divide-y divide-gray-100 -mx-6 px-6">
+              <InfoRow label="Reference Number" value={inv.refNumber || "\u2014"} />
+              <InfoRow label="Status" value={<Badge variant={statusInfo.variant} size="sm">{statusInfo.label}</Badge>} />
+              <InfoRow label="Currency" value={inv.currency || "NGN"} />
+              <InfoRow label="Repayment Structure" value={inv.repaymentStructure ? inv.repaymentStructure.charAt(0).toUpperCase() + inv.repaymentStructure.slice(1) : "\u2014"} />
+              <InfoRow label="ROI" value={`${inv.roi || inv.interestRatePerAnnum || 0}%`} />
+              <InfoRow label="Tenure" value={inv.tenure ? `${inv.tenure} months` : "\u2014"} />
+              <InfoRow label="Duration" value={inv.duration ? `${inv.duration} months` : "\u2014"} />
+              <InfoRow label="Returns Withdrawn" value={inv.returnsWithdrawn ? "Yes" : "No"} />
+              <InfoRow label="Expected Returns" value={formatCurrency(inv.expectedReturns)} />
+              <InfoRow label="Start Date" value={formatDate(inv.startDate)} />
+              <InfoRow label="End Date" value={formatDate(inv.endDate)} />
+              <InfoRow label="Created" value={formatDate(inv.createdAt)} />
+              <InfoRow label="Last Updated" value={formatDate(inv.updatedAt)} />
+            </div>
+          </Card>
+        </div>
+
+        <div className="space-y-6 h-auto">
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+            <div className="flex items-center h-1/2 gap-3 mb-5">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-dark-lavender to-indigo-700 flex items-center justify-center text-white font-bold text-lg shadow-sm shrink-0">
+                {investorInitials}
+              </div>
+              <div className="min-w-0">
+                <h3 className="text-base font-semibold text-gray-900 truncate">{investorName}</h3>
+                <p className="text-xs text-gray-500">Investor</p>
+              </div>
+            </div>
+            <div className="space-y-3 text-sm divide-y divide-gray-100">
+              <div className="flex items-center gap-3 text-gray-600 pb-3">
+                <Mail size={14} className="shrink-0 text-gray-400" />
+                <span className="truncate">{inv.investor?.email || inv.user?.email || "\u2014"}</span>
+              </div>
+              <div className="flex items-center gap-3 text-gray-600 py-3">
+                <Phone size={14} className="shrink-0 text-gray-400" />
+                <span>{inv.investor?.phone || inv.user?.phone || "\u2014"}</span>
+              </div>
+              <div className="flex items-center gap-3 text-gray-600 pt-3">
+                <Hash size={14} className="shrink-0 text-gray-400" />
+                <span>{inv.investor?.refNumber || inv.user?.refNumber || "\u2014"}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+            <div className="h-1.5 bg-gradient-to-r from-indigo-500 via-dark-lavender to-purple-500 rounded-t-xl -mx-6 -mt-6 mb-4" />
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center">
+                <Building2 size={18} className="text-indigo-600" />
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900">Project</h3>
+                <p className="text-xs text-gray-500">Associated investment project</p>
+              </div>
+            </div>
+            <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
+              <p className="text-base font-bold text-gray-900">
+                {inv.projectData?.projectName || inv.project?.projectName || "No project assigned"}
+              </p>
+              {inv.projectData?.createdAt && (
+                <p className="text-xs text-gray-400 mt-2">
+                  Created {formatDate(inv.projectData.createdAt)}
+                </p>
+              )}
+            </div>
+            {inv.productId && (
+              <div className="mt-3 flex items-center gap-2 text-xs text-gray-400">
+                <Hash size={11} />
+                <span className="font-mono">Product: {inv.productId.slice(0, 8)}...</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <section className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden h-auto">
+        <div className="border-b w-full border-gray-100 px-6 py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-amber-50 flex items-center justify-center">
+              <Receipt size={16} className="text-amber-600" />
+            </div>
+            <div>
+              <h3 className="text-base font-semibold text-gray-900">Payment Records</h3>
+              <p className="text-xs text-gray-500 mt-0.5">
+                {payments.length > 0
+                  ? `${payments.length} payment${payments.length === 1 ? '' : 's'} recorded`
+                  : 'All payments recorded against this investment'}
               </p>
             </div>
-          );
-        })}
-      </section>
-
-      <section className="rounded-2xl border border-gray-200 bg-white shadow-sm">
-        <div className="border-b border-gray-100 px-6 py-5 flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-900">
-            Payment Records
-          </h3>
-          <Button size="sm" onClick={() => setShowRecordPayment(true)}>
-            <Plus size={16} /> Record Payment
-          </Button>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-gray-400 tabular-nums">
+              Due: {formatCurrency(paymentTotals.investmentTotalDue)}
+            </span>
+            <Button size="sm" onClick={() => setShowRecordPayment(true)}>
+              <Plus size={15} /> Record Payment
+            </Button>
+          </div>
         </div>
-        <div className="grid gap-4 border-b border-gray-100 px-6 py-6 md:grid-cols-3">
-          <div className="rounded-2xl bg-slate-50 p-4">
-            <p className="text-xs uppercase tracking-wide text-gray-500">
-              Total Payments Recorded
-            </p>
-            <p className="mt-2 text-xl md:text-2xl font-semibold text-gray-900">
-              {formatCurrency(paymentTotals.totalPaymentAmountRecorded)}
-            </p>
+
+        <div className="grid gap-4 px-6 py-5 md:grid-cols-3 bg-gradient-to-br from-gray-50 to-white border-b border-gray-100">
+          <div className="bg-white rounded-xl border border-emerald-200/60 p-4 shadow-sm">
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-2 h-2 rounded-full bg-emerald-500" />
+              <p className="text-xs font-semibold text-emerald-700 uppercase tracking-wider">Payments Recorded</p>
+            </div>
+            <p className="text-2xl font-bold text-gray-900 tabular-nums">{formatCurrency(paymentTotals.totalPaymentAmountRecorded)}</p>
           </div>
-          <div className="rounded-2xl bg-slate-50 p-4">
-            <p className="text-xs uppercase tracking-wide text-gray-500">
-              Total Due
-            </p>
-            <p className="mt-2 text-xl md:text-2xl font-semibold text-gray-900">
-              {formatCurrency(paymentTotals.investmentTotalDue)}
-            </p>
+          <div className="bg-white rounded-xl border border-amber-200/60 p-4 shadow-sm">
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-2 h-2 rounded-full bg-amber-500" />
+              <p className="text-xs font-semibold text-amber-700 uppercase tracking-wider">Total Due</p>
+            </div>
+            <p className="text-2xl font-bold text-gray-900 tabular-nums">{formatCurrency(paymentTotals.investmentTotalDue)}</p>
           </div>
-          <div className="rounded-2xl bg-slate-50 p-4">
-            <p className="text-xs uppercase tracking-wide text-gray-500">
-              Balance Left
-            </p>
-            <p className="mt-2 text-xl md:text-2xl font-semibold text-gray-900">
+          <div className="bg-white rounded-xl border border-rose-200/60 p-4 shadow-sm">
+            <div className="flex items-center gap-2 mb-1">
+              <div className={`w-2 h-2 rounded-full ${paymentTotals.balanceLeft > 0 ? "bg-rose-500" : "bg-emerald-500"}`} />
+              <p className={`text-xs font-semibold uppercase tracking-wider ${paymentTotals.balanceLeft > 0 ? "text-rose-700" : "text-emerald-700"}`}>Balance Left</p>
+            </div>
+            <p className={`text-2xl font-bold tabular-nums ${paymentTotals.balanceLeft > 0 ? "text-rose-600" : "text-emerald-600"}`}>
               {formatCurrency(paymentTotals.balanceLeft)}
             </p>
           </div>
         </div>
+
         <div className="p-6">
           {paymentsLoading ? (
             <Skeleton.Table rows={3} />
           ) : payments.length > 0 ? (
             <div className="overflow-x-auto -mx-6">
-              <table className="w-full min-w-[600px]">
-                <thead className="bg-gray-50 border-b border-gray-200">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Amount
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Payment Date
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Due Date
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Status
-                    </th>
+              <table className="w-full text-left text-gray-500 text-sm border-separate border-spacing-0">
+                <thead>
+                  <tr className="border-b border-gray-100">
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">#</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Amount</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Payment Date</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Due Date</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {payments.map((payment) => (
+                <tbody className="divide-y divide-gray-50">
+                  {payments.map((payment, idx) => (
                     <tr
                       key={payment.id || payment._id}
-                      className="hover:bg-gray-50 transition-colors"
+                      className="hover:bg-gray-50/80 transition-colors even:bg-gray-50/40"
                     >
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-bold text-gray-900">
-                          {formatCurrency(payment.amount)}
+                        <span className="text-xs text-gray-400 font-mono tabular-nums">{idx + 1}</span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center gap-2">
+                          <div className="w-1.5 h-1.5 rounded-full bg-gray-300" />
+                          <span className="text-sm font-bold text-gray-900 tabular-nums">{formatCurrency(payment.amount)}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <p className="text-sm text-gray-900">
-                          {formatDate(payment.paymentDate)}
-                        </p>
+                        <div className="flex items-center gap-2">
+                          <CalendarDays size={13} className="text-gray-400 shrink-0" />
+                          <span className="text-sm text-gray-700">{formatDate(payment.paymentDate)}</span>
+                        </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <p className="text-sm text-gray-900">
-                          {formatDate(payment.dueDate)}
-                        </p>
+                        <div className="flex items-center gap-2">
+                          <CalendarDays size={13} className="text-gray-400 shrink-0" />
+                          <span className="text-sm text-gray-700">{formatDate(payment.dueDate)}</span>
+                        </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <Badge variant={getPaymentBadge(payment.status)}>
-                          {payment.status || "--"}
+                          {payment.status || "\u2014"}
                         </Badge>
                       </td>
                     </tr>
@@ -435,12 +572,20 @@ export default function InvestmentDetail() {
               </table>
             </div>
           ) : (
-            <p className="text-gray-500 text-center py-12">
-              No payment records found.
-            </p>
+            <div className="text-center py-12">
+              <div className="w-16 h-16 rounded-full bg-amber-50 flex items-center justify-center mx-auto mb-4">
+                <Receipt size={28} className="text-amber-300" />
+              </div>
+              <p className="text-gray-500 font-semibold">No payment records yet</p>
+              <p className="text-gray-400 text-sm mt-1 mb-5">Record the first payment to start tracking.</p>
+              <Button size="sm" onClick={() => setShowRecordPayment(true)}>
+                <Plus size={15} /> Record First Payment
+              </Button>
+            </div>
           )}
         </div>
       </section>
+        
 
       <Modal
         isOpen={showRecordPayment}
@@ -452,30 +597,31 @@ export default function InvestmentDetail() {
         size="sm"
       >
         <div className="space-y-4">
+          {investment && (
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-800">
+              Recording a payment of <span className="font-semibold">{formatCurrency(inv.expectedMonthlyRepayment)}</span> is the expected monthly amount.
+            </div>
+          )}
           <Input
             label={`Amount (${currencySymbol(investmentCurrency)})`}
             type="number"
             value={paymentForm.amount}
-            onChange={(e) =>
-              setPaymentForm({ ...paymentForm, amount: e.target.value })
-            }
+            onChange={(e) => setPaymentForm({ ...paymentForm, amount: e.target.value })}
             placeholder="e.g. 50000"
+            min={1}
+            step="0.01"
           />
           <Input
             label="Payment Date"
             type="date"
             value={paymentForm.paymentDate}
-            onChange={(e) =>
-              setPaymentForm({ ...paymentForm, paymentDate: e.target.value })
-            }
+            onChange={(e) => setPaymentForm({ ...paymentForm, paymentDate: e.target.value })}
           />
           <Input
             label="Due Date"
             type="date"
             value={paymentForm.dueDate}
-            onChange={(e) =>
-              setPaymentForm({ ...paymentForm, dueDate: e.target.value })
-            }
+            onChange={(e) => setPaymentForm({ ...paymentForm, dueDate: e.target.value })}
           />
           <div className="flex gap-3 justify-end pt-2">
             <Button
@@ -487,15 +633,19 @@ export default function InvestmentDetail() {
             >
               Cancel
             </Button>
-            <Button
-              onClick={handleRecordPayment}
-              disabled={savingPayment || !paymentForm.amount}
-            >
+            <Button onClick={handleRecordPayment} disabled={savingPayment || !paymentForm.amount}>
               {savingPayment ? "Recording..." : "Record Payment"}
             </Button>
           </div>
         </div>
       </Modal>
+
+      <AmountUpdateModal
+        open={amountModalOpen}
+        onClose={() => setAmountModalOpen(false)}
+        investment={investment}
+        onSuccess={() => { fetchInvestment(); fetchInvestmentPayments(); }}
+      />
     </div>
   );
 }

@@ -250,7 +250,7 @@ export default function AdminKyc() {
             )}
 
             {/* Actions */}
-            {selected.status !== "approved" && selected.status !== "rejected" && (
+            {selected.status !== "approved" && (
               <>
                 {confirmReject ? (
                   <div className="space-y-3 pt-2">

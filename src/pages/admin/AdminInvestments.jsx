@@ -2,13 +2,13 @@
 import { useNavigate } from "react-router-dom";
 import {
   Search,
-  TrendingUp,
-  CircleDollarSign,
-  CalendarDays,
   AlertCircle,
+  DollarSign,
+  View,
 } from "lucide-react";
 import { adminApi } from "../../services/api";
 import { Card, Skeleton, Badge, Pagination } from "../../components/common";
+import AmountUpdateModal from "../../components/common/AmountUpdateModal";
 import toast from "react-hot-toast";
 import { formatCurrencyAmount } from "../../utils/currency";
 
@@ -46,6 +46,7 @@ export default function AdminInvestments() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({ total: 0, pages: 0 });
+  const [amountModal, setAmountModal] = useState({ open: false, investment: null });
 
   const fetch = async () => {
     setLoading(true);
@@ -151,16 +152,16 @@ export default function AdminInvestments() {
                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   End
                 </th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {filtered.map((inv) => (
                 <tr
                   key={inv.id || inv._id}
-                  className="hover:bg-gray-50 transition-colors cursor-pointer"
-                  onClick={() =>
-                    navigate(`/admin/investments/${inv.id || inv._id}`)
-                  }
+                  className="hover:bg-gray-50 transition-colors"
                 >
                   <td className="px-6 py-4 font-medium text-gray-900">
                     {inv.refNumber || "--"}
@@ -188,6 +189,26 @@ export default function AdminInvestments() {
                   <td className="px-6 py-4 text-gray-500">
                     {formatDate(inv.endDate)}
                   </td>
+                  <td className="px-6 py-4">
+                    <button
+                      onClick={() =>
+                        navigate(`/admin/investments/${inv.id || inv._id}`)
+                      }
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-600 hover:text-gray-900 transition-colors"
+                    >
+                      <View size={14} />
+                      View
+                    </button>
+                    <button
+                      onClick={() => {
+                        setAmountModal({ open: true, investment: inv });
+                      }}
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-neon-tangerine hover:text-neon-tangerine/80 transition-colors"
+                    >
+                      <DollarSign size={14} />
+                      Edit Amount
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -204,6 +225,13 @@ export default function AdminInvestments() {
         pages={pagination.pages}
         total={pagination.total}
         onPageChange={setPage}
+      />
+
+      <AmountUpdateModal
+        open={amountModal.open}
+        onClose={() => setAmountModal({ open: false, investment: null })}
+        investment={amountModal.investment}
+        onSuccess={fetch}
       />
     </div>
   );

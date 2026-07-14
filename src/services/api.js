@@ -232,14 +232,18 @@ export const adminApi = {
     api.patch(`/admin/distributions/${id}/approve`).then((r) => r.data),
   payDistribution: (id) =>
     api.post(`/admin/distributions/${id}/pay`).then((r) => r.data),
-  getInvestments: (params) => {
-    const q = new URLSearchParams(params).toString();
-    return api.get(`/admin/investments?${q}`).then((r) => r.data);
-  },
-  getInvestmentDetail: (id) =>
-    api.get(`/admin/investments/${id}`).then((r) => r.data),
-  recordInvestmentPayment: (id, data) =>
-    api.post(`/admin/investments/${id}/payments`, data).then((r) => r.data),
+getInvestments: (params) => {
+  const q = new URLSearchParams(params).toString();
+  return api.get(`/admin/investments?${q}`).then((r) => r.data);
+},
+getInvestmentDetail: (id) =>
+  api.get(`/admin/investments/${id}`).then((r) => r.data),
+recordInvestmentPayment: (id, data) =>
+  api.post(`/admin/investments/${id}/payments`, data).then((r) => r.data),
+sendAmountUpdateOtp: (id) =>
+  api.post(`/admin/investments/${id}/send-amount-otp`).then((r) => r.data),
+updateAmount: (id, data) =>
+  api.put(`/admin/investments/${id}/amount`, data).then((r) => r.data),
   getPropertyDetail: (id) =>
     api.get(`/admin/properties/${id}`).then((r) => r.data),
   getPropertyRequests: (propertyId) =>
