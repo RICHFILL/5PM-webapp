@@ -31,8 +31,8 @@ export default function KycGuard({ children }) {
     );
   }
 
-  return children;
   if (status === "approved") {
+    return children;
   }
 
   if (status === "pending" || status === "under_review") {

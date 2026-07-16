@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import React,{ useState, useEffect, useRef } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -27,6 +27,8 @@ import {
   ClipboardList,
   Package,
   Settings,
+  Phone,
+  HelpCircle,
 } from 'lucide-react';
 import useAuthStore from '../store/authStore';
 import { notificationApi } from '../services/api';
@@ -51,6 +53,8 @@ const adminMenuItems = [
   { label: 'Withdrawals', icon: ArrowUpDown, path: '/admin/withdrawals' },
   { label: 'Audit Logs', icon: ClipboardList, path: '/admin/audit-logs' },
   { label: 'Support', icon: MessageSquare, path: '/admin/support' },
+  { label: 'Enquiries', icon: HelpCircle, path: '/admin/enquiries' },
+  { label: 'Callbacks', icon: Phone, path: '/admin/callbacks' },
   { label: 'Reports', icon: FileBarChart, path: '/admin/reports' },
   { label: 'Settings', icon: Settings, path: '/admin/settings' },
 ];

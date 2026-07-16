@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React,{ useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import {
   LayoutGrid,
@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import useAuthStore from '../store/authStore';
 import EmailVerificationModal from '../components/EmailVerificationModal';
+import WhatsAppFloat from '../components/WhatsAppFloat';
 
 const menuItems = [
   { label: 'Dashboard', icon: LayoutGrid, path: '/dashboard' },
@@ -194,6 +195,7 @@ function DashboardLayout({ children }) {
       )}
 
       <EmailVerificationModal isOpen={verifyModalOpen} onClose={() => setVerifyModalOpen(false)} />
+      <WhatsAppFloat />
     </div>
   );
 }

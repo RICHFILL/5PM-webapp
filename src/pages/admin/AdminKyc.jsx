@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Shield, CheckCircle, XCircle, Clock, Search, ExternalLink, AlertCircle, Settings, User, FileText, MapPin, CreditCard } from "lucide-react";
+import { Shield, CheckCircle, XCircle, Clock, Search, ExternalLink, AlertCircle, Settings, User, FileText, MapPin, CreditCard, MessageCircle } from "lucide-react";
 import { adminApi, adminKycSettingsApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Modal, Pagination } from "../../components/common";
 import toast from "react-hot-toast";
@@ -134,6 +134,7 @@ export default function AdminKyc() {
             <tr>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">User</th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Email</th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Phone</th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Submitted</th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
               <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
@@ -146,6 +147,7 @@ export default function AdminKyc() {
                   <span className="font-medium text-gray-900">{r.kycUser?.firstName} {r.kycUser?.lastName}</span>
                 </td>
                 <td className="px-6 py-4 text-gray-600">{r.kycUser?.email}</td>
+                <td className="px-6 py-4 text-gray-500">{r.kycUser?.phone || '—'}</td>
                 <td className="px-6 py-4 text-gray-500">{formatDate(r.createdAt)}</td>
                 <td className="px-6 py-4">
                   <Badge variant={statusVariant(r.status)}>{r.status || "pending"}</Badge>
@@ -179,7 +181,7 @@ export default function AdminKyc() {
               <div className="bg-gray-50 rounded-xl p-4 space-y-2">
                 <div className="flex justify-between text-sm"><span className="text-gray-600">Name</span><span className="font-semibold">{selected.kycUser?.firstName} {selected.kycUser?.lastName}</span></div>
                 <div className="flex justify-between text-sm"><span className="text-gray-600">Email</span><span className="font-semibold">{selected.kycUser?.email}</span></div>
-                {selected.kycUser?.phone && <div className="flex justify-between text-sm"><span className="text-gray-600">Phone</span><span className="font-semibold">{selected.kycUser.phone}</span></div>}
+                {selected.kycUser?.phone && <div className="flex justify-between text-sm"><span className="text-gray-600">Phone</span><span className="font-semibold flex items-center gap-2">{selected.kycUser.phone}<a href={`https://wa.me/${selected.kycUser.phone.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" title="Chat on WhatsApp"><MessageCircle size={14} className="text-[#25D366] hover:opacity-80" /></a></span></div>}
                 <div className="flex justify-between text-sm"><span className="text-gray-600">Status</span><Badge variant={statusVariant(selected.status)}>{selected.status}</Badge></div>
               </div>
             </div>

@@ -1,9 +1,13 @@
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../constants';
+import WhatsAppFloat from '../components/WhatsAppFloat';
+import CallbackFloat from '../components/CallbackFloat';
 
 function PublicLayout({ children }) {
   return (
-    <div className="min-h-screen flex flex-col">
+    <>
+      <div className="min-h-screen flex flex-col">
       <header className="bg-white border-b border-gray-100 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 py-2 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link to={ROUTES.HOME} className="flex items-center py-2 gap-2">
@@ -31,7 +35,7 @@ function PublicLayout({ children }) {
               <img src="/assets/newlogo.png" alt="Logo" className="h-20 mb-2 object-contain" style={{ filter: 'grayscale(1) brightness(200%)' }} />
               <p className="text-sm text-gray-400">Premium digital wealth and investment platform.</p>
               <div className="flex flex-col gap-2 mt-6">
-                <a href="#" target="_blank" rel="noopener noreferrer">
+                <a href="https://play.google.com/store/apps/details?id=com.fivepmnexus&pcampaignid=web_share" target="_blank" rel="noopener noreferrer">
                   <img src="/assets/play.png" alt="Get it on Google Play" className="h-12 w-auto" />
                 </a>
                 <a href="#" target="_blank" rel="noopener noreferrer">
@@ -72,6 +76,9 @@ function PublicLayout({ children }) {
         </div>
       </footer>
     </div>
+    <WhatsAppFloat />
+    <CallbackFloat />
+    </>
   );
 }
 

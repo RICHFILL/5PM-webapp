@@ -522,6 +522,28 @@ export const helpApi = {
     api.post("/help/tickets", payload).then((r) => r.data),
 };
 
+// --- Contact / Enquiries ---
+export const contactApi = {
+  submitEnquiry: (data) => api.post("/contact", data).then((r) => r.data),
+  getAllEnquiries: (params) => {
+    const q = new URLSearchParams(params).toString();
+    return api.get(`/contact/admin?${q}`).then((r) => r.data);
+  },
+  updateEnquiryStatus: (id, status) =>
+    api.patch(`/contact/${id}`, { status }).then((r) => r.data),
+};
+
+// --- Callbacks ---
+export const callbackApi = {
+  requestCallback: (data) => api.post("/callbacks", data).then((r) => r.data),
+  getAll: (params) => {
+    const q = new URLSearchParams(params).toString();
+    return api.get(`/callbacks/admin?${q}`).then((r) => r.data);
+  },
+  updateStatus: (id, status) =>
+    api.patch(`/callbacks/${id}`, { status }).then((r) => r.data),
+};
+
 // --- Analytics ---
 export const analyticsApi = {
   getInsights: () => api.get("/analytics/insights").then((r) => r.data),

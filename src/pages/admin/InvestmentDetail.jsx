@@ -20,6 +20,7 @@ import {
   CheckCircle2,
   Clock,
   Copy,
+  MessageCircle,
 } from "lucide-react";
 import { adminApi, investmentApi } from "../../services/api";
 import {
@@ -428,7 +429,11 @@ export default function InvestmentDetail() {
               </div>
               <div className="flex items-center gap-3 text-gray-600 py-3">
                 <Phone size={14} className="shrink-0 text-gray-400" />
-                <span>{inv.investor?.phone || inv.user?.phone || "\u2014"}</span>
+                <span className="flex items-center gap-2">{inv.investor?.phone || inv.user?.phone || "\u2014"}{(inv.investor?.phone || inv.user?.phone) && (
+                  <a href={`https://wa.me/${(inv.investor?.phone || inv.user?.phone).replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" title="Chat on WhatsApp">
+                    <MessageCircle size={14} className="text-[#25D366] hover:opacity-80" />
+                  </a>
+                )}</span>
               </div>
               <div className="flex items-center gap-3 text-gray-600 pt-3">
                 <Hash size={14} className="shrink-0 text-gray-400" />

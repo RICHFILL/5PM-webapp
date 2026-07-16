@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Send, User, Shield } from "lucide-react";
+import { ArrowLeft, Send, User, Shield, MessageCircle } from "lucide-react";
 import { adminTicketApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button } from "../../components/common";
 import toast from "react-hot-toast";
@@ -101,6 +101,11 @@ export default function AdminTicketDetail() {
         <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
           <span>By: {ticket.ticketUser?.firstName} {ticket.ticketUser?.lastName}</span>
           <span>{ticket.ticketUser?.email}</span>
+          {ticket.ticketUser?.phone && (
+            <a href={`https://wa.me/${ticket.ticketUser.phone.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[#25D366] hover:underline" title="Chat on WhatsApp">
+              <MessageCircle size={14} /> WhatsApp
+            </a>
+          )}
           <span>Category: {ticket.category}</span>
           <span>Priority: <Badge variant={ticket.priority === "urgent" ? "danger" : ticket.priority === "high" ? "warning" : "default"}>{ticket.priority}</Badge></span>
           <span>{formatDate(ticket.createdAt)}</span>
