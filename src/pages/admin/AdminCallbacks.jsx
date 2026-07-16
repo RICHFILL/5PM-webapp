@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Search, Phone, Filter, AlertCircle, PhoneCall, PhoneOff, CheckCircle, XCircle } from "lucide-react";
+import { Search, Phone, Filter, AlertCircle, PhoneCall, CheckCircle, XCircle } from "lucide-react";
 import { callbackApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button } from "../../components/common";
 import toast from "react-hot-toast";

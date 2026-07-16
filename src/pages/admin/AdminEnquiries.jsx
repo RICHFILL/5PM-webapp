@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Search, Mail, Filter, AlertCircle, Eye, CheckCheck, MessageSquare, ChevronDown } from "lucide-react";
+import { Search, Mail, Filter, AlertCircle, Eye, CheckCheck, MessageSquare } from "lucide-react";
 import { contactApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button } from "../../components/common";
 import toast from "react-hot-toast";
