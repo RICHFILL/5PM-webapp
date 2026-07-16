@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Shield, CheckCircle, XCircle, Clock, Search, ExternalLink, AlertCircle, Settings, User, FileText, MapPin, CreditCard, MessageCircle } from "lucide-react";
+import { Shield, CheckCircle, XCircle, Clock, Search, ExternalLink, AlertCircle, Settings, User, FileText, MapPin, CreditCard, MessageCircle, Zap, Loader2 } from "lucide-react";
 import { adminApi, adminKycSettingsApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Modal, Pagination } from "../../components/common";
 import toast from "react-hot-toast";
@@ -47,6 +47,8 @@ export default function AdminKyc() {
   const [selected, setSelected] = useState(null);
   const [rejectionNote, setRejectionNote] = useState("");
   const [confirmReject, setConfirmReject] = useState(false);
+  const [verifying, setVerifying] = useState(false);
+  const [verifyResult, setVerifyResult] = useState(null);
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({ total: 0, pages: 0 });
   const [verificationMode, setVerificationMode] = useState("manual");
@@ -91,6 +93,26 @@ export default function AdminKyc() {
       toast.success(`KYC ${status}`);
     } catch (err) {
       toast.error(err?.response?.data?.message || "Failed to update KYC");
+    }
+  };
+
+  const handleAutoVerify = async () => {
+    if (!selected) return;
+    setVerifying(true);
+    setVerifyResult(null);
+    try {
+      const data = await adminApi.autoVerifyKyc(selected.id || selected._id);
+      setVerifyResult(data.verification);
+      if (data.verification?.verified === true) {
+        setRequests((prev) => prev.map((r) => (r.id || r._id) === (selected.id || selected._id) ? { ...r, status: "approved" } : r));
+        toast.success("KYC auto-verified and approved");
+      } else {
+        toast.error("Auto-verification did not pass");
+      }
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Auto-verification failed");
+    } finally {
+      setVerifying(false);
     }
   };
 
@@ -172,7 +194,7 @@ export default function AdminKyc() {
       </Card>
       <Pagination page={page} pages={pagination.pages} total={pagination.total} onPageChange={setPage} />
 
-      <Modal isOpen={!!selected} onClose={() => { setSelected(null); setRejectionNote(""); setConfirmReject(false); }} title="Review KYC Request" size="lg">
+      <Modal isOpen={!!selected} onClose={() => { setSelected(null); setRejectionNote(""); setConfirmReject(false); setVerifying(false); setVerifyResult(null); }} title="Review KYC Request" size="lg">
         {selected && (
           <div className="space-y-5">
             {/* User Info */}
@@ -251,10 +273,55 @@ export default function AdminKyc() {
               </div>
             )}
 
+            {/* Verification Result */}
+            {verifyResult && (
+              <div className={`rounded-xl p-4 text-sm ${verifyResult.verified === true ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
+                <div className="flex items-start gap-3">
+                  {verifyResult.verified === true ? (
+                    <CheckCircle size={20} className="text-green-600 shrink-0 mt-0.5" />
+                  ) : (
+                    <XCircle size={20} className="text-red-600 shrink-0 mt-0.5" />
+                  )}
+                  <div>
+                    <p className={`font-semibold ${verifyResult.verified === true ? 'text-green-800' : 'text-red-800'}`}>
+                      {verifyResult.verified === true ? 'Verification Passed' : 'Verification Failed'}
+                    </p>
+                    <p className={`mt-1 ${verifyResult.verified === true ? 'text-green-700' : 'text-red-700'}`}>
+                      {verifyResult.details}
+                    </p>
+                    {verifyResult.checks && (
+                      <div className="mt-2 space-y-1">
+                        {Object.entries(verifyResult.checks).map(([key, val]) => (
+                          <div key={key} className="flex items-center gap-2 text-xs">
+                            {val === true || val?.passed ? (
+                              <CheckCircle size={12} className="text-green-500" />
+                            ) : val === false || val?.passed === false ? (
+                              <XCircle size={12} className="text-red-500" />
+                            ) : (
+                              <Clock size={12} className="text-gray-400" />
+                            )}
+                            <span className="capitalize">{key.replace(/([A-Z])/g, ' $1')}: </span>
+                            <span className="font-mono">
+                              {typeof val === 'object' ? (val.passed ? 'Passed' : val.reason || 'Failed') : String(val)}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Actions */}
-            {selected.status !== "approved" && (
+            {selected.status !== "approved" && !verifyResult?.verified === true && (
               <>
-                {confirmReject ? (
+                {verifying ? (
+                  <div className="flex items-center justify-center gap-2 pt-2 py-4">
+                    <Loader2 size={20} className="animate-spin text-neon-tangerine" />
+                    <span className="text-sm text-gray-600">Running auto-verification...</span>
+                  </div>
+                ) : confirmReject ? (
                   <div className="space-y-3 pt-2">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Rejection Reason (required)</label>
@@ -270,6 +337,9 @@ export default function AdminKyc() {
                   </div>
                 ) : (
                   <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                    <Button variant="outline" className="flex-1" onClick={handleAutoVerify} disabled={verifying}>
+                      <Zap size={16} /> Auto Verify
+                    </Button>
                     <Button variant="danger" className="flex-1" onClick={() => setConfirmReject(true)}>
                       <XCircle size={16} /> Reject
                     </Button>

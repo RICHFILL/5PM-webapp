@@ -205,6 +205,8 @@ export const adminApi = {
       return api.patch(`/admin/kyc/${id}/review`).then((r) => r.data);
     return api.patch(`/admin/kyc/${id}/approve`).then((r) => r.data);
   },
+  autoVerifyKyc: (id) =>
+    api.patch(`/admin/kyc/${id}/auto-verify`).then((r) => r.data),
   getWallets: (params) => {
     const q = new URLSearchParams(params).toString();
     return api.get(`/admin/wallets?${q}`).then((r) => r.data);
