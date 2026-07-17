@@ -2,11 +2,14 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Clock, CheckCircle2, XCircle, Send, Home, ExternalLink,
-  Calendar, MessageSquare, Wallet, TrendingUp, AlertCircle, CheckCircle,
+  Calendar, MessageSquare, TrendingUp, CheckCircle,
 } from "lucide-react";
-import { propertyApi, walletApi } from "../../services/api";
-import { Card, Skeleton, Badge, Button, Modal } from "../../components/common";
+import { propertyApi, agreementApi } from "../../services/api";
+import { Card, Skeleton, Badge, Button } from "../../components/common";
 import { formatNaira } from "../../utils/format";
+import useAuthStore from "../../store/authStore";
+import AgreementSigningModal from "../../components/agreement/AgreementSigningModal";
+import toast from "react-hot-toast";
 
 const statusConfig = {
   pending: { label: "Pending", variant: "warning", icon: Clock },
@@ -17,14 +20,19 @@ const statusConfig = {
 
 export default function MyRequests() {
   const navigate = useNavigate();
+  const { user } = useAuthStore();
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [investError, setInvestError] = useState(null);
 
   const [investReq, setInvestReq] = useState(null);
-  const [walletBalance, setWalletBalance] = useState(0);
+  const [showAgreement, setShowAgreement] = useState(false);
+  const [agreementSigned, setAgreementSigned] = useState(false);
+  const [agreementData, setAgreementData] = useState(null);
   const [investing, setInvesting] = useState(false);
-  const [investError, setInvestError] = useState("");
-  const [investSuccess, setInvestSuccess] = useState(null);
+
+  const investorName =
+    `${user?.firstName || ""} ${user?.lastName || ""}`.trim() || "Investor";
 
   const fetch = async () => {
     setLoading(true);
@@ -40,38 +48,57 @@ export default function MyRequests() {
 
   useEffect(() => { fetch(); }, []);
 
-  const openInvestModal = async (req) => {
+  const openInvest = (req) => {
     setInvestReq(req);
-    setInvestError("");
-    setInvestSuccess(null);
-    try {
-      const balRes = await walletApi.getBalance();
-      setWalletBalance(parseFloat(balRes?.balance) || 0);
-    } catch {
-      setWalletBalance(0);
-    }
+    setAgreementSigned(false);
+    setAgreementData(null);
+    setShowAgreement(true);
   };
 
-  const closeInvestModal = () => {
-    setInvestReq(null);
-    setInvestError("");
-    setInvestSuccess(null);
-    setInvesting(false);
-  };
-
-  const handleInvest = async () => {
+  const handleAgreementConfirm = async (payload) => {
     if (!investReq) return;
     setInvesting(true);
-    setInvestError("");
     try {
       const res = await propertyApi.completeRequest(investReq.id);
       const investment = res?.data || res;
-      setInvestSuccess(investment);
+      const investmentId = investment?.id;
+
+      if (investmentId) {
+        try {
+          const formData = new FormData();
+          if (payload.signature.type === "typed") {
+            formData.append("signatureType", "typed");
+          } else {
+            const blob = await fetch(payload.signature.data).then((r) => r.blob());
+            formData.append("signature", blob, "signature.png");
+            formData.append("signatureType", payload.signature.type);
+          }
+          formData.append("fullName", payload.fullName);
+          formData.append("signedAt", payload.signedAt);
+          const agreementRes = await agreementApi.submitAgreement(investmentId, formData);
+          setAgreementData(agreementRes?.agreement || {
+            signatureUrl: payload.signature.type !== "typed" ? payload.signature.data : null,
+            fullName: payload.signature.type === "typed" ? payload.signature.data : payload.fullName,
+            signedAt: payload.signedAt,
+          });
+        } catch (agreementErr) {
+          console.warn("Agreement submission non-fatal:", agreementErr);
+          setAgreementData({
+            signatureUrl: payload.signature.type !== "typed" ? payload.signature.data : null,
+            fullName: payload.signature.type === "typed" ? payload.signature.data : payload.fullName,
+            signedAt: payload.signedAt,
+          });
+        }
+      }
+
+      setAgreementSigned(true);
       setRequests((prev) =>
         prev.map((r) => (r.id === investReq.id ? { ...r, status: "completed" } : r))
       );
     } catch (err) {
       setInvestError(err?.response?.data?.message || err.message || "Investment failed");
+      alert(err?.response?.data?.message || err.message || "Investment failed");
+      toast.error(err?.response?.data?.message || err.message || "Investment failed");
     } finally {
       setInvesting(false);
     }
@@ -112,10 +139,10 @@ export default function MyRequests() {
           {requests.map((req) => {
             const config = statusConfig[req.status] || statusConfig.pending;
             const StatusIcon = config.icon;
-            const property = req.property || {};
-            const images = typeof property.images === "string"
-              ? (() => { try { return JSON.parse(property.images); } catch { return []; } })()
-              : (property.images || []);
+            const prop = req.property || {};
+            const images = typeof prop.images === "string"
+              ? (() => { try { return JSON.parse(prop.images); } catch { return []; } })()
+              : (prop.images || []);
             const firstImage = images[0];
 
             return (
@@ -124,7 +151,7 @@ export default function MyRequests() {
                   <div className="flex items-start gap-4 flex-1 min-w-0">
                     <div className="w-20 h-20 rounded-xl bg-dark-lavender/10 flex items-center justify-center shrink-0 overflow-hidden">
                       {firstImage ? (
-                        <img src={firstImage} alt={property.title} className="w-full h-full object-cover" />
+                        <img src={firstImage} alt={prop.title} className="w-full h-full object-cover" />
                       ) : (
                         <Home size={28} className="text-dark-lavender/40" />
                       )}
@@ -132,7 +159,7 @@ export default function MyRequests() {
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap mb-1">
                         <h3 className="font-semibold text-gray-900 truncate">
-                          {property.title || "Property"}
+                          {prop.title || "Property"}
                         </h3>
                         <Badge variant={config.variant} size="sm">
                           <StatusIcon size={12} className="inline mr-1" />
@@ -142,15 +169,15 @@ export default function MyRequests() {
                       <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-gray-600">
                         <span>
                           <strong>{req.desiredUnits}</strong> unit{req.desiredUnits > 1 ? "s" : ""}
-                          {property.unitPrice ? ` at ${formatNaira(Number(property.unitPrice))} each` : ""}
+                          {prop.unitPrice ? ` at ${formatNaira(Number(prop.unitPrice))} each` : ""}
                         </span>
-                        {property.unitPrice && (
+                        {prop.unitPrice && (
                           <span className="font-medium text-gray-800">
-                            Total: {formatNaira(req.desiredUnits * Number(property.unitPrice))}
+                            Total: {formatNaira(req.desiredUnits * Number(prop.unitPrice))}
                           </span>
                         )}
-                        {property.duration && (
-                          <span>{property.duration} months</span>
+                        {prop.duration && (
+                          <span>{prop.duration} months</span>
                         )}
                         <span className="flex items-center gap-1">
                           <Calendar size={13} />
@@ -174,7 +201,7 @@ export default function MyRequests() {
                   </div>
                   <div className="flex flex-col items-end gap-2 shrink-0">
                     {req.status === "approved" && (
-                      <Button size="sm" onClick={() => openInvestModal(req)}>
+                      <Button size="sm" onClick={() => openInvest(req)}>
                         <TrendingUp size={14} className="mr-1" />
                         Invest Now
                       </Button>
@@ -193,85 +220,20 @@ export default function MyRequests() {
         </div>
       )}
 
-      <Modal isOpen={!!investReq} onClose={closeInvestModal} title="Confirm Investment" size="md">
-        {investSuccess ? (
-          <div className="text-center space-y-5 py-6">
-            <div className="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center">
-              <CheckCircle className="text-green-600" size={32} />
-            </div>
-            <h3 className="text-xl font-semibold text-gray-900">Investment Successful!</h3>
-            <p className="text-sm text-gray-600">
-              You have successfully purchased {investReq?.desiredUnits} unit{investReq?.desiredUnits > 1 ? "s" : ""} in{" "}
-              <strong>{property.title}</strong> for <strong>{formatNaira(totalCost)}</strong>.
-            </p>
-            <div className="flex gap-3 justify-center">
-              <Button onClick={() => navigate("/investments")}>
-                View Portfolio
-              </Button>
-              <Button variant="outline" onClick={closeInvestModal}>
-                Done
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-5 py-2">
-            <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
-              <div className="w-14 h-14 rounded-lg overflow-hidden shrink-0 bg-dark-lavender/10 flex items-center justify-center">
-                {property.images?.[0] ? (
-                  <img src={property.images[0]} alt="" className="w-full h-full object-cover" />
-                ) : (
-                  <Home size={24} className="text-dark-lavender/40" />
-                )}
-              </div>
-              <div>
-                <p className="font-semibold text-gray-900">{property.title}</p>
-                <p className="text-sm text-gray-500">
-                  {investReq?.desiredUnits} unit{investReq?.desiredUnits > 1 ? "s" : ""} requested
-                </p>
-              </div>
-            </div>
+      <AgreementSigningModal
+        isOpen={showAgreement}
+        onClose={() => { setShowAgreement(false); setAgreementSigned(false); }}
+        onConfirm={handleAgreementConfirm}
+        investorName={investorName}
+        principalAmount={totalCost}
+        currency="NGN"
+        tenorMonths={property.duration}
+        monthlyRatePercent={property.expectedROI}
+        propertyName={property.title}
+        submitting={investing}
+        signedSuccess={agreementSigned}
+      />
 
-            <div className="space-y-3 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Units</span>
-                <span className="font-medium">{investReq?.desiredUnits}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Unit price</span>
-                <span className="font-medium">{formatNaira(Number(property.unitPrice || 0))}</span>
-              </div>
-              <div className="flex justify-between border-t pt-3">
-                <span className="font-semibold text-gray-900">Total cost</span>
-                <span className="font-semibold text-gray-900">{formatNaira(totalCost)}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600 flex items-center gap-1">
-                  <Wallet size={14} /> Wallet balance
-                </span>
-                <span className={`font-medium ${walletBalance >= totalCost ? "text-green-600" : "text-red-600"}`}>
-                  {formatNaira(walletBalance)}
-                </span>
-              </div>
-            </div>
-
-            {investError && (
-              <div className="flex items-start gap-2 p-3 bg-red-50 rounded-lg text-sm text-red-700">
-                <AlertCircle size={16} className="mt-0.5 shrink-0" />
-                <span>{investError}</span>
-              </div>
-            )}
-
-            <div className="flex gap-3 justify-end pt-2">
-              <Button variant="outline" onClick={closeInvestModal} disabled={investing}>
-                Cancel
-              </Button>
-              <Button onClick={handleInvest} disabled={investing || walletBalance < totalCost}>
-                {investing ? "Processing..." : "Confirm & Invest"}
-              </Button>
-            </div>
-          </div>
-        )}
-      </Modal>
     </div>
   );
 }

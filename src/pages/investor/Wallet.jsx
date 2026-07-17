@@ -45,7 +45,7 @@ const FILTERS = [
 
 const DEPOSIT_ADDRESSES = {
   NGN: { bank: "FCMB", account: "1003799718", name: "5PM NEXUS INVEST LIMITED" },
-  USD: { bank: "5pm Nexus", account: "2000914506", name: "5PM NEXUS INVEST LIMITED" },
+  USD: { bank: "FCMB", account: "2000914506", name: "5PM NEXUS INVEST LIMITED" },
   USDT: { network: "TRC20", address: "TBz5yvdhA5isuWQKUAQqsEy4vNpBP5U85S" },
 };
 
