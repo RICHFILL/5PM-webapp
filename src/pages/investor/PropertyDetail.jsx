@@ -330,7 +330,7 @@ export default function PropertyDetail() {
           </Card>
 
           {property.features?.length > 0 && (
-            <Card className="h-auto">
+            <div className="h-auto">
               <h3 className="text-lg font-semibold text-gray-900 mb-3">
                 Features
               </h3>
@@ -348,11 +348,11 @@ export default function PropertyDetail() {
                   </div>
                 ))}
               </div>
-            </Card>
+            </div>
           )}
 
           {property.documents?.length > 0 && (
-            <Card className="h-auto">
+            <div className="space-y-4">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 Property Documents
               </h3>
@@ -379,7 +379,7 @@ export default function PropertyDetail() {
                   </a>
                 ))}
               </div>
-            </Card>
+            </div>
           )}
 
           {updates.length > 0 && (

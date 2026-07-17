@@ -30,7 +30,17 @@ export default function CreditNoteAgreement({
   const symbol = currency === "NGN" ? "₦" : currency;
 
   return (
-    <div className="text-sm leading-relaxed text-gray-800 space-y-4 font-serif">
+    <div
+      className="relative text-sm leading-relaxed text-gray-800 space-y-4 font-serif"
+      style={{
+        backgroundImage: "url('/assets/letterhead-1.png')",
+        backgroundSize: "100% 100%",
+        backgroundRepeat: "no-repeat",
+        padding: "180px 60px 100px 60px", // top clears the logo block, bottom clears the orange footer strip
+        minHeight: "1123px", // A4 height at 96dpi-ish; adjust to your PNG's aspect ratio
+      }}
+    >
+
       <div className="text-center space-y-1 pb-2 border-b border-gray-200">
         <p className="font-bold tracking-wide">5PM NEXUS INVEST LIMITED</p>
         <p className="text-xs text-gray-500 italic">
