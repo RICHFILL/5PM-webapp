@@ -13,8 +13,9 @@ function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const passwordError = password && (
-    password.length < 12
+  const passwordError =
+    password &&
+    (password.length < 12
       ? "At least 12 characters required"
       : !/[a-z]/.test(password)
         ? "Needs a lowercase letter"
@@ -24,8 +25,7 @@ function Login() {
             ? "Needs a number"
             : !/[!@#$%^&*]/.test(password)
               ? "Needs a special character (!@#$%^&*)"
-              : ""
-  );
+              : "");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,15 +40,24 @@ function Login() {
         localStorage.setItem("authToken", token);
         login(token, { email });
       }
-      const redirectTo = response.user?.role === 'admin' ? '/admin' : '/dashboard';
+      const redirectTo =
+        response.user?.role === "admin" ? "/admin" : "/dashboard";
       window.location.href = redirectTo;
     } catch (err) {
-      if (err.response?.status === 403 && err.response?.data?.message?.toLowerCase().includes('not verified')) {
-        localStorage.setItem('verifyEmail', email);
-        window.location.href = '/verify-email';
+      console.log("Login Error:", err);
+      console.log("Response:", err.response);
+      console.log("Data:", err.response?.data);
+
+      if (
+        err.response?.status === 403 &&
+        err.response?.data?.message?.toLowerCase().includes("not verified")
+      ) {
+        localStorage.setItem("verifyEmail", email);
+        window.location.href = "/verify-email";
         return;
       }
-      setError(err.message || "Login failed. Please try again.");
+
+      setError(err.response?.data?.message || err.message || "Login failed.");
     } finally {
       setLoading(false);
     }
@@ -71,7 +80,9 @@ function Login() {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Email Address
+          </label>
           <input
             type="email"
             value={email}
@@ -82,7 +93,9 @@ function Login() {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Password
+          </label>
           <div className="relative">
             <input
               type={showPassword ? "text" : "password"}
@@ -100,10 +113,15 @@ function Login() {
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           </div>
-          {passwordError && <p className="text-red-500 text-xs mt-1">{passwordError}</p>}
+          {passwordError && (
+            <p className="text-red-500 text-xs mt-1">{passwordError}</p>
+          )}
         </div>
         <div className="flex items-center justify-end">
-          <Link to="/forgot-password" className="text-sm text-neon-tangerine hover:text-neon-tangerine/80 font-medium">
+          <Link
+            to="/forgot-password"
+            className="text-sm text-neon-tangerine hover:text-neon-tangerine/80 font-medium"
+          >
             Forgot password?
           </Link>
         </div>
@@ -118,7 +136,10 @@ function Login() {
 
       <p className="text-center text-gray-600 text-sm mt-6">
         Don't have an account?{" "}
-        <Link to="/register" className="text-neon-tangerine hover:text-neon-tangerine/80 font-medium">
+        <Link
+          to="/register"
+          className="text-neon-tangerine hover:text-neon-tangerine/80 font-medium"
+        >
           Sign up here
         </Link>
       </p>

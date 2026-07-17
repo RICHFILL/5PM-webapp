@@ -55,7 +55,7 @@ function Register() {
     }
   };
 
-  const inputClass = "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-neon-tangerine focus:border-transparent outline-none";
+  const inputClass = `w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 ${!Object.values(passwordChecks).every(Boolean) ? "focus:ring-red-500" : "focus:ring-neon-tangerine"} focus:border-transparent outline-none`;
 
   return (
     <div>

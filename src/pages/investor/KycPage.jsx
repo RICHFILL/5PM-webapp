@@ -675,9 +675,9 @@ function KycPage() {
         const s = res?.kyc?.status || null;
         if (s) store.setStatus(s);
       } catch (e) {
-        if (e?.code !== "ERR_NETWORK")
-          toast.error("Failed to load KYC status. Check your connection.");
-        else toast.error("Network error — is the backend server running?");
+        // if (e?.code !== "ERR_NETWORK")
+        //   toast.error("Failed to load KYC status. Check your connection.");
+        // else toast.error("Network error — is the backend server running?");
       } finally {
         setLoading(false);
       }
