@@ -5,6 +5,7 @@ import useInvestmentStore from "../../store/investmentStore";
 import useAuthStore from "../../store/authStore";
 import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
 import { formatNaira } from '../../utils/format';
+import AgreementSigningModal from "../../components/agreement/AgreementSigningModal";
 
 const formatROI = (roi) => roi || "3.5%";
 
@@ -14,53 +15,79 @@ function InvestModal({ isOpen, onClose, product }) {
   const [step, setStep] = useState("form");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showAgreement, setShowAgreement] = useState(false);
 
   const minAmount = product?.minimumInvestment || product?.minInvestment || 0;
+  const investorName =
+    `${user?.firstName || ""} ${user?.lastName || ""}`.trim() || "Investor";
 
-  const handleInvest = async (e) => {
+  const handleInvest = (e) => {
     e.preventDefault();
     if (Number(amount) < minAmount) {
       setError(`Minimum investment is ${formatNaira(minAmount)}`);
       return;
     }
-    setLoading(true); setError("");
+    setShowAgreement(true);
+  };
+
+  const handleAgreementConfirm = async (payload) => {
+    setLoading(true);
+    setError("");
     try {
       await investmentApi.createInvestment({
         productId: product.id,
         amount: Number(amount),
+        agreement: payload,
       });
+      setShowAgreement(false);
       setStep("confirmation");
     } catch (err) {
       setError(err?.response?.data?.message || err.message || "Investment failed");
+      setShowAgreement(false);
     } finally { setLoading(false); }
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={step === "form" ? `Invest in ${product?.name || product?.projectName}` : "Investment Confirmed"} size="md">
-      {step === "form" ? (
-        <form onSubmit={handleInvest} className="space-y-4">
-          <div className="bg-neon-tangerine/10 rounded-xl p-4 space-y-2">
-            <div className="flex justify-between text-sm"><span className="text-gray-600">Expected ROI</span><span className="font-semibold">{formatROI(product?.roiDisplay || product?.expectedROI)}</span></div>
-            <div className="flex justify-between text-sm"><span className="text-gray-600">Minimum Investment</span><span className="font-semibold">{formatNaira(minAmount)}</span></div>
-            <div className="flex justify-between text-sm"><span className="text-gray-600">Duration</span><span className="font-semibold">{product?.duration || product?.tenure || "--"} months</span></div>
+    <>
+      <Modal isOpen={isOpen} onClose={onClose} title={step === "form" ? `Invest in ${product?.name || product?.projectName}` : "Investment Confirmed"} size="md">
+        {step === "form" ? (
+          <form onSubmit={handleInvest} className="space-y-4">
+            <div className="bg-neon-tangerine/10 rounded-xl p-4 space-y-2">
+              <div className="flex justify-between text-sm"><span className="text-gray-600">Expected ROI</span><span className="font-semibold">{formatROI(product?.roiDisplay || product?.expectedROI)}</span></div>
+              <div className="flex justify-between text-sm"><span className="text-gray-600">Minimum Investment</span><span className="font-semibold">{formatNaira(minAmount)}</span></div>
+              <div className="flex justify-between text-sm"><span className="text-gray-600">Duration</span><span className="font-semibold">{product?.duration || product?.tenure || "--"} months</span></div>
+            </div>
+            <Input label="Investment Amount (NGN)" type="number" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder={`Min ${formatNaira(minAmount)}`} required min={minAmount} />
+            {error && <p className="text-sm text-red-600 flex items-center gap-1"><AlertCircle size={14} />{error}</p>}
+            <Button type="submit" className="w-full" disabled={loading || !amount}>
+              {loading ? "Processing..." : `Invest ${formatNaira(Number(amount) || 0)}`}
+            </Button>
+          </form>
+        ) : (
+          <div className="text-center space-y-4 py-4">
+            <div className="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center">
+              <CheckCircle2 className="text-green-600" size={32} />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900">Investment Submitted!</h3>
+            <p className="text-sm text-gray-600">You have successfully invested {formatNaira(Number(amount))} in {product?.name || product?.projectName}.</p>
+            <Button onClick={onClose} variant="secondary">View My Investments</Button>
           </div>
-          <Input label="Investment Amount (NGN)" type="number" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder={`Min ${formatNaira(minAmount)}`} required min={minAmount} />
-          {error && <p className="text-sm text-red-600 flex items-center gap-1"><AlertCircle size={14} />{error}</p>}
-          <Button type="submit" className="w-full" disabled={loading || !amount}>
-            {loading ? "Processing..." : `Invest ${formatNaira(Number(amount) || 0)}`}
-          </Button>
-        </form>
-      ) : (
-        <div className="text-center space-y-4 py-4">
-          <div className="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center">
-            <CheckCircle2 className="text-green-600" size={32} />
-          </div>
-          <h3 className="text-lg font-semibold text-gray-900">Investment Submitted!</h3>
-          <p className="text-sm text-gray-600">You have successfully invested {formatNaira(Number(amount))} in {product?.name || product?.projectName}.</p>
-          <Button onClick={onClose} variant="secondary">View My Investments</Button>
-        </div>
-      )}
-    </Modal>
+        )}
+      </Modal>
+
+      <AgreementSigningModal
+        isOpen={showAgreement}
+        onClose={() => setShowAgreement(false)}
+        onConfirm={handleAgreementConfirm}
+        investorName={investorName}
+        principalAmount={Number(amount)}
+        currency="NGN"
+        tenorMonths={product?.duration || product?.tenure}
+        monthlyRatePercent={parseFloat(product?.roiDisplay || product?.expectedROI) || 0}
+        propertyName={product?.name || product?.projectName || "Investment Product"}
+        submitting={loading}
+      />
+    </>
   );
 }
 
