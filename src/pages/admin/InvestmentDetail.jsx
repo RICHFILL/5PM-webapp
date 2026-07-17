@@ -21,8 +21,10 @@ import {
   Clock,
   Copy,
   MessageCircle,
+  FileText,
+  Eye,
 } from "lucide-react";
-import { adminApi, investmentApi } from "../../services/api";
+import { adminApi, investmentApi, agreementApi } from "../../services/api";
 import {
   Card,
   Skeleton,
@@ -35,7 +37,9 @@ import AmountUpdateModal from "../../components/common/AmountUpdateModal";
 import toast from "react-hot-toast";
 import { currencySymbol } from "../../utils/currency";
 import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 import InvestmentCertificate from "../../components/certificate/InvestmentCertificate";
+import CreditNoteAgreement from "../../components/agreement/CreditNoteAgreement";
 
 function InfoRow({ label, value, highlight }) {
   return (
@@ -107,6 +111,12 @@ export default function InvestmentDetail() {
   const certificateRef = useRef(null);
   const [downloading, setDownloading] = useState(false);
   const [amountModalOpen, setAmountModalOpen] = useState(false);
+  const contractRef = useRef(null);
+  const [contractDownloading, setContractDownloading] = useState(false);
+  const [showContractModal, setShowContractModal] = useState(false);
+  const [agreementData, setAgreementData] = useState(null);
+  const [agreementLoading, setAgreementLoading] = useState(false);
+  const hasAgreement = agreementData != null;
 
   const fetchInvestment = useCallback(async () => {
     try {
@@ -145,6 +155,22 @@ export default function InvestmentDetail() {
     fetchInvestment();
     fetchInvestmentPayments();
   }, [fetchInvestment, fetchInvestmentPayments]);
+
+  useEffect(() => {
+    const fetchAgreement = async () => {
+      if (!investment?.id) return;
+      setAgreementLoading(true);
+      try {
+        const res = await agreementApi.getAgreementAdmin(investment.id);
+        setAgreementData(res?.agreement || null);
+      } catch {
+        setAgreementData(null);
+      } finally {
+        setAgreementLoading(false);
+      }
+    };
+    fetchAgreement();
+  }, [investment?.id]);
 
   const investmentCurrency = investment?.currency || "NGN";
   const formatCurrency = useCallback(
@@ -193,6 +219,29 @@ export default function InvestmentDetail() {
       link.click();
     } finally {
       setDownloading(false);
+    }
+  };
+
+  const handleDownloadContract = async () => {
+    if (!contractRef.current) return;
+    setContractDownloading(true);
+    try {
+      const canvas = await html2canvas(contractRef.current, {
+        scale: 2,
+        backgroundColor: "#ffffff",
+        useCORS: true,
+      });
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      const filename = `contract-${(inv.projectData?.projectName || inv.project?.projectName || "investment").replace(/\s+/g, "-").toLowerCase()}.pdf`;
+      pdf.save(filename);
+    } catch (err) {
+      console.error("PDF generation failed", err);
+    } finally {
+      setContractDownloading(false);
     }
   };
 
@@ -470,6 +519,57 @@ export default function InvestmentDetail() {
               </div>
             )}
           </div>
+
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+            <div className="h-1.5 bg-gradient-to-r from-amber-500 to-neon-tangerine rounded-t-xl -mx-6 -mt-6 mb-4" />
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
+                <FileText size={18} className="text-amber-600" />
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900">Agreement</h3>
+                <p className="text-xs text-gray-500">Signed credit note contract</p>
+              </div>
+            </div>
+            <div className="space-y-3">
+              {hasAgreement ? (
+                <>
+                  <div className="bg-emerald-50 rounded-xl p-3 border border-emerald-100">
+                    <div className="flex items-center gap-2 text-sm text-emerald-700">
+                      <CheckCircle2 size={14} />
+                      <span className="font-medium">Signed</span>
+                    </div>
+                    <p className="text-xs text-emerald-600 mt-1">
+                      {agreementData?.signedAt
+                        ? `Signed on ${formatDate(agreementData.signedAt)}`
+                        : "Agreement has been signed"}
+                    </p>
+                  </div>
+                  <Button
+                    className="w-full"
+                    variant="outline"
+                    onClick={() => setShowContractModal(true)}
+                  >
+                    <Eye size={15} /> View Agreement
+                  </Button>
+                  <Button
+                    className="w-full"
+                    onClick={handleDownloadContract}
+                    disabled={contractDownloading}
+                  >
+                    <Download size={15} />
+                    {contractDownloading ? "Generating..." : "Download Agreement (PDF)"}
+                  </Button>
+                </>
+              ) : (
+                <div className="bg-amber-50 rounded-xl p-3 border border-amber-100">
+                  <p className="text-xs text-amber-700">
+                    This investment does not have a signed agreement yet.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -644,6 +744,52 @@ export default function InvestmentDetail() {
           </div>
         </div>
       </Modal>
+
+      <Modal
+        isOpen={showContractModal}
+        onClose={() => setShowContractModal(false)}
+        title="Private Credit Note Agreement"
+        size="xl"
+      >
+        <div className="max-h-80 overflow-y-auto rounded-xl border border-gray-200 bg-white p-5">
+          <CreditNoteAgreement
+            investorName={investorName}
+            principalAmount={inv.amount}
+            currency={investmentCurrency}
+            tenorMonths={inv.tenure}
+            monthlyRatePercent={inv.interestRatePerAnnum}
+            propertyName={inv.projectData?.projectName || inv.project?.projectName}
+            signatureUrl={agreementData?.signatureUrl}
+            signatureFullName={agreementData?.fullName}
+            signatureDate={agreementData?.signedAt}
+          />
+        </div>
+        <div className="flex gap-3 justify-end pt-4">
+          <Button onClick={handleDownloadContract} disabled={contractDownloading}>
+            <Download size={15} />
+            {contractDownloading ? "Generating..." : "Download (PDF)"}
+          </Button>
+          <Button variant="outline" onClick={() => setShowContractModal(false)}>
+            Close
+          </Button>
+        </div>
+      </Modal>
+
+      <div style={{ position: "fixed", top: 0, left: "-9999px" }}>
+        <div ref={contractRef}>
+          <CreditNoteAgreement
+            investorName={investorName}
+            principalAmount={inv.amount}
+            currency={investmentCurrency}
+            tenorMonths={inv.tenure}
+            monthlyRatePercent={inv.interestRatePerAnnum}
+            propertyName={inv.projectData?.projectName || inv.project?.projectName}
+            signatureUrl={agreementData?.signatureUrl}
+            signatureFullName={agreementData?.fullName}
+            signatureDate={agreementData?.signedAt}
+          />
+        </div>
+      </div>
 
       <AmountUpdateModal
         open={amountModalOpen}

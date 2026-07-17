@@ -40,6 +40,7 @@ const TermsConditions = lazy(() => import('../pages/investor/TermsConditions'));
 const KycPage = lazy(() => import('../pages/investor/KycPage'));
 const Properties = lazy(() => import('../pages/investor/Properties'));
 const PropertyDetail = lazy(() => import('../pages/investor/PropertyDetail'));
+const MyRequests = lazy(() => import('../pages/investor/MyRequests'));
 const Portfolio = lazy(() => import('../pages/investor/Portfolio'));
 const Reports = lazy(() => import('../pages/investor/Reports'));
 const Notifications = lazy(() => import('../pages/investor/Notifications'));
@@ -237,6 +238,7 @@ function AppRoutes() {
         <Route path="/investments/:id" element={<ProtectedRoute><InvestDetail /></ProtectedRoute>} />
         <Route path="/wallet" element={<ProtectedRoute><Wallet /></ProtectedRoute>} />
         <Route path="/properties" element={<ProtectedRoute><Properties /></ProtectedRoute>} />
+        <Route path="/properties/requests" element={<ProtectedRoute><MyRequests /></ProtectedRoute>} />
         <Route path="/properties/:id" element={<ProtectedRoute><PropertyDetail /></ProtectedRoute>} />
         <Route path="/portfolio" element={<ProtectedRoute><Portfolio /></ProtectedRoute>} />
         <Route path="/wealth-plans" element={<ProtectedRoute><WealthPlans /></ProtectedRoute>} />

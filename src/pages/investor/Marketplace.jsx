@@ -1,11 +1,14 @@
-﻿import { useState, useEffect } from "react";
-import { Search, Filter, TrendingUp, Clock, DollarSign, ChevronRight, CheckCircle2, AlertCircle } from "lucide-react";
-import { investmentApi } from "../../services/api";
+﻿import { useState, useEffect, useRef } from "react";
+import { Search, Filter, TrendingUp, Clock, DollarSign, ChevronRight, CheckCircle2, AlertCircle, Download } from "lucide-react";
+import { investmentApi, agreementApi } from "../../services/api";
 import useInvestmentStore from "../../store/investmentStore";
 import useAuthStore from "../../store/authStore";
 import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
 import { formatNaira } from '../../utils/format';
 import AgreementSigningModal from "../../components/agreement/AgreementSigningModal";
+import CreditNoteAgreement from "../../components/agreement/CreditNoteAgreement";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 const formatROI = (roi) => roi || "3.5%";
 
@@ -16,6 +19,10 @@ function InvestModal({ isOpen, onClose, product }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showAgreement, setShowAgreement] = useState(false);
+  const [agreementSigned, setAgreementSigned] = useState(false);
+  const [agreementData, setAgreementData] = useState(null);
+  const contractRef = useRef(null);
+  const [contractDownloading, setContractDownloading] = useState(false);
 
   const minAmount = product?.minimumInvestment || product?.minInvestment || 0;
   const investorName =
@@ -34,17 +41,55 @@ function InvestModal({ isOpen, onClose, product }) {
     setLoading(true);
     setError("");
     try {
-      await investmentApi.createInvestment({
+      const result = await investmentApi.createInvestment({
         productId: product.id,
         amount: Number(amount),
-        agreement: payload,
       });
-      setShowAgreement(false);
-      setStep("confirmation");
+      const investmentId = result?.investment?.id || result?.data?.id || result?.id;
+
+      if (investmentId) {
+        const formData = new FormData();
+        if (payload.signature.type === "typed") {
+          formData.append("signatureType", "typed");
+        } else {
+          const blob = await fetch(payload.signature.data).then((r) => r.blob());
+          formData.append("signature", blob, "signature.png");
+          formData.append("signatureType", payload.signature.type);
+        }
+        formData.append("fullName", payload.fullName);
+        formData.append("signedAt", payload.signedAt);
+        const agreementRes = await agreementApi.submitAgreement(investmentId, formData);
+        setAgreementData(agreementRes?.agreement || null);
+      }
+
+      setAgreementSigned(true);
     } catch (err) {
       setError(err?.response?.data?.message || err.message || "Investment failed");
       setShowAgreement(false);
     } finally { setLoading(false); }
+  };
+
+  const handleDownloadContract = async () => {
+    if (!contractRef.current) return;
+    setContractDownloading(true);
+    try {
+      const canvas = await html2canvas(contractRef.current, {
+        scale: 2,
+        backgroundColor: "#ffffff",
+        useCORS: true,
+      });
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      const filename = `contract-${(product?.name || product?.projectName || "investment").replace(/\s+/g, "-").toLowerCase()}.pdf`;
+      pdf.save(filename);
+    } catch (err) {
+      console.error("PDF generation failed", err);
+    } finally {
+      setContractDownloading(false);
+    }
   };
 
   return (
@@ -70,14 +115,24 @@ function InvestModal({ isOpen, onClose, product }) {
             </div>
             <h3 className="text-lg font-semibold text-gray-900">Investment Submitted!</h3>
             <p className="text-sm text-gray-600">You have successfully invested {formatNaira(Number(amount))} in {product?.name || product?.projectName}.</p>
-            <Button onClick={onClose} variant="secondary">View My Investments</Button>
+            <div className="flex gap-3 justify-center">
+              <Button onClick={handleDownloadContract} disabled={contractDownloading} variant="outline">
+                <Download size={15} />
+                {contractDownloading ? "Generating..." : "Download Contract (PDF)"}
+              </Button>
+              <Button onClick={onClose} variant="secondary">View My Investments</Button>
+            </div>
           </div>
         )}
       </Modal>
 
       <AgreementSigningModal
         isOpen={showAgreement}
-        onClose={() => setShowAgreement(false)}
+        onClose={() => {
+          setShowAgreement(false);
+          setAgreementSigned(false);
+          setStep("confirmation");
+        }}
         onConfirm={handleAgreementConfirm}
         investorName={investorName}
         principalAmount={Number(amount)}
@@ -86,7 +141,24 @@ function InvestModal({ isOpen, onClose, product }) {
         monthlyRatePercent={parseFloat(product?.roiDisplay || product?.expectedROI) || 0}
         propertyName={product?.name || product?.projectName || "Investment Product"}
         submitting={loading}
+        signedSuccess={agreementSigned}
       />
+
+      <div style={{ position: "fixed", top: 0, left: "-9999px" }}>
+        <div ref={contractRef}>
+          <CreditNoteAgreement
+            investorName={investorName}
+            principalAmount={Number(amount)}
+            currency="NGN"
+            tenorMonths={product?.duration || product?.tenure}
+            monthlyRatePercent={parseFloat(product?.roiDisplay || product?.expectedROI) || 0}
+            propertyName={product?.name || product?.projectName || "Investment Product"}
+            signatureUrl={agreementData?.signatureUrl}
+            signatureFullName={agreementData?.fullName}
+            signatureDate={agreementData?.signedAt}
+          />
+        </div>
+      </div>
     </>
   );
 }

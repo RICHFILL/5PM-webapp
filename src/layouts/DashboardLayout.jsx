@@ -24,6 +24,7 @@ import {
   Brain,
   Building,
   ArrowLeft,
+  Send,
 } from 'lucide-react';
 import useAuthStore from '../store/authStore';
 import EmailVerificationModal from '../components/EmailVerificationModal';
@@ -35,6 +36,7 @@ const menuItems = [
   { label: 'Wealth Plans', icon: PiggyBank, path: '/wealth-plans' },
   { label: 'My Investments', icon: TrendingUp, path: '/investments' },
   { label: 'Real Estate', icon: Building2, path: '/properties' },
+  { label: 'My Requests', icon: Send, path: '/properties/requests' },
   // { label: 'Portfolio', icon: PieChart, path: '/portfolio' },
   { label: 'Reports', icon: BarChart3, path: '/reports' },
   { label: 'Wallet', icon: Wallet, path: '/wallet' },

@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Modal, Button } from "../common";
 import CreditNoteAgreement from "./CreditNoteAgreement";
 import SignaturePad from "./SignaturePad";
-import { AlertCircle, ShieldCheck } from "lucide-react";
+import { AlertCircle, ShieldCheck, CheckCircle2, Download } from "lucide-react";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 export default function AgreementSigningModal({
   isOpen,
@@ -15,10 +17,78 @@ export default function AgreementSigningModal({
   monthlyRatePercent,
   propertyName,
   submitting,
+  signedSuccess,
 }) {
   const [signature, setSignature] = useState(null);
   const [agreed, setAgreed] = useState(false);
   const [scrolledToEnd, setScrolledToEnd] = useState(false);
+  const agreementRef = useRef(null);
+  const [downloading, setDownloading] = useState(false);
+
+  const handleDownloadPdf = async () => {
+    if (!agreementRef.current) return;
+    setDownloading(true);
+    try {
+      const canvas = await html2canvas(agreementRef.current, {
+        scale: 2,
+        backgroundColor: "#ffffff",
+        useCORS: true,
+      });
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      const filename = `contract-${(propertyName || "agreement").replace(/\s+/g, "-").toLowerCase()}.pdf`;
+      pdf.save(filename);
+    } catch (err) {
+      console.error("PDF generation failed", err);
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  if (signedSuccess) {
+    return (
+      <Modal isOpen={isOpen} onClose={onClose} title="Contract Signed Successfully" size="xl">
+        <div className="text-center space-y-6 py-6">
+          <div className="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center">
+            <CheckCircle2 className="text-green-600" size={32} />
+          </div>
+          <h3 className="text-xl font-semibold text-gray-900">Contract Signed Successfully!</h3>
+          <p className="text-sm text-gray-600 max-w-md mx-auto">
+            Your Private Credit Note Agreement has been signed and submitted. You can download a copy for your records.
+          </p>
+
+          <div style={{ position: "fixed", top: 0, left: "-9999px" }}>
+            <div ref={agreementRef}>
+              <CreditNoteAgreement
+                investorName={investorName}
+                principalAmount={principalAmount}
+                currency={currency}
+                tenorMonths={tenorMonths}
+                monthlyRatePercent={monthlyRatePercent}
+                propertyName={propertyName}
+                signatureUrl={signature?.type !== "typed" ? signature?.data : undefined}
+                signatureFullName={signature?.type === "typed" ? signature?.data : investorName}
+                signatureDate={new Date().toISOString()}
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-3 justify-center">
+            <Button onClick={handleDownloadPdf} disabled={downloading}>
+              <Download size={15} />
+              {downloading ? "Generating PDF..." : "Download Signed Contract (PDF)"}
+            </Button>
+            <Button variant="outline" onClick={onClose}>
+              Close
+            </Button>
+          </div>
+        </div>
+      </Modal>
+    );
+  }
 
   const handleScroll = (e) => {
     const { scrollTop, scrollHeight, clientHeight } = e.target;

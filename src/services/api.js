@@ -151,7 +151,7 @@ export const propertyApi = {
   getPropertyDetail: (id) => api.get(`/properties/${id}`).then((r) => r.data),
   purchaseUnit: (id, data) =>
     api
-      .post("/property-investments", { propertyId: id, units: data.units })
+      .post("/property-investments", { propertyId: id, ...data })
       .then((r) => r.data),
   requestInvestment: (propertyId, data) =>
     api
@@ -159,6 +159,10 @@ export const propertyApi = {
       .then((r) => r.data),
   getMyPropertyInvestments: () =>
     api.get("/property-investments").then((r) => r.data),
+  getMyRequests: () =>
+    api.get("/property-investments/requests/my").then((r) => r.data),
+  completeRequest: (requestId) =>
+    api.post(`/property-investments/complete-request/${requestId}`).then((r) => r.data),
 };
 
 // --- Admin ---
@@ -300,6 +304,17 @@ export const adminTicketApi = {
 
 export const adminTokenApi = {
   getAllTokens: () => api.get("/admin/tokens").then((r) => r.data),
+};
+
+export const agreementApi = {
+  submitAgreement: (investmentId, formData) =>
+    api.post(`/investments/${investmentId}/agreement`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    }).then((r) => r.data),
+  getAgreement: (investmentId) =>
+    api.get(`/investments/${investmentId}/agreement`).then((r) => r.data),
+  getAgreementAdmin: (investmentId) =>
+    api.get(`/admin/investments/${investmentId}/agreement`).then((r) => r.data),
 };
 
 export const depositApi = {

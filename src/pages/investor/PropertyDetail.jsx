@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+﻿import { useState, useEffect, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
   ArrowLeft,
@@ -18,8 +18,9 @@ import {
   Send,
   ChevronLeft,
   ChevronRight,
+  Download,
 } from "lucide-react";
-import { propertyApi, propertyUpdateApi } from "../../services/api";
+import { propertyApi, propertyUpdateApi, agreementApi } from "../../services/api";
 import {
   Card,
   Skeleton,
@@ -31,6 +32,9 @@ import {
 import { formatNaira } from "../../utils/format";
 import useAuth from "../../hooks/useAuth";
 import AgreementSigningModal from "../../components/agreement/AgreementSigningModal";
+import CreditNoteAgreement from "../../components/agreement/CreditNoteAgreement";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 export default function PropertyDetail() {
   const { id } = useParams();
@@ -45,8 +49,12 @@ export default function PropertyDetail() {
   const [purchaseError, setPurchaseError] = useState("");
   const [requestMessage, setRequestMessage] = useState("");
   const [showAgreement, setShowAgreement] = useState(false);
+  const [agreementSigned, setAgreementSigned] = useState(false);
+  const [agreementData, setAgreementData] = useState(null);
   const [signaturePayload, setSignaturePayload] = useState(null);
   const [activeImage, setActiveImage] = useState(0);
+  const contractRef = useRef(null);
+  const [contractDownloading, setContractDownloading] = useState(false);
 
   const investorName =
     `${user?.firstName || ""} ${user?.lastName || ""}`.trim() || "Investor";
@@ -166,29 +174,71 @@ export default function PropertyDetail() {
     setPurchaseLoading(true);
     setPurchaseError("");
     try {
-      if (isRequestMode) {
-        await propertyApi.requestInvestment(id, {
-          desiredUnits: units,
-          message: requestMessage,
-          agreement: payload,
-        });
-        setPurchaseStep("requestConfirmation");
-      } else {
-        await propertyApi.purchaseUnit(id, {
-          units,
-          totalAmount: totalCost,
-          agreement: payload,
-        });
-        setPurchaseStep("confirmation");
+      const result = await propertyApi.purchaseUnit(id, {
+        units,
+        totalAmount: totalCost,
+      });
+      const investmentId = result?.data?.id || result?.id;
+
+      if (investmentId) {
+        try {
+          const formData = new FormData();
+          if (payload.signature.type === "typed") {
+            formData.append("signatureType", "typed");
+          } else {
+            const blob = await fetch(payload.signature.data).then((r) => r.blob());
+            formData.append("signature", blob, "signature.png");
+            formData.append("signatureType", payload.signature.type);
+          }
+          formData.append("fullName", payload.fullName);
+          formData.append("signedAt", payload.signedAt);
+          const agreementRes = await agreementApi.submitAgreement(investmentId, formData);
+          setAgreementData(agreementRes?.agreement || {
+            signatureUrl: payload.signature.type !== "typed" ? payload.signature.data : null,
+            fullName: payload.signature.type === "typed" ? payload.signature.data : payload.fullName,
+            signedAt: payload.signedAt,
+          });
+        } catch (agreementErr) {
+          console.warn("Agreement submission non-fatal:", agreementErr);
+          setAgreementData({
+            signatureUrl: payload.signature.type !== "typed" ? payload.signature.data : null,
+            fullName: payload.signature.type === "typed" ? payload.signature.data : payload.fullName,
+            signedAt: payload.signedAt,
+          });
+        }
       }
-      setShowAgreement(false);
+
+      setAgreementSigned(true);
     } catch (err) {
       setPurchaseError(
-        err?.response?.data?.message || err.message || "Submission failed",
+        err?.response?.data?.message || err.message || "Purchase failed",
       );
       setShowAgreement(false);
     } finally {
       setPurchaseLoading(false);
+    }
+  };
+
+  const handleDownloadContract = async () => {
+    if (!contractRef.current) return;
+    setContractDownloading(true);
+    try {
+      const canvas = await html2canvas(contractRef.current, {
+        scale: 2,
+        backgroundColor: "#ffffff",
+        useCORS: true,
+      });
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      const filename = `contract-${propertyName.replace(/\s+/g, "-").toLowerCase()}.pdf`;
+      pdf.save(filename);
+    } catch (err) {
+      console.error("PDF generation failed", err);
+    } finally {
+      setContractDownloading(false);
     }
   };
 
@@ -433,7 +483,7 @@ export default function PropertyDetail() {
         </div>
 
         <div className="space-y-4">
-          <Card className="h-auto">
+          <div className="h-auto bg-white py-3 px-4 rounded-xl border border-gray-200 space-y-4">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
               Investment Details
             </h3>
@@ -513,9 +563,9 @@ export default function PropertyDetail() {
                 </Button>
               )}
             </div>
-          </Card>
+          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-white py-3 px-4 rounded-xl border border-gray-200">
             <div className="bg-slate-50 rounded-xl p-4 text-center">
               <TrendingUp
                 size={20}
@@ -637,7 +687,13 @@ export default function PropertyDetail() {
 
             <Button
               className="w-full"
-              onClick={() => setShowAgreement(true)}
+              onClick={() => {
+                if (isRequestMode) {
+                  handleRequestInvestment();
+                } else {
+                  setShowAgreement(true);
+                }
+              }}
               disabled={purchaseLoading || units < 1 || units > maxUnits}
             >
               {purchaseLoading
@@ -659,11 +715,13 @@ export default function PropertyDetail() {
             </h3>
             <p className="text-sm text-gray-600">
               Your request to invest in {propertyName} has been sent. An admin
-              will contact you shortly.
+              will review it and notify you once approved.
             </p>
-            <Button onClick={() => setShowPurchase(false)} variant="secondary">
-              Done
-            </Button>
+            <div className="flex gap-3 justify-center">
+              <Button onClick={() => setShowPurchase(false)} variant="secondary">
+                Done
+              </Button>
+            </div>
           </div>
         ) : (
           <div className="text-center space-y-4 py-4">
@@ -677,16 +735,26 @@ export default function PropertyDetail() {
               You have purchased {units} unit{units > 1 ? "s" : ""} in{" "}
               {propertyName} for {formatNaira(totalCost)}.
             </p>
-            <Button onClick={() => setShowPurchase(false)} variant="secondary">
-              Done
-            </Button>
+            <div className="flex gap-3 justify-center">
+              <Button onClick={handleDownloadContract} disabled={contractDownloading} variant="outline">
+                <Download size={15} />
+                {contractDownloading ? "Generating..." : "Download Contract (PDF)"}
+              </Button>
+              <Button onClick={() => setShowPurchase(false)} variant="secondary">
+                Done
+              </Button>
+            </div>
           </div>
         )}
       </Modal>
 
       <AgreementSigningModal
         isOpen={showAgreement}
-        onClose={() => setShowAgreement(false)}
+        onClose={() => {
+          setShowAgreement(false);
+          setAgreementSigned(false);
+          setPurchaseStep("confirmation");
+        }}
         onConfirm={handleAgreementConfirm}
         investorName={investorName}
         principalAmount={totalCost}
@@ -695,7 +763,24 @@ export default function PropertyDetail() {
         monthlyRatePercent={property.expectedROI}
         propertyName={propertyName}
         submitting={purchaseLoading}
+        signedSuccess={agreementSigned}
       />
+
+      <div style={{ position: "fixed", top: 0, left: "-9999px" }}>
+        <div ref={contractRef}>
+          <CreditNoteAgreement
+            investorName={investorName}
+            principalAmount={totalCost}
+            currency="NGN"
+            tenorMonths={property.tenure}
+            monthlyRatePercent={property.expectedROI}
+            propertyName={propertyName}
+            signatureUrl={agreementData?.signatureUrl}
+            signatureFullName={agreementData?.fullName}
+            signatureDate={agreementData?.signedAt}
+          />
+        </div>
+      </div>
     </div>
   );
 }

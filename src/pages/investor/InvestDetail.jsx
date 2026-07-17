@@ -15,13 +15,19 @@ import {
   ShieldCheck,
   CalendarDays,
   Copy,
+  FileText,
+  PenSquare,
+  Eye,
 } from "lucide-react";
-import { investmentApi } from "../../services/api";
-import { Card, Skeleton, Badge } from "../../components/common";
+import { investmentApi, agreementApi } from "../../services/api";
+import { Card, Skeleton, Badge, Button, Modal } from "../../components/common";
 import { formatCurrency } from "../../utils/format";
 import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 import useAuth from "../../hooks/useAuth";
 import InvestmentCertificate from "../../components/certificate/InvestmentCertificate";
+import AgreementSigningModal from "../../components/agreement/AgreementSigningModal";
+import CreditNoteAgreement from "../../components/agreement/CreditNoteAgreement";
 
 const formatDate = (date) =>
   date
@@ -85,6 +91,14 @@ export default function InvestDetail() {
   });
   const certificateRef = useRef(null);
   const [downloading, setDownloading] = useState(false);
+  const contractRef = useRef(null);
+  const [contractDownloading, setContractDownloading] = useState(false);
+  const [showContractModal, setShowContractModal] = useState(false);
+  const [showSigningModal, setShowSigningModal] = useState(false);
+  const [agreementSigned, setAgreementSigned] = useState(false);
+  const [agreementData, setAgreementData] = useState(null);
+  const [agreementLoading, setAgreementLoading] = useState(false);
+  const hasAgreement = agreementData != null;
 
   useEffect(() => {
     const fetch = async () => {
@@ -121,6 +135,22 @@ export default function InvestDetail() {
     if (id) fetchPayments();
   }, [id]);
 
+  useEffect(() => {
+    const fetchAgreement = async () => {
+      if (!investment?.id) return;
+      setAgreementLoading(true);
+      try {
+        const res = await agreementApi.getAgreement(investment.id);
+        setAgreementData(res?.agreement || null);
+      } catch {
+        setAgreementData(null);
+      } finally {
+        setAgreementLoading(false);
+      }
+    };
+    fetchAgreement();
+  }, [investment?.id]);
+
   const handleDownloadCertificate = async () => {
     if (!certificateRef.current) return;
     setDownloading(true);
@@ -135,6 +165,49 @@ export default function InvestDetail() {
       link.click();
     } finally {
       setDownloading(false);
+    }
+  };
+
+  const handleDownloadContract = async () => {
+    if (!contractRef.current) return;
+    setContractDownloading(true);
+    try {
+      const canvas = await html2canvas(contractRef.current, {
+        scale: 2,
+        backgroundColor: "#ffffff",
+        useCORS: true,
+      });
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      const filename = `contract-${(inv.projectData?.projectName || inv.project?.projectName || "investment").replace(/\s+/g, "-").toLowerCase()}.pdf`;
+      pdf.save(filename);
+    } catch (err) {
+      console.error("PDF generation failed", err);
+    } finally {
+      setContractDownloading(false);
+    }
+  };
+
+  const handleAgreementSign = async (payload) => {
+    try {
+      const formData = new FormData();
+      if (payload.signature.type === "typed") {
+        formData.append("signatureType", "typed");
+      } else {
+        const blob = await fetch(payload.signature.data).then((r) => r.blob());
+        formData.append("signature", blob, "signature.png");
+        formData.append("signatureType", payload.signature.type);
+      }
+      formData.append("fullName", payload.fullName);
+      formData.append("signedAt", payload.signedAt);
+      const res = await agreementApi.submitAgreement(inv.id, formData);
+      setAgreementData(res?.agreement || null);
+      setAgreementSigned(true);
+    } catch {
+      setShowSigningModal(false);
     }
   };
 
@@ -330,7 +403,7 @@ export default function InvestDetail() {
         </div>
 
         <div className="space-y-6">
-          <Card>
+          <div className="rounded-2xl border border-gray-200 bg-white shadow-sm p-6">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-dark-lavender to-indigo-700 flex items-center justify-center text-white font-bold text-lg shadow-sm shrink-0">
                 {investorInitials}
@@ -344,10 +417,10 @@ export default function InvestDetail() {
               <div className="text-gray-600 pb-3">{user?.email || "\u2014"}</div>
               <div className="text-gray-600 py-3">{user?.phone || "\u2014"}</div>
             </div>
-          </Card>
+          </div>
 
           {inv.projectData && (
-            <Card>
+            <div className="rounded-2xl border border-gray-200 bg-white shadow-sm p-6">
               <div className="h-1.5 bg-gradient-to-r from-indigo-500 via-dark-lavender to-purple-500 rounded-t-xl -mx-6 -mt-6 mb-4" />
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center">
@@ -368,8 +441,67 @@ export default function InvestDetail() {
                   </p>
                 )}
               </div>
-            </Card>
+            </div>
           )}
+
+          <div className="rounded-2xl border border-gray-200 bg-white shadow-sm p-6">
+            <div className="h-1.5 bg-gradient-to-r from-amber-500 to-neon-tangerine rounded-t-xl -mx-6 -mt-6 mb-4" />
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
+                <FileText size={18} className="text-amber-600" />
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900">Agreement</h3>
+                <p className="text-xs text-gray-500">Signed credit note contract</p>
+              </div>
+            </div>
+            <div className="space-y-3">
+              {hasAgreement ? (
+                <>
+                  <div className="bg-emerald-50 rounded-xl p-3 border border-emerald-100">
+                    <div className="flex items-center gap-2 text-sm text-emerald-700">
+                      <CheckCircle2 size={14} />
+                      <span className="font-medium">Signed</span>
+                    </div>
+                    <p className="text-xs text-emerald-600 mt-1">
+                      {agreementData?.signedAt
+                        ? `Signed on ${formatDate(agreementData.signedAt)}`
+                        : "Agreement has been signed"}
+                    </p>
+                  </div>
+                  <Button
+                    className="w-full"
+                    variant="outline"
+                    onClick={() => setShowContractModal(true)}
+                  >
+                    <Eye size={15} /> View Agreement
+                  </Button>
+                  <Button
+                    className="w-full"
+                    onClick={handleDownloadContract}
+                    disabled={contractDownloading}
+                  >
+                    <Download size={15} />
+                    {contractDownloading ? "Generating..." : "Download Agreement (PDF)"}
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <div className="bg-amber-50 rounded-xl p-3 border border-amber-100">
+                    <p className="text-xs text-amber-700">
+                      This investment does not have a signed agreement yet. You can review and sign now.
+                    </p>
+                  </div>
+                  <Button
+                    className="w-full"
+                    onClick={() => setShowSigningModal(true)}
+                  >
+                    <PenSquare size={15} /> Sign Agreement
+                  </Button>
+                </>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -479,6 +611,69 @@ export default function InvestDetail() {
           )}
         </div>
       </section>
+
+      <Modal
+        isOpen={showContractModal}
+        onClose={() => setShowContractModal(false)}
+        title="Private Credit Note Agreement"
+        size="xl"
+      >
+        <div className="max-h-80 overflow-y-auto rounded-xl border border-gray-200 bg-white p-5">
+          <CreditNoteAgreement
+            investorName={investorName}
+            principalAmount={inv.amount}
+            currency={currency}
+            tenorMonths={inv.tenure}
+            monthlyRatePercent={inv.interestRatePerAnnum}
+            propertyName={inv.projectData?.projectName || inv.project?.projectName}
+            signatureUrl={agreementData?.signatureUrl}
+            signatureFullName={agreementData?.fullName}
+            signatureDate={agreementData?.signedAt}
+          />
+        </div>
+        <div className="flex gap-3 justify-end pt-4">
+          <Button onClick={handleDownloadContract} disabled={contractDownloading}>
+            <Download size={15} />
+            {contractDownloading ? "Generating..." : "Download (PDF)"}
+          </Button>
+          <Button variant="outline" onClick={() => setShowContractModal(false)}>
+            Close
+          </Button>
+        </div>
+      </Modal>
+
+      <AgreementSigningModal
+        isOpen={showSigningModal}
+        onClose={() => {
+          setShowSigningModal(false);
+          setAgreementSigned(false);
+        }}
+        onConfirm={handleAgreementSign}
+        investorName={investorName}
+        principalAmount={inv.amount}
+        currency={currency}
+        tenorMonths={inv.tenure}
+        monthlyRatePercent={inv.interestRatePerAnnum}
+        propertyName={inv.projectData?.projectName || inv.project?.projectName || "Investment"}
+        submitting={false}
+        signedSuccess={agreementSigned}
+      />
+
+      <div style={{ position: "fixed", top: 0, left: "-9999px" }}>
+        <div ref={contractRef}>
+          <CreditNoteAgreement
+            investorName={investorName}
+            principalAmount={inv.amount}
+            currency={currency}
+            tenorMonths={inv.tenure}
+            monthlyRatePercent={inv.interestRatePerAnnum}
+            propertyName={inv.projectData?.projectName || inv.project?.projectName}
+            signatureUrl={agreementData?.signatureUrl}
+            signatureFullName={agreementData?.fullName}
+            signatureDate={agreementData?.signedAt}
+          />
+        </div>
+      </div>
 
     </div>
   );

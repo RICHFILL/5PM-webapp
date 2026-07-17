@@ -26,6 +26,9 @@ export default function CreditNoteAgreement({
   monthlyRatePercent,
   propertyName,
   today = new Date(),
+  signatureUrl,
+  signatureFullName,
+  signatureDate,
 }) {
   const symbol = currency === "NGN" ? "₦" : currency;
 
@@ -41,17 +44,17 @@ export default function CreditNoteAgreement({
       }}
     >
 
-      <div className="text-center space-y-1 pb-2 border-b border-gray-200">
+      <div className="text-start space-y-1 pb-2 border-b border-gray-200">
         <p className="font-bold tracking-wide">5PM NEXUS INVEST LIMITED</p>
         <p className="text-xs text-gray-500 italic">
           Let's grow your capital together
         </p>
       </div>
 
-      <p className="text-center font-bold underline">
+      <p className="text-start font-bold underline">
         PRIVATE CREDIT NOTE AGREEMENT
       </p>
-      <p className="text-center text-xs text-gray-500">
+      <p className="text-start text-xs text-gray-500">
         Investor Facility Form
       </p>
 
@@ -246,7 +249,42 @@ export default function CreditNoteAgreement({
         </p>
       </div>
 
-      <p className="text-center text-xs text-gray-500 pt-2 border-t border-gray-200">
+      {signatureUrl || signatureFullName ? (
+        <div className="border-t border-gray-300 pt-4 mt-4">
+          <p className="font-bold text-sm mb-3">SIGNATURE</p>
+          <div className="grid grid-cols-2 gap-4 text-xs">
+            <div>
+              <p className="text-gray-500">Signed by:</p>
+              <p className="font-semibold text-gray-900 mt-0.5">
+                {signatureFullName || investorName}
+              </p>
+            </div>
+            {signatureDate && (
+              <div>
+                <p className="text-gray-500">Date signed:</p>
+                <p className="font-semibold text-gray-900 mt-0.5">
+                  {new Date(signatureDate).toLocaleDateString("en-NG", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </p>
+              </div>
+            )}
+          </div>
+          {signatureUrl && (
+            <div className="mt-3 border border-gray-200 rounded-lg p-3 bg-gray-50 inline-block">
+              <img
+                src={signatureUrl}
+                alt="Signature"
+                className="max-h-16 object-contain"
+              />
+            </div>
+          )}
+        </div>
+      ) : null}
+
+      <p className="text-start text-xs text-gray-500 pt-2 border-t border-gray-200">
         5PM NEXUS INVEST LIMITED &nbsp;|&nbsp; www.5pmnexus.com &nbsp;|&nbsp;
         +234 703 341 7802 / +234 708 089 7994
       </p>
