@@ -34,7 +34,7 @@ export default function CreditNoteAgreement({
 
   return (
     <div
-      className="relative text-sm leading-relaxed text-gray-800 space-y-4 font-serif"
+      className="relative text-sm text-start leading-relaxed text-gray-800 space-y-4 font-serif"
       style={{
         backgroundImage: "url('/assets/letterhead-1.png')",
         backgroundSize: "100% 100%",
