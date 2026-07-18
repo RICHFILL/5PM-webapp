@@ -23,7 +23,8 @@ import { investmentApi, agreementApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Modal } from "../../components/common";
 import { formatCurrency } from "../../utils/format";
 import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
+import { pdf } from "@react-pdf/renderer";
+import CreditNoteDocument from "../../components/agreement/CreditNoteDocument";
 import useAuth from "../../hooks/useAuth";
 import InvestmentCertificate from "../../components/certificate/InvestmentCertificate";
 import AgreementSigningModal from "../../components/agreement/AgreementSigningModal";
@@ -91,8 +92,6 @@ export default function InvestDetail() {
   });
   const certificateRef = useRef(null);
   const [downloading, setDownloading] = useState(false);
-  const contractRef = useRef(null);
-  const [contractDownloading, setContractDownloading] = useState(false);
   const [showContractModal, setShowContractModal] = useState(false);
   const [showSigningModal, setShowSigningModal] = useState(false);
   const [agreementSigned, setAgreementSigned] = useState(false);
@@ -168,26 +167,33 @@ export default function InvestDetail() {
     }
   };
 
-  const handleDownloadContract = async () => {
-    if (!contractRef.current) return;
-    setContractDownloading(true);
+  const handleDownloadPdf = async () => {
     try {
-      const canvas = await html2canvas(contractRef.current, {
-        scale: 2,
-        backgroundColor: "#ffffff",
-        useCORS: true,
-      });
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("p", "mm", "a4");
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      const doc = (
+        <CreditNoteDocument
+          investorName={investorName}
+          principalAmount={inv.amount}
+          currency={currency}
+          tenorMonths={inv.tenure}
+          monthlyRatePercent={inv.interestRatePerAnnum}
+          propertyName={inv.projectData?.projectName || inv.project?.projectName}
+          signatureUrl={agreementData?.signatureUrl}
+          signatureFullName={agreementData?.fullName}
+          signatureDate={agreementData?.signedAt}
+        />
+      );
+      const blob = await pdf(doc).toBlob();
+      const url = URL.createObjectURL(blob);
       const filename = `contract-${(inv.projectData?.projectName || inv.project?.projectName || "investment").replace(/\s+/g, "-").toLowerCase()}.pdf`;
-      pdf.save(filename);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
     } catch (err) {
       console.error("PDF generation failed", err);
-    } finally {
-      setContractDownloading(false);
     }
   };
 
@@ -478,11 +484,10 @@ export default function InvestDetail() {
                   </Button>
                   <Button
                     className="w-full"
-                    onClick={handleDownloadContract}
-                    disabled={contractDownloading}
+                    onClick={handleDownloadPdf}
                   >
                     <Download size={15} />
-                    {contractDownloading ? "Generating..." : "Download Agreement (PDF)"}
+                    Download Agreement (PDF)
                   </Button>
                 </>
               ) : (
@@ -632,9 +637,9 @@ export default function InvestDetail() {
           />
         </div>
         <div className="flex gap-3 justify-end pt-4">
-          <Button onClick={handleDownloadContract} disabled={contractDownloading}>
+          <Button onClick={handleDownloadPdf}>
             <Download size={15} />
-            {contractDownloading ? "Generating..." : "Download (PDF)"}
+            Download (PDF)
           </Button>
           <Button variant="outline" onClick={() => setShowContractModal(false)}>
             Close
@@ -658,22 +663,6 @@ export default function InvestDetail() {
         submitting={false}
         signedSuccess={agreementSigned}
       />
-
-      <div style={{ position: "fixed", top: 0, left: "-9999px" }}>
-        <div ref={contractRef}>
-          <CreditNoteAgreement
-            investorName={investorName}
-            principalAmount={inv.amount}
-            currency={currency}
-            tenorMonths={inv.tenure}
-            monthlyRatePercent={inv.interestRatePerAnnum}
-            propertyName={inv.projectData?.projectName || inv.project?.projectName}
-            signatureUrl={agreementData?.signatureUrl}
-            signatureFullName={agreementData?.fullName}
-            signatureDate={agreementData?.signedAt}
-          />
-        </div>
-      </div>
 
     </div>
   );

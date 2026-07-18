@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef } from "react";
+﻿import { useState, useEffect } from "react";
 import { Search, Filter, TrendingUp, Clock, DollarSign, ChevronRight, CheckCircle2, AlertCircle, Download } from "lucide-react";
 import { investmentApi, agreementApi } from "../../services/api";
 import useInvestmentStore from "../../store/investmentStore";
@@ -6,9 +6,8 @@ import useAuthStore from "../../store/authStore";
 import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
 import { formatNaira } from '../../utils/format';
 import AgreementSigningModal from "../../components/agreement/AgreementSigningModal";
-import CreditNoteAgreement from "../../components/agreement/CreditNoteAgreement";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
+import CreditNoteDocument from "../../components/agreement/CreditNoteDocument";
+import { pdf } from "@react-pdf/renderer";
 
 const formatROI = (roi) => roi || "3.5%";
 
@@ -21,8 +20,6 @@ function InvestModal({ isOpen, onClose, product }) {
   const [showAgreement, setShowAgreement] = useState(false);
   const [agreementSigned, setAgreementSigned] = useState(false);
   const [agreementData, setAgreementData] = useState(null);
-  const contractRef = useRef(null);
-  const [contractDownloading, setContractDownloading] = useState(false);
 
   const minAmount = product?.minimumInvestment || product?.minInvestment || 0;
   const investorName =
@@ -69,26 +66,33 @@ function InvestModal({ isOpen, onClose, product }) {
     } finally { setLoading(false); }
   };
 
-  const handleDownloadContract = async () => {
-    if (!contractRef.current) return;
-    setContractDownloading(true);
+  const handleDownloadPdf = async () => {
     try {
-      const canvas = await html2canvas(contractRef.current, {
-        scale: 2,
-        backgroundColor: "#ffffff",
-        useCORS: true,
-      });
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("p", "mm", "a4");
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      const doc = (
+        <CreditNoteDocument
+          investorName={investorName}
+          principalAmount={Number(amount)}
+          currency="NGN"
+          tenorMonths={product?.duration || product?.tenure}
+          monthlyRatePercent={parseFloat(product?.roiDisplay || product?.expectedROI) || 0}
+          propertyName={product?.name || product?.projectName || "Investment Product"}
+          signatureUrl={agreementData?.signatureUrl}
+          signatureFullName={agreementData?.fullName}
+          signatureDate={agreementData?.signedAt}
+        />
+      );
+      const blob = await pdf(doc).toBlob();
+      const url = URL.createObjectURL(blob);
       const filename = `contract-${(product?.name || product?.projectName || "investment").replace(/\s+/g, "-").toLowerCase()}.pdf`;
-      pdf.save(filename);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
     } catch (err) {
       console.error("PDF generation failed", err);
-    } finally {
-      setContractDownloading(false);
     }
   };
 
@@ -116,9 +120,9 @@ function InvestModal({ isOpen, onClose, product }) {
             <h3 className="text-lg font-semibold text-gray-900">Investment Submitted!</h3>
             <p className="text-sm text-gray-600">You have successfully invested {formatNaira(Number(amount))} in {product?.name || product?.projectName}.</p>
             <div className="flex gap-3 justify-center">
-              <Button onClick={handleDownloadContract} disabled={contractDownloading} variant="outline">
+              <Button onClick={handleDownloadPdf} variant="outline">
                 <Download size={15} />
-                {contractDownloading ? "Generating..." : "Download Contract (PDF)"}
+                Download Contract (PDF)
               </Button>
               <Button onClick={onClose} variant="secondary">View My Investments</Button>
             </div>
@@ -144,21 +148,6 @@ function InvestModal({ isOpen, onClose, product }) {
         signedSuccess={agreementSigned}
       />
 
-      <div style={{ position: "fixed", top: 0, left: "-9999px" }}>
-        <div ref={contractRef}>
-          <CreditNoteAgreement
-            investorName={investorName}
-            principalAmount={Number(amount)}
-            currency="NGN"
-            tenorMonths={product?.duration || product?.tenure}
-            monthlyRatePercent={parseFloat(product?.roiDisplay || product?.expectedROI) || 0}
-            propertyName={product?.name || product?.projectName || "Investment Product"}
-            signatureUrl={agreementData?.signatureUrl}
-            signatureFullName={agreementData?.fullName}
-            signatureDate={agreementData?.signedAt}
-          />
-        </div>
-      </div>
     </>
   );
 }
