@@ -291,6 +291,21 @@ function LandingPage() {
         </div>
       </section>
 
+      {/* Explainer Video */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="rounded-2xl overflow-hidden shadow-xl">
+            <iframe
+              className="w-full aspect-video"
+              src="https://www.youtube.com/embed/u7mH1QyGjL0"
+              title="How 5PM Nexus Invest Works"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        </div>
+      </section>
+
       {/* Why Choose Us */}
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
