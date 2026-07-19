@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import {
   TrendingUp, Shield, Star, ArrowRight, ChevronDown,
   Home, Wallet, CheckCircle, Globe, BarChart3, Users, ChevronRight,
+  Play, Volume2, VolumeX,
 } from "lucide-react";
 import { Button } from "../../components/common";
 import { ROUTES } from "../../constants";
@@ -134,6 +135,68 @@ function ScrollReveal({ children, className = "" }) {
   return (
     <div ref={ref} className={`transition-all duration-700 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"} ${className}`}>
       {children}
+    </div>
+  );
+}
+function VideoPlayer({ src, poster }) {
+  const videoRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
+
+  const handlePlay = () => {
+    const vid = videoRef.current;
+    if (!vid) return;
+    vid.play();
+    setIsPlaying(true);
+  };
+
+  const toggleMute = (e) => {
+    e.stopPropagation();
+    const vid = videoRef.current;
+    if (!vid) return;
+    vid.muted = !vid.muted;
+    setIsMuted(vid.muted);
+  };
+
+  return (
+    <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-gray-200 bg-black group">
+      <video
+        ref={videoRef}
+        className="w-full aspect-video object-cover"
+        src={src}
+        poster={poster}
+        controls={isPlaying}
+        muted={isMuted}
+        playsInline
+        preload="metadata"
+        onPause={() => setIsPlaying(false)}
+        onEnded={() => setIsPlaying(false)}
+      />
+
+      {!isPlaying && (
+        <button
+          onClick={handlePlay}
+          className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/40 transition-colors duration-300"
+          aria-label="Play video"
+        >
+          <span className="absolute inset-0 flex items-center justify-center">
+            <span className="w-20 h-20 rounded-full bg-neon-tangerine/30 animate-ping absolute" />
+            <span className="w-20 h-20 rounded-full bg-white flex items-center justify-center shadow-xl relative z-10 group-hover:scale-105 transition-transform">
+              <Play size={30} className="text-neon-tangerine ml-1" fill="currentColor" />
+            </span>
+          </span>
+        </button>
+      )}
+
+      {!isPlaying && (
+        <button
+          onClick={toggleMute}
+          className="absolute bottom-4 right-4 w-9 h-9 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center text-white transition-colors z-10"
+          aria-label={isMuted ? "Unmute" : "Mute"}
+        >
+          {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+        </button>
+      )}
     </div>
   );
 }
@@ -292,17 +355,37 @@ function LandingPage() {
       </section>
 
       {/* Explainer Video */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="rounded-2xl overflow-hidden shadow-xl">
-            <iframe
-              className="w-full aspect-video"
-              src="https://www.youtube.com/embed/u7mH1QyGjL0"
-              title="How 5PM Nexus Invest Works"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-          </div>
+      <section className="py-24 bg-gray-50 border-y border-gray-200">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <ScrollReveal className="text-center mb-14">
+            <span className="text-neon-tangerine text-xs font-bold uppercase tracking-[0.2em]">See It In Action</span>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-gray-900 mt-3 mb-4">
+              How 5PM NEXUS INVEST<br />Works
+            </h2>
+            <p className="text-gray-600 max-w-xl mx-auto">
+              A two-minute walkthrough of how your capital moves from sign-up to real, asset-backed returns.
+            </p>
+          </ScrollReveal>
+
+          <ScrollReveal>
+            <div className="max-w-4xl mx-auto">
+              <VideoPlayer
+                src="/assets/video/intro.mp4"
+                poster="/assets/video/intro-poster.png"
+              />
+            </div>
+          </ScrollReveal>
+
+          <ScrollReveal className="flex flex-wrap justify-center gap-8 mt-10 text-sm text-gray-500">
+            <div className="flex items-center gap-2">
+              <CheckCircle size={14} className="text-green-500" />
+              2 min watch
+            </div>
+            <div className="flex items-center gap-2">
+              <Shield size={14} className="text-neon-tangerine" />
+              No sign-up required
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 
