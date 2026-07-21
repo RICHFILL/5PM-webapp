@@ -21,6 +21,7 @@ import { kycApi } from "../../services/api";
 import useKycStore from "../../store/kycStore";
 import { KYC_STEPS, KYC_STATUS } from "../../constants";
 import toast from "react-hot-toast";
+import { compressImage } from "../../utils/imageCompress";
 
 const stepLabels = KYC_STEPS.map((s) => s.label);
 
@@ -324,9 +325,12 @@ function Step3Identity({ data, onChange, onNext, onPrev }) {
 }
 
 function Step4Documents({ data, onChange, onPrev, onNext }) {
-  const handleFile = (field) => (e) => {
+  const handleFile = (field) => async (e) => {
     const file = e.target.files?.[0];
-    if (file) onChange({ ...data, [field]: file });
+    if (file) {
+      const compressed = await compressImage(file);
+      onChange({ ...data, [field]: compressed });
+    }
   };
   const documentFields = [
     {
@@ -479,7 +483,10 @@ function Step5Selfie({ data, onChange, onNext, onPrev }) {
             ref={fileInputRef}
             type="file"
             accept="image/*"
-            onChange={(e) => onChange(e.target.files?.[0])}
+            onChange={async (e) => {
+              const file = e.target.files?.[0];
+              if (file) onChange(await compressImage(file));
+            }}
             className="hidden"
           />
         </div>
@@ -498,13 +505,22 @@ function Step5Selfie({ data, onChange, onNext, onPrev }) {
   );
 }
 
-function Step6Review({ store, onPrev, onSubmit, submitting }) {
+function Step6Review({ store, onPrev, onSubmit, submitting, submitStage }) {
   const info = store.personalInfo || {};
   const addr = store.addressInfo || {};
   const identity = store.identityInfo || {};
   const docs = store.documents || {};
-  const allComplete = info.firstName && info.lastName && addr.country && addr.address &&
-  identity.identityType && identity.identityNumber && docs.passport && docs.governmentId && docs.utilityBill && store.selfie;
+  const allComplete =
+    info.firstName &&
+    info.lastName &&
+    addr.country &&
+    addr.address &&
+    identity.identityType &&
+    identity.identityNumber &&
+    docs.passport &&
+    docs.governmentId &&
+    docs.utilityBill &&
+    store.selfie;
   return (
     <div className="space-y-6">
       <div className="bg-neon-tangerine/10 border border-neon-tangerine/30 rounded-xl p-4">
@@ -582,7 +598,7 @@ function Step6Review({ store, onPrev, onSubmit, submitting }) {
           onClick={onSubmit}
           disabled={!allComplete || submitting}
         >
-          {submitting ? "Submitting..." : "Submit KYC"}{" "}
+          {submitting ? submitStage || "Submitting..." : "Submit KYC"}{" "}
           <ChevronRight size={16} />
         </Button>
       </div>
@@ -665,6 +681,7 @@ function KycPage() {
   const store = useKycStore();
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [submitStage, setSubmitStage] = useState("");
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -689,32 +706,61 @@ function KycPage() {
     setSubmitting(true);
     setError("");
     try {
-      if (store.personalInfo)
+      // Step 1: text-based info — cheap, sequential is fine here
+      setSubmitStage("Saving personal information...");
+      if (store.personalInfo) {
         await kycApi.submitPersonalInfo(store.personalInfo);
-      if (store.addressInfo) await kycApi.submitAddressInfo(store.addressInfo);
+      }
+
+      setSubmitStage("Saving address information...");
+      if (store.addressInfo) {
+        await kycApi.submitAddressInfo(store.addressInfo);
+      }
+
+      setSubmitStage("Saving identity information...");
       if (store.identityInfo) {
         const { identityType, identityNumber } = store.identityInfo;
-        const payload = identityType === "nin" ? { nin: identityNumber } : { bvn: identityNumber };
+        const payload =
+          identityType === "nin"
+            ? { nin: identityNumber }
+            : { bvn: identityNumber };
         await kycApi.submitIdentityInfo(payload);
       }
+
+      // Step 2: file uploads — parallelize documents + selfie together
+      setSubmitStage("Uploading documents and photo...");
       const docs = store.documents || {};
+      const uploadTasks = [];
+
       if (docs.passport || docs.governmentId || docs.utilityBill) {
         const fd = new FormData();
         if (docs.passport) fd.append("passport", docs.passport);
         if (docs.governmentId) fd.append("governmentId", docs.governmentId);
         if (docs.utilityBill) fd.append("utilityBill", docs.utilityBill);
-        await kycApi.uploadDocument(fd);
+        uploadTasks.push(kycApi.uploadDocument(fd));
       }
+
       if (store.selfie) {
         const fd = new FormData();
         fd.append("selfie", store.selfie);
-        await kycApi.uploadSelfie(fd);
+        uploadTasks.push(kycApi.uploadSelfie(fd));
       }
+
+      if (uploadTasks.length) {
+        await Promise.all(uploadTasks);
+      }
+
+      // Step 3: final submission for verification
+      setSubmitStage("Verifying your information...");
       const res = await kycApi.submitKyc();
+
       if (res?.autoVerified === true && res?.kyc?.status === "approved") {
         store.setStatus(KYC_STATUS.APPROVED);
         toast.success("KYC auto-approved!");
-      } else if (res?.autoVerified === true && res?.kyc?.status === "rejected") {
+      } else if (
+        res?.autoVerified === true &&
+        res?.kyc?.status === "rejected"
+      ) {
         store.setStatus(KYC_STATUS.REJECTED);
         toast.error(res?.message || "KYC could not be auto-verified");
       } else {
@@ -722,16 +768,79 @@ function KycPage() {
         toast.success("KYC submitted for manual review.");
       }
     } catch (err) {
-      const msg =
+      let msg =
         err?.response?.data?.message ||
         err.message ||
         "Submission failed. Please try again.";
+
+      // Give the user a clearer signal for timeouts vs actual server errors
+      if (err.code === "ECONNABORTED" || /timeout/i.test(err.message)) {
+        msg =
+          "The upload is taking longer than expected. This can happen on a slow connection — please try again.";
+      } else if (err.code === "ERR_NETWORK") {
+        msg = "Network error. Please check your connection and try again.";
+      }
+
       setError(msg);
       toast.error(msg);
     } finally {
       setSubmitting(false);
+      setSubmitStage("");
     }
   };
+  // const handleSubmit = async () => {
+  //   setSubmitting(true);
+  //   setError("");
+  //   try {
+  //     if (store.personalInfo)
+  //       await kycApi.submitPersonalInfo(store.personalInfo);
+  //     if (store.addressInfo) await kycApi.submitAddressInfo(store.addressInfo);
+  //     if (store.identityInfo) {
+  //       const { identityType, identityNumber } = store.identityInfo;
+  //       const payload =
+  //         identityType === "nin"
+  //           ? { nin: identityNumber }
+  //           : { bvn: identityNumber };
+  //       await kycApi.submitIdentityInfo(payload);
+  //     }
+  //     const docs = store.documents || {};
+  //     if (docs.passport || docs.governmentId || docs.utilityBill) {
+  //       const fd = new FormData();
+  //       if (docs.passport) fd.append("passport", docs.passport);
+  //       if (docs.governmentId) fd.append("governmentId", docs.governmentId);
+  //       if (docs.utilityBill) fd.append("utilityBill", docs.utilityBill);
+  //       await kycApi.uploadDocument(fd);
+  //     }
+  //     if (store.selfie) {
+  //       const fd = new FormData();
+  //       fd.append("selfie", store.selfie);
+  //       await kycApi.uploadSelfie(fd);
+  //     }
+  //     const res = await kycApi.submitKyc();
+  //     if (res?.autoVerified === true && res?.kyc?.status === "approved") {
+  //       store.setStatus(KYC_STATUS.APPROVED);
+  //       toast.success("KYC auto-approved!");
+  //     } else if (
+  //       res?.autoVerified === true &&
+  //       res?.kyc?.status === "rejected"
+  //     ) {
+  //       store.setStatus(KYC_STATUS.REJECTED);
+  //       toast.error(res?.message || "KYC could not be auto-verified");
+  //     } else {
+  //       store.setStatus(KYC_STATUS.PENDING);
+  //       toast.success("KYC submitted for manual review.");
+  //     }
+  //   } catch (err) {
+  //     const msg =
+  //       err?.response?.data?.message ||
+  //       err.message ||
+  //       "Submission failed. Please try again.";
+  //     setError(msg);
+  //     toast.error(msg);
+  //   } finally {
+  //     setSubmitting(false);
+  //   }
+  // };
 
   if (loading) {
     return (
@@ -831,6 +940,7 @@ function KycPage() {
             onPrev={store.prevStep}
             onSubmit={handleSubmit}
             submitting={submitting}
+            submitStage={submitStage}
           />
         )}
       </Card>
