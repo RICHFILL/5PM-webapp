@@ -28,7 +28,7 @@ function Profile() {
           setUserData(profile);
           setUser(profile);
         }
-        if (kyc) setKycStatus(kyc?.status || kyc?.data?.status || null);
+        if (kyc) setKycStatus(kyc?.kyc?.status || kyc?.status || null);
       } catch (err) {
         if (err.message?.includes("401")) logout();
       } finally { setLoading(false); }
@@ -150,7 +150,7 @@ function Profile() {
         </Card>
 
         <div className="space-y-6">
-          <Card>
+          <div className="bg-white p-4 rounded-lg">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Account Security</h3>
             <div className="space-y-3">
               <button onClick={() => setShowPasswordModal(true)}
@@ -166,9 +166,9 @@ function Profile() {
                 <LogOut size={20} /> Sign Out
               </button>
             </div>
-          </Card>
+          </div>
 
-          <Card>
+          <div className="space-y-3 h-auto bg-white p-4 rounded-lg">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">KYC Status</h3>
             <div className="flex items-center gap-3">
               {kycStatus === "approved" ? (
@@ -195,7 +195,7 @@ function Profile() {
                 Complete KYC
               </Button>
             )}
-          </Card>
+          </div>
         </div>
       </div>
 
