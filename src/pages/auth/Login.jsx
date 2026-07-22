@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Check, X } from "lucide-react";
 import useAuth from "../../hooks/useAuth";
 import { authApi } from "../../services/api";
 
@@ -26,6 +26,14 @@ function Login() {
             : !/[!@#$%^&*]/.test(password)
               ? "Needs a special character (!@#$%^&*)"
               : "");
+  const allPasswordChecksPass = password && !passwordError;
+  const passwordChecks = {
+    minLength: password.length >= 12,
+    hasLowercase: /[a-z]/.test(password),
+    hasUppercase: /[A-Z]/.test(password),
+    hasNumber: /[0-9]/.test(password),
+    hasSpecial: /[!@#$%^&*]/.test(password),
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -103,7 +111,7 @@ function Login() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
               required
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-neon-tangerine focus:border-transparent outline-none ${passwordError ? "border-red-300" : "border-gray-300"}`}
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-neon-tangerine focus:border-transparent outline-none transition-colors ${password ? (allPasswordChecksPass ? "border-green-500" : "border-red-300") : "border-gray-300"}`}
             />
             <button
               type="button"
@@ -113,9 +121,13 @@ function Login() {
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           </div>
-          {passwordError && (
-            <p className="text-red-500 text-xs mt-1">{passwordError}</p>
-          )}
+          <div className="mt-3 space-y-2 text-sm">
+            {Object.entries({ "At least 12 characters": passwordChecks.minLength, "One lowercase letter": passwordChecks.hasLowercase, "One uppercase letter": passwordChecks.hasUppercase, "One number": passwordChecks.hasNumber, "One special character (!@#$%^&*)": passwordChecks.hasSpecial }).map(([label, check]) => (
+              <div key={label} className={`flex items-center gap-2 ${check ? "text-green-600" : "text-red-500"}`}>
+                {check ? <Check size={16} /> : <X size={16} />} <span>{label}</span>
+              </div>
+            ))}
+          </div>
         </div>
         <div className="flex items-center justify-end">
           <Link

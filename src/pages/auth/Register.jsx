@@ -24,10 +24,7 @@ function Register() {
     hasSpecial: /[!@#$%^&*]/.test(formData.password),
   };
   const passwordsMatch = formData.password === formData.confirmPassword && formData.password.length > 0;
-  const strengthScore = Object.values(passwordChecks).filter(Boolean).length;
-  const strengthLabel = strengthScore <= 1 ? "Weak" : strengthScore <= 2 ? "Fair" : strengthScore <= 3 ? "Good" : "Strong";
-  const strengthColor = strengthScore <= 1 ? "bg-red-500" : strengthScore <= 2 ? "bg-orange-400" : strengthScore <= 3 ? "bg-yellow-400" : "bg-green-500";
-  const strengthTextColor = strengthScore <= 1 ? "text-red-600" : strengthScore <= 2 ? "text-orange-500" : strengthScore <= 3 ? "text-yellow-600" : "text-green-600";
+  const allChecksMet = Object.values(passwordChecks).every(Boolean);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -55,7 +52,8 @@ function Register() {
     }
   };
 
-  const inputClass = `w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 ${!Object.values(passwordChecks).every(Boolean) ? "focus:ring-red-500" : "focus:ring-neon-tangerine"} focus:border-transparent outline-none`;
+  const inputClass = `w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-neon-tangerine focus:border-transparent outline-none`;
+  const passwordInputClass = `w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-neon-tangerine focus:border-transparent outline-none transition-colors ${formData.password ? (allChecksMet ? "border-green-500" : "border-red-300") : "border-gray-300"}`;
 
   return (
     <div>
@@ -82,23 +80,12 @@ function Register() {
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
           <div className="relative">
-            <input type={showPassword ? "text" : "password"} name="password" value={formData.password} onChange={handleChange} placeholder="Create a strong password" required className={inputClass} />
+            <input type={showPassword ? "text" : "password"} name="password" value={formData.password} onChange={handleChange} placeholder="Create a strong password" required className={passwordInputClass} />
             <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700">
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           </div>
           <div className="mt-3 space-y-2 text-sm">
-            {formData.password && (
-              <div className="mb-3">
-                <div className="flex items-center justify-between text-xs mb-1">
-                  <span className={strengthTextColor}>{strengthLabel}</span>
-                  <span className="text-gray-400">{strengthScore}/5</span>
-                </div>
-                <div className="w-full bg-gray-100 rounded-full h-2">
-                  <div className={`${strengthColor} h-2 rounded-full transition-all duration-300`} style={{ width: `${(strengthScore / 5) * 100}%` }}></div>
-                </div>
-              </div>
-            )}
             {Object.entries({ "At least 12 characters": passwordChecks.minLength, "One lowercase letter": passwordChecks.hasLowercase, "One uppercase letter": passwordChecks.hasUppercase, "One number": passwordChecks.hasNumber, "One special character (!@#$%^&*)": passwordChecks.hasSpecial }).map(([label, check]) => (
               <div key={label} className={`flex items-center gap-2 ${check ? "text-green-600" : "text-gray-500"}`}>
                 <Check size={16} /> <span>{label}</span>
@@ -123,7 +110,7 @@ function Register() {
             I agree to the <Link to="/terms" className="text-neon-tangerine font-medium">Terms & Conditions</Link> and <Link to="/terms" className="text-neon-tangerine font-medium">Privacy Policy</Link>
           </span>
         </label>
-        <button type="submit" disabled={loading || !agreeTerms || !Object.values(passwordChecks).every(Boolean) || !passwordsMatch}
+        <button type="submit" disabled={loading || !agreeTerms || !allChecksMet || !passwordsMatch}
           className="w-full bg-neon-tangerine text-white font-semibold py-2.5 rounded-lg hover:bg-neon-tangerine/80 transition-all duration-200 disabled:opacity-50">
           {loading ? "Creating Account..." : "Create Account"}
         </button>
