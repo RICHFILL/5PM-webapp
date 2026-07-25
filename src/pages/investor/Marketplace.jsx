@@ -4,7 +4,7 @@ import { investmentApi, agreementApi } from "../../services/api";
 import useInvestmentStore from "../../store/investmentStore";
 import useAuthStore from "../../store/authStore";
 import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
-import { formatNaira } from '../../utils/format';
+import { formatCurrencyAmount } from '../../utils/currency';
 import AgreementSigningModal from "../../components/agreement/AgreementSigningModal";
 import CreditNoteDocument from "../../components/agreement/CreditNoteDocument";
 import { pdf } from "@react-pdf/renderer";
@@ -14,6 +14,7 @@ const formatROI = (roi) => roi || "3.5%";
 function InvestModal({ isOpen, onClose, product }) {
   const { user } = useAuthStore();
   const [amount, setAmount] = useState("");
+  const [currency, setCurrency] = useState("NGN");
   const [step, setStep] = useState("form");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -28,7 +29,7 @@ function InvestModal({ isOpen, onClose, product }) {
   const handleInvest = (e) => {
     e.preventDefault();
     if (Number(amount) < minAmount) {
-      setError(`Minimum investment is ${formatNaira(minAmount)}`);
+      setError(`Minimum investment is ${formatCurrencyAmount(minAmount, currency)}`);
       return;
     }
     setShowAgreement(true);
@@ -41,6 +42,7 @@ function InvestModal({ isOpen, onClose, product }) {
       const result = await investmentApi.createInvestment({
         productId: product.id,
         amount: Number(amount),
+        currency,
       });
       const investmentId = result?.investment?.id || result?.data?.id || result?.id;
 
@@ -72,7 +74,7 @@ function InvestModal({ isOpen, onClose, product }) {
         <CreditNoteDocument
           investorName={investorName}
           principalAmount={Number(amount)}
-          currency="NGN"
+          currency={currency}
           tenorMonths={product?.duration || product?.tenure}
           monthlyRatePercent={parseFloat(product?.roiDisplay || product?.expectedROI) || 0}
           propertyName={product?.name || product?.projectName || "Investment Product"}
@@ -103,13 +105,24 @@ function InvestModal({ isOpen, onClose, product }) {
           <form onSubmit={handleInvest} className="space-y-4">
             <div className="bg-neon-tangerine/10 rounded-xl p-4 space-y-2">
               <div className="flex justify-between text-sm"><span className="text-gray-600">Expected ROI</span><span className="font-semibold">{formatROI(product?.roiDisplay || product?.expectedROI)}</span></div>
-              <div className="flex justify-between text-sm"><span className="text-gray-600">Minimum Investment</span><span className="font-semibold">{formatNaira(minAmount)}</span></div>
+              <div className="flex justify-between text-sm"><span className="text-gray-600">Minimum Investment</span><span className="font-semibold">{formatCurrencyAmount(minAmount, currency)}</span></div>
               <div className="flex justify-between text-sm"><span className="text-gray-600">Duration</span><span className="font-semibold">{product?.duration || product?.tenure || "--"} months</span></div>
             </div>
-            <Input label="Investment Amount (NGN)" type="number" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder={`Min ${formatNaira(minAmount)}`} required min={minAmount} />
+            <div>
+              <label className="block text-sm font-semibold text-gray-800 mb-1">Currency</label>
+              <div className="flex gap-2">
+                {["NGN", "USD"].map((c) => (
+                  <button key={c} type="button" onClick={() => setCurrency(c)}
+                    className={`flex-1 py-2 rounded-lg text-sm font-semibold border transition-colors ${currency === c ? "bg-neon-tangerine text-white border-neon-tangerine" : "bg-white text-gray-600 border-gray-300 hover:border-gray-400"}`}>
+                    {c}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <Input label={`Investment Amount (${currency})`} type="number" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder={`Min ${formatCurrencyAmount(minAmount, currency)}`} required min={minAmount} />
             {error && <p className="text-sm text-red-600 flex items-center gap-1"><AlertCircle size={14} />{error}</p>}
             <Button type="submit" className="w-full" disabled={loading || !amount}>
-              {loading ? "Processing..." : `Invest ${formatNaira(Number(amount) || 0)}`}
+              {loading ? "Processing..." : `Invest ${formatCurrencyAmount(Number(amount) || 0, currency)}`}
             </Button>
           </form>
         ) : (
@@ -118,7 +131,7 @@ function InvestModal({ isOpen, onClose, product }) {
               <CheckCircle2 className="text-green-600" size={32} />
             </div>
             <h3 className="text-lg font-semibold text-gray-900">Investment Submitted!</h3>
-            <p className="text-sm text-gray-600">You have successfully invested {formatNaira(Number(amount))} in {product?.name || product?.projectName}.</p>
+            <p className="text-sm text-gray-600">You have successfully invested {formatCurrencyAmount(Number(amount), currency)} in {product?.name || product?.projectName}.</p>
             <div className="flex gap-3 justify-center">
               <Button onClick={handleDownloadPdf} variant="outline">
                 <Download size={15} />
@@ -140,7 +153,7 @@ function InvestModal({ isOpen, onClose, product }) {
         onConfirm={handleAgreementConfirm}
         investorName={investorName}
         principalAmount={Number(amount)}
-        currency="NGN"
+        currency={currency}
         tenorMonths={product?.duration || product?.tenure}
         monthlyRatePercent={parseFloat(product?.roiDisplay || product?.expectedROI) || 0}
         propertyName={product?.name || product?.projectName || "Investment Product"}
@@ -220,7 +233,7 @@ export default function Marketplace() {
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <DollarSign size={16} className="text-neon-tangerine" />
-                    <span>Min: <strong className="text-gray-900">{formatNaira(product.minimumInvestment || product.minInvestment)}</strong></span>
+                    <span>Min: <strong className="text-gray-900">{formatCurrencyAmount(product.minimumInvestment || product.minInvestment)}</strong></span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Clock size={16} className="text-neon-tangerine" />

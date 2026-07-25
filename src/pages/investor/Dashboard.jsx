@@ -7,6 +7,7 @@ import { Card, Skeleton } from "../../components/common";
 import WithdrawalRequestModal from "../../components/WithdrawalRequestModal";
 import { PortfolioGrowthChart, InvestmentPerformanceChart, ReturnHistoryChart } from "../../components/charts";
 import { getGreeting } from "../../utils/greetings";
+import { formatCurrencyAmount } from "../../utils/currency";
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ function Dashboard() {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [chartCurrency, setChartCurrency] = useState("ALL");
   const [payments, setPayments] = useState([]);
   const [paymentsLoading, setPaymentsLoading] = useState(true);
   const [paymentTotals, setPaymentTotals] = useState({ totalPaymentAmountRecorded: 0, totalDue: 0, balanceLeft: 0 });
@@ -57,35 +59,39 @@ function Dashboard() {
     if (user) fetchData();
   }, [user?.id, user?._id, fetchUserPayments]);
 
+  const filteredInvestments = useMemo(() => {
+    if (chartCurrency === "ALL") return investments;
+    return investments.filter((inv) => (inv.currency || "NGN") === chartCurrency);
+  }, [investments, chartCurrency]);
+
   const portfolioGrowthData = useMemo(() => {
     const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
     return months.map((month, i) => ({
       month,
-      value: investments.reduce((sum, inv) => {
+      value: filteredInvestments.reduce((sum, inv) => {
         const start = inv.startDate ? new Date(inv.startDate).getMonth() : 0;
         return sum + (i >= start ? Number(inv.amount || 0) : 0);
       }, 0),
     }));
-  }, [investments]);
+  }, [filteredInvestments]);
 
   const performanceData = useMemo(() => {
-    return investments.map((inv) => ({
+    return filteredInvestments.map((inv) => ({
       name: inv.project?.projectName || inv.refNumber || "Investment",
       invested: Number(inv.amount || 0),
       returns: Number(inv.interestEarned || 0),
+      currency: inv.currency || "NGN",
     }));
-  }, [investments]);
+  }, [filteredInvestments]);
 
   const returnHistoryData = useMemo(() => {
     const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
     const currentMonth = new Date().getMonth();
     return months.map((month, i) => ({
       month,
-      return: i <= currentMonth ? investments.reduce((sum, inv) => sum + Number(inv.interestEarned || 0) * ((i + 1) / 12), 0) : 0,
+      return: i <= currentMonth ? filteredInvestments.reduce((sum, inv) => sum + Number(inv.interestEarned || 0) * ((i + 1) / 12), 0) : 0,
     }));
-  }, [investments]);
-
-  const formatCurrency = (amount) => new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", minimumFractionDigits: 0 }).format(amount || 0);
+  }, [filteredInvestments]);
 
   const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }) : "--";
 
@@ -98,9 +104,8 @@ function Dashboard() {
     }
   };
 
-  const totalInvested = dashboardData?.totalInvested ?? 0;
-  const walletBalance = dashboardData?.walletBalance ?? 0;
-  const totalInterestEarned = dashboardData?.totalInterestEarned ?? 0;
+  const totalsByCurrency = dashboardData?.totalsByCurrency ?? [];
+  const walletBalances = dashboardData?.walletBalances ?? {};
 
   if (loading) {
     return (
@@ -141,31 +146,40 @@ function Dashboard() {
       </div>
 
       <div className="bg-dark-lavender rounded-2xl text-white px-4 py-6 md:px-7 md:py-8 mb-6 md:mb-8 shadow-lg">
-        <div className="flex flex-col gap-2">
-          <p className="text-white/70 text-sm md:text-base font-medium tracking-wide">Total NGN Wallet Balance</p>
-          <h2 className="text-xl md:text-2xl font-bold tracking-tight">{formatCurrency(walletBalance)}</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-3 mt-1 md:mt-3">
-            <div className="bg-white/10 rounded-lg px-3 py-2 md:px-4 md:py-2.5 backdrop-blur-sm">
-              <p className="text-white/60 text-xs md:text-sm font-medium mb-1">Total Interest Earned</p>
-              <p className="text-sm md:text-base font-bold">{formatCurrency(totalInterestEarned)}</p>
+        <div className="flex flex-col gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <p className="text-white/70 text-sm md:text-base font-medium tracking-wide">NGN Wallet Balance</p>
+              <h2 className="text-xl md:text-2xl font-bold tracking-tight">{formatCurrencyAmount(walletBalances.NGN)}</h2>
             </div>
-            <div className="bg-white/10 rounded-lg px-3 py-2 md:px-4 md:py-2.5 backdrop-blur-sm">
-              <p className="text-white/60 text-xs md:text-sm font-medium mb-1">Total Amount Invested</p>
-              <p className="text-sm md:text-base font-bold">{formatCurrency(totalInvested)}</p>
+            <div>
+              <p className="text-white/70 text-sm md:text-base font-medium tracking-wide">USD Wallet Balance</p>
+              <h2 className="text-xl md:text-2xl font-bold tracking-tight">{formatCurrencyAmount(walletBalances.USD, "USD")}</h2>
             </div>
-            <div className="bg-white/10 rounded-lg px-3 py-2 md:px-4 md:py-2.5 backdrop-blur-sm">
-              <p className="text-white/60 text-xs md:text-sm font-medium mb-1">Total Repayment Recorded</p>
-              <p className="text-sm md:text-base font-bold">{formatCurrency(paymentTotals.totalPaymentAmountRecorded)}</p>
-            </div>
-            <div className="bg-white/10 rounded-lg px-3 py-2 md:px-4 md:py-2.5 backdrop-blur-sm">
-              <p className="text-white/60 text-xs md:text-sm font-medium mb-1">Total Due</p>
-              <p className="text-sm md:text-base font-bold">{formatCurrency(totalInvested || 0)}</p>
-            </div>
-            {/* <div className="bg-white/10 rounded-lg px-3 py-2 md:px-4 md:py-2.5 backdrop-blur-sm">
-              <p className="text-white/60 text-xs md:text-sm font-medium mb-1">Balance Left</p>
-              <p className="text-sm md:text-base font-bold">{formatCurrency(paymentTotals.balanceLeft)}</p>
-            </div> */}
           </div>
+          {totalsByCurrency.map((tc) => (
+            <div key={tc.currency}>
+              <p className="text-white/50 text-xs font-semibold uppercase tracking-wider mb-2">{tc.currency} Investment Summary</p>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 md:gap-3">
+                <div className="bg-white/10 rounded-lg px-3 py-2 md:px-4 md:py-2.5 backdrop-blur-sm">
+                  <p className="text-white/60 text-xs md:text-sm font-medium mb-1">Amount Invested</p>
+                  <p className="text-sm md:text-base font-bold">{formatCurrencyAmount(tc.totalInvested, tc.currency)}</p>
+                </div>
+                <div className="bg-white/10 rounded-lg px-3 py-2 md:px-4 md:py-2.5 backdrop-blur-sm">
+                  <p className="text-white/60 text-xs md:text-sm font-medium mb-1">Interest Earned</p>
+                  <p className="text-sm md:text-base font-bold">{formatCurrencyAmount(tc.totalInterestEarned, tc.currency)}</p>
+                </div>
+                <div className="bg-white/10 rounded-lg px-3 py-2 md:px-4 md:py-2.5 backdrop-blur-sm">
+                  <p className="text-white/60 text-xs md:text-sm font-medium mb-1">Monthly Repayment</p>
+                  <p className="text-sm md:text-base font-bold">{formatCurrencyAmount(tc.totalExpectedMonthlyRepayment, tc.currency)}</p>
+                </div>
+                <div className="bg-white/10 rounded-lg px-3 py-2 md:px-4 md:py-2.5 backdrop-blur-sm">
+                  <p className="text-white/60 text-xs md:text-sm font-medium mb-1">Payout at Expiry</p>
+                  <p className="text-sm md:text-base font-bold">{formatCurrencyAmount(tc.totalPayoutUponExpiration, tc.currency)}</p>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -203,8 +217,9 @@ function Dashboard() {
                   <div className="flex items-center gap-3">
                     <div className="w-3 h-3 rounded-full" style={{ backgroundColor: ["#00D4F5","#0F2060","#7C3AED","#F59E0B","#10B981"][idx % 5] }} />
                     <span className="text-sm text-gray-700">{item?.project?.projectName}</span>
+                    <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${item.currency === "USD" ? "bg-emerald-100 text-emerald-700" : "bg-blue-100 text-blue-700"}`}>{item.currency || "NGN"}</span>
                   </div>
-                  <span className="text-sm font-semibold text-gray-900">{formatCurrency(item.amount)}</span>
+                  <span className="text-sm font-semibold text-gray-900">{formatCurrencyAmount(item.amount, item.currency)}</span>
                 </div>
               ))}
             </div>
@@ -229,7 +244,7 @@ function Dashboard() {
                     <p className="text-xs text-gray-600">{payment.investment?.project?.projectName || "Investment payment"}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-semibold text-gray-900">{formatCurrency(payment.amount)}</p>
+                    <p className="font-semibold text-gray-900">{formatCurrencyAmount(payment.amount)}</p>
                     <p className="text-xs text-gray-500">{formatDate(payment.paymentDate)}</p>
                   </div>
                   <span className={`text-xs font-semibold px-3 py-1 rounded-full ${getPaymentStatusColor(payment.status)}`}>{payment.status || "Unknown"}</span>
@@ -242,9 +257,19 @@ function Dashboard() {
 
       {/* Charts Section */}
       <div className="mb-6 mt-4 md:mb-8">
-        <div className="flex items-center gap-2 mb-4 md:mb-6">
-          <BarChart3 className="text-neon-tangerine shrink-0" size={20} />
-          <h2 className="text-lg md:text-2xl font-bold text-gray-900">Portfolio Analytics</h2>
+        <div className="flex items-center justify-between mb-4 md:mb-6">
+          <div className="flex items-center gap-2">
+            <BarChart3 className="text-neon-tangerine shrink-0" size={20} />
+            <h2 className="text-lg md:text-2xl font-bold text-gray-900">Portfolio Analytics</h2>
+          </div>
+          <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+            {["ALL", "NGN", "USD"].map((c) => (
+              <button key={c} onClick={() => setChartCurrency(c)}
+                className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-colors ${chartCurrency === c ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}>
+                {c === "ALL" ? "All" : c}
+              </button>
+            ))}
+          </div>
         </div>
         <div className="grid sm:grid-cols-2 gap-4 md:gap-6 mb-4 md:mb-6">
           <Card>
@@ -252,14 +277,14 @@ function Dashboard() {
               <TrendingUp className="text-neon-tangerine" size={20} />
               <Card.Title>Portfolio Growth</Card.Title>
             </div>
-            <PortfolioGrowthChart data={portfolioGrowthData} />
+            <PortfolioGrowthChart data={portfolioGrowthData} currency={chartCurrency} />
           </Card>
           <Card>
             <div className="flex items-center gap-2 mb-4">
               <Activity className="text-neon-tangerine" size={20} />
               <Card.Title>Return History</Card.Title>
             </div>
-            <ReturnHistoryChart data={returnHistoryData} />
+            <ReturnHistoryChart data={returnHistoryData} currency={chartCurrency} />
           </Card>
         </div>
         <Card>
@@ -267,7 +292,7 @@ function Dashboard() {
             <BarChart3 className="text-neon-tangerine" size={20} />
             <Card.Title>Investment Performance</Card.Title>
           </div>
-          <InvestmentPerformanceChart data={performanceData} />
+          <InvestmentPerformanceChart data={performanceData} currency={chartCurrency} />
         </Card>
       </div>
 
@@ -307,8 +332,8 @@ function Dashboard() {
         isOpen={showWithdrawModal}
         onClose={() => setShowWithdrawModal(false)}
         onConfirm={handleWithdrawalRequest}
-        expectedReturns={totalInterestEarned}
-        formatCurrency={formatCurrency}
+        expectedReturns={totalsByCurrency.reduce((s, tc) => s + tc.totalInterestEarned, 0)}
+        formatCurrency={formatCurrencyAmount}
         isSubmitting={isSubmittingWithdrawal}
         error={error}
       />

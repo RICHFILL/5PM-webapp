@@ -3,7 +3,7 @@ import { Search, Plus, AlertCircle, Edit3, Archive, Package } from "lucide-react
 import { adminProductApi } from "../../services/api";
 import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
 import toast from "react-hot-toast";
-import { formatNaira } from '../../utils/format';
+import { formatCurrencyAmount } from '../../utils/currency';
 
 const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }) : "--";
 
@@ -199,7 +199,7 @@ export default function AdminInvestmentProducts() {
                   <td className="px-6 py-4"><span className="text-xs font-semibold text-neon-tangerine uppercase">{p.tag || "--"}</span></td>
                   <td className="px-6 py-4 font-semibold text-gray-900">{p.roiDisplay || `${p.expectedROI}%`}</td>
                   <td className="px-6 py-4 text-gray-600">
-                    {formatNaira(p.minimumInvestment)}
+                    {formatCurrencyAmount(p.minimumInvestment)}
                     {p.minUSD && <span className="text-gray-400 ml-1">({p.minUSD})</span>}
                   </td>
                   <td className="px-6 py-4 text-gray-600">{p.duration} months</td>

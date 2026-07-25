@@ -5,7 +5,7 @@ import { userApi } from "../../services/api";
 import useAuthStore from "../../store/authStore";
 import { Card, Skeleton } from "../../components/common";
 import PortfolioGrowthChart from "../../components/charts/PortfolioGrowthChart";
-import { formatNaira } from '../../utils/format';
+import { formatCurrencyAmount } from '../../utils/currency';
 
 
 const COLORS = ["#00B8DB", "#1E3A5F", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6"];
@@ -75,11 +75,14 @@ export default function Portfolio() {
       <div className="grid md:grid-cols-4 gap-4">
         <div className="bg-neon-tangerine rounded-xl p-5 text-white">
           <p className="text-sm text-cyan-100 mb-1">Total Portfolio Value</p>
-          <p className="text-xl md:text-2xl font-bold">{formatNaira(stats?.totalInvested)}</p>
+          <p className="text-xl md:text-2xl font-bold">{formatCurrencyAmount(stats?.totalInvested)}</p>
+          <p className="text-xs text-white/70 mt-1">
+            {investments.filter(i => i.currency === "USD").reduce((s, i) => s + Number(i.amount || 0), 0) > 0 && `USD: ${formatCurrencyAmount(investments.filter(i => i.currency === "USD").reduce((s, i) => s + Number(i.amount || 0), 0), "USD")}`}
+          </p>
         </div>
         <div className="bg-white rounded-xl border border-gray-100 p-5">
           <div className="flex items-center gap-2 text-xs text-gray-500 mb-1"><TrendingUp size={14} className="text-green-500" />Total Returns</div>
-          <p className="text-xl md:text-2xl font-bold text-gray-900">{formatNaira(stats?.totalInterestEarned)}</p>
+          <p className="text-xl md:text-2xl font-bold text-gray-900">{formatCurrencyAmount(stats?.totalInterestEarned)}</p>
         </div>
         <div className="bg-white rounded-xl border border-gray-100 p-5">
           <div className="flex items-center gap-2 text-xs text-gray-500 mb-1"><Percent size={14} className="text-neon-tangerine" />Avg. ROI</div>
@@ -122,6 +125,7 @@ export default function Portfolio() {
                 <tr className="border-b border-gray-100 text-xs text-gray-400 uppercase tracking-[0.18em]">
                   <th className="text-left pb-3 font-semibold">Investment</th>
                   <th className="text-left pb-3 font-semibold">Amount</th>
+                  <th className="text-left pb-3 font-semibold">Curr</th>
                   <th className="text-left pb-3 font-semibold">ROI</th>
                   <th className="text-left pb-3 font-semibold">Tenure</th>
                   <th className="text-right pb-3 font-semibold">Allocation</th>
@@ -136,7 +140,10 @@ export default function Portfolio() {
                         <span className="font-medium text-gray-900">{inv.project?.projectName || "Investment"}</span>
                       </div>
                     </td>
-                    <td className="py-3 font-semibold text-gray-900">{formatNaira(inv.amount)}</td>
+                    <td className="py-3 font-semibold text-gray-900">{formatCurrencyAmount(inv.amount, inv.currency)}</td>
+                    <td className="py-3 text-gray-600">
+                      <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${(inv.currency || "NGN") === "USD" ? "bg-emerald-100 text-emerald-700" : "bg-blue-100 text-blue-700"}`}>{inv.currency || "NGN"}</span>
+                    </td>
                     <td className="py-3 text-gray-600">{inv.interestRatePerAnnum}%</td>
                     <td className="py-3 text-gray-600">{inv.tenure} months</td>
                     <td className="py-3 text-right">

@@ -3,7 +3,7 @@ import { Users, ShieldCheck, TrendingUp, DollarSign, Activity, Building2, Wallet
 import { adminApi } from "../../services/api";
 import { Card, Skeleton, Badge } from "../../components/common";
 import toast from "react-hot-toast";
-import { formatNaira } from '../../utils/format';
+import { formatCurrencyAmount } from '../../utils/currency';
 
 const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }) : "--";
 
@@ -42,15 +42,14 @@ export default function AdminDashboard() {
   const statCards = [
     { label: "Total Users", value: stats.totalInvestors || 0, icon: Users, color: "bg-blue-500" },
     { label: "Active Investments", value: stats.activeInvestments || 0, icon: TrendingUp, color: "bg-green-500" },
-    { label: "Total Invested", value: formatNaira(stats.totalInvestmentValue || 0), icon: DollarSign, color: "bg-neon-tangerine" },
+    { label: "Total Invested", value: formatCurrencyAmount(stats.totalInvestmentValue || 0), icon: DollarSign, color: "bg-neon-tangerine",
+      sub: stats.totalInvestmentValueByCurrency ? Object.entries(stats.totalInvestmentValueByCurrency).map(([c, v]) => formatCurrencyAmount(v, c)).join(" / ") : "" },
     { label: "Pending KYC", value: stats.pendingKYCReviews || 0, icon: ShieldCheck, color: "bg-yellow-500" },
     { label: "Active Projects", value: stats.activeProjects || 0, icon: Building2, color: "bg-purple-500" },
     { label: "Approved This Month", value: stats.approvedThisMonth || 0, icon: CalendarDays, color: "bg-cyan-500" },
-    { label: "Total Deposits", value: formatNaira(stats.totalDeposits || 0), icon: Wallet, color: "bg-emerald-500" },
-    { label: "Total Withdrawals", value: formatNaira(stats.totalWithdrawals || 0), icon: Activity, color: "bg-orange-500" },
+    { label: "Total Deposits", value: formatCurrencyAmount(stats.totalDeposits || 0), icon: Wallet, color: "bg-emerald-500" },
+    { label: "Total Withdrawals", value: formatCurrencyAmount(stats.totalWithdrawals || 0), icon: Activity, color: "bg-orange-500" },
   ];
-
-  const maxMonthly = Math.max(...monthlyInv.map(m => m.value), 1);
 
   return (
     <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-4 md:space-y-6">
@@ -66,6 +65,7 @@ export default function AdminDashboard() {
             </div>
             <p className="text-xl md:text-2xl font-bold text-gray-900">{s.value}</p>
             <p className="text-xs text-gray-500 mt-1">{s.label}</p>
+            {s.sub && <p className="text-[10px] text-gray-400 mt-0.5">{s.sub}</p>}
           </div>
         ))}
       </div>
@@ -74,14 +74,22 @@ export default function AdminDashboard() {
         <Card>
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Monthly Investments</h3>
           {monthlyInv.length > 0 ? (
-            <div className="space-y-2">
-              {monthlyInv.map((m) => (
-                <div key={m.month} className="flex items-center gap-3">
-                  <span className="text-xs font-medium text-gray-500 w-8">{m.month}</span>
-                  <div className="flex-1 h-5 bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-neon-tangerine rounded-full transition-all" style={{ width: `${(m.value / maxMonthly) * 100}%` }} />
-                  </div>
-                  <span className="text-xs font-semibold text-gray-700 w-20 text-right">{formatNaira(m.value)}</span>
+            <div className="space-y-4">
+              {monthlyInv.map((mc) => (
+                <div key={mc.currency}>
+                  <p className="text-xs font-semibold text-gray-500 mb-1 uppercase">{mc.currency}</p>
+                  {(() => {
+                    const maxVal = Math.max(...mc.data.map(m => m.value), 1);
+                    return mc.data.map((m) => (
+                      <div key={m.month} className="flex items-center gap-3 py-0.5">
+                        <span className="text-xs font-medium text-gray-500 w-8">{m.month}</span>
+                        <div className="flex-1 h-4 bg-gray-100 rounded-full overflow-hidden">
+                          <div className="h-full bg-neon-tangerine rounded-full transition-all" style={{ width: `${(m.value / maxVal) * 100}%` }} />
+                        </div>
+                        <span className="text-xs font-semibold text-gray-700 w-24 text-right">{formatCurrencyAmount(m.value, mc.currency)}</span>
+                      </div>
+                    ));
+                  })()}
                 </div>
               ))}
             </div>
@@ -95,7 +103,10 @@ export default function AdminDashboard() {
               {data.investmentDistribution.map((p, i) => (
                 <div key={i} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
                   <span className="text-sm text-gray-900">{p.project}</span>
-                  <span className="text-sm font-semibold text-gray-900">{formatNaira(p.total)}</span>
+                  <div className="text-right">
+                    <span className="text-sm font-semibold text-gray-900">{formatCurrencyAmount(p.total, p.currency)}</span>
+                    <span className={`ml-1 text-[10px] font-semibold px-1 py-0.5 rounded ${p.currency === "USD" ? "bg-emerald-100 text-emerald-700" : "bg-blue-100 text-blue-700"}`}>{p.currency || "NGN"}</span>
+                  </div>
                 </div>
               ))}
             </div>
@@ -114,7 +125,7 @@ export default function AdminDashboard() {
                     <p className="text-sm font-medium text-gray-900">{w.withdrawalUser?.firstName} {w.withdrawalUser?.lastName}</p>
                     <p className="text-xs text-gray-500">{formatDate(w.requestDate || w.createdAt)}</p>
                   </div>
-                  <span className="text-sm font-semibold text-gray-900">{formatNaira(w.amount)}</span>
+                  <span className="text-sm font-semibold text-gray-900">{formatCurrencyAmount(w.amount)}</span>
                 </div>
               ))}
             </div>
@@ -131,7 +142,7 @@ export default function AdminDashboard() {
                     <p className="text-sm font-medium text-gray-900">{a.investor?.firstName} {a.investor?.lastName}</p>
                     <p className="text-xs text-gray-500">{a.projectData?.projectName || a.project || "--"}</p>
                   </div>
-                  <span className="text-sm font-semibold text-gray-900">{formatNaira(a.amount)}</span>
+                  <span className="text-sm font-semibold text-gray-900">{formatCurrencyAmount(a.amount, a.currency)}</span>
                 </div>
               ))}
             </div>
@@ -143,11 +154,11 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-white rounded-xl border border-gray-100 p-5">
             <p className="text-xs text-gray-500">Payments Recorded</p>
-            <p className="text-xl font-bold text-gray-900">{formatNaira(stats.totalPaymentAmountRecorded)}</p>
+            <p className="text-xl font-bold text-gray-900">{formatCurrencyAmount(stats.totalPaymentAmountRecorded)}</p>
           </div>
           <div className="bg-white rounded-xl border border-gray-100 p-5">
             <p className="text-xs text-gray-500">Balance Left</p>
-            <p className="text-xl font-bold text-gray-900">{formatNaira(stats.totalBalanceLeft)}</p>
+            <p className="text-xl font-bold text-gray-900">{formatCurrencyAmount(stats.totalBalanceLeft)}</p>
           </div>
           <div className="bg-white rounded-xl border border-gray-100 p-5">
             <p className="text-xs text-gray-500">Completed Investments</p>
