@@ -1,6 +1,6 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { API_BASE_URL } from "../../constants";
+import { API_BASE_URL, ADMIN_WHATSAPP } from "../../constants";
 
 const initialState = {
   title: "Mr.",
@@ -273,6 +273,20 @@ export default function InvestmentMandateForm() {
 
       setSubmitted(true);
       toast.success("Mandate form submitted successfully");
+
+      const name = `${form.surname} ${form.givenName}`.trim();
+      const msg =
+        `New Investment Mandate Form Submission\n\n` +
+        `Name: ${name}\n` +
+        `Phone: ${form.mobile1}\n` +
+        `Email: ${form.email}\n` +
+        `Investment: ₦${Number(form.investmentAmount).toLocaleString()}\n` +
+        `Tenor: ${form.preferredTenor}\n` +
+        `Date: ${form.signatureDate}`;
+      window.open(
+        `https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(msg)}`,
+        "_blank"
+      );
     } catch (err) {
       toast.error(err.message || "Something went wrong. Please try again.");
     } finally {

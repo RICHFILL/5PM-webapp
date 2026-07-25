@@ -64,6 +64,8 @@ export const KYC_STATUS = {
   REJECTED: 'rejected',
 };
 
+export const ADMIN_WHATSAPP = "2347033417802";
+
 export const TRANSACTION_TYPES = {
   DEPOSIT: 'deposit',
   WITHDRAWAL: 'withdrawal',
