@@ -31,7 +31,7 @@ import {
   Input,
   Modal,
 } from "../../components/common";
-import { formatCurrency } from "../../utils/format";
+import { formatCurrencyAmount } from "../../utils/currency";
 import toast from "react-hot-toast";
 
 const formatDate = (date) =>
@@ -84,6 +84,7 @@ export default function AdminUserDetail() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [investments, setInvestments] = useState([]);
+  const [totalsByCurrency, setTotalsByCurrency] = useState(null);
   const [stats, setStats] = useState(null);
   const [showEdit, setShowEdit] = useState(false);
   const [editForm, setEditForm] = useState({
@@ -100,8 +101,10 @@ export default function AdminUserDetail() {
       const data = await adminApi.getUserDetail(id);
       const u = data?.data?.user || data?.user || data;
       const inv = data?.data?.investments || data?.investments || [];
+      const tbc = data?.data?.totalsByCurrency || data?.totalsByCurrency || null;
       setUser(u);
       setInvestments(Array.isArray(inv) ? inv : []);
+      setTotalsByCurrency(Array.isArray(tbc) && tbc.length > 0 ? tbc : null);
       setEditForm({
         firstName: u.firstName || "",
         lastName: u.lastName || "",
@@ -119,9 +122,12 @@ export default function AdminUserDetail() {
   const fetchStats = useCallback(async () => {
     try {
       const data = await userApi.getUserStats(id);
-      setStats(data?.data || data || null);
+      const s = data?.data || data || null;
+      setStats(s);
+      const tbc = s?.totalsByCurrency || null;
+      if (Array.isArray(tbc) && tbc.length > 0) setTotalsByCurrency(tbc);
     } catch (err) {
-      setStats(null); /* fall back to derived stats below */
+      setStats(null);
     }
   }, [id]);
 
@@ -146,65 +152,7 @@ export default function AdminUserDetail() {
     }
   };
 
-  // Most investments will share one currency, but fall back to NGN if none present
-  const primaryCurrency = investments[0]?.currency || "NGN";
-
-  // Derive stats from investments/user when the stats endpoint has nothing useful
-  const derived = {
-    activeInvestments: investments.filter((i) => i.status === "active").length,
-    totalInvested: investments.reduce((sum, i) => sum + num(i.amount), 0),
-    totalInterest: investments.reduce(
-      (sum, i) => sum + num(i.interestEarned),
-      0,
-    ),
-    totalPayments: num(user?.totalPaymentAmountRecorded),
-  };
-
-  const statCards = [
-    {
-      key: "activeInvestments",
-      label: "Active Investments",
-      icon: TrendingUp,
-      color: "bg-blue-500",
-      bg: "bg-blue-50",
-      text: "text-blue-600",
-    },
-    {
-      key: "totalInvested",
-      label: "Total Invested",
-      icon: DollarSign,
-      color: "bg-emerald-500",
-      bg: "bg-emerald-50",
-      text: "text-emerald-600",
-      currency: true,
-    },
-    {
-      key: "totalInterest",
-      label: "Total Interest Earned",
-      icon: Activity,
-      color: "bg-amber-500",
-      bg: "bg-amber-50",
-      text: "text-amber-600",
-      currency: true,
-    },
-    {
-      key: "totalPayments",
-      label: "Payments Recorded",
-      icon: CalendarDays,
-      color: "bg-violet-500",
-      bg: "bg-violet-50",
-      text: "text-violet-600",
-      currency: true,
-    },
-  ];
-
-  const resolveStatValue = (s) => {
-    const raw =
-      stats && stats[s.key] !== undefined && stats[s.key] !== null
-        ? stats[s.key]
-        : derived[s.key];
-    return s.currency ? formatCurrency(num(raw), primaryCurrency) : num(raw);
-  };
+  const activeCount = investments.filter((i) => i.status === "active").length;
 
   if (loading) {
     return (
@@ -327,24 +275,59 @@ export default function AdminUserDetail() {
       </section>
 
       {/* Stats Grid */}
-      <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {statCards.map((s) => {
-          const val = resolveStatValue(s);
-          return (
-            <div
-              key={s.key}
-              className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm hover:shadow-md transition-shadow"
-            >
-              <div className={`inline-flex rounded-xl ${s.bg} p-3`}>
-                <s.icon className={`h-5 w-5 ${s.text}`} />
+      <section className="space-y-4">
+        {totalsByCurrency ? (
+          totalsByCurrency.map((tc) => (
+            <div key={tc.currency}>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">{tc.currency} Summary</p>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+                  <div className="inline-flex rounded-xl bg-blue-50 p-3"><TrendingUp className="h-5 w-5 text-blue-600" /></div>
+                  <p className="mt-4 text-xl md:text-2xl font-bold text-gray-900">{tc.activeInvestments ?? tc.totalInvestments ?? 0}</p>
+                  <p className="text-xs text-gray-500 mt-1">Active Investments</p>
+                </div>
+                <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+                  <div className="inline-flex rounded-xl bg-emerald-50 p-3"><DollarSign className="h-5 w-5 text-emerald-600" /></div>
+                  <p className="mt-4 text-xl md:text-2xl font-bold text-gray-900 truncate">{formatCurrencyAmount(tc.totalInvested, tc.currency)}</p>
+                  <p className="text-xs text-gray-500 mt-1">Total Invested</p>
+                </div>
+                <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+                  <div className="inline-flex rounded-xl bg-amber-50 p-3"><Activity className="h-5 w-5 text-amber-600" /></div>
+                  <p className="mt-4 text-xl md:text-2xl font-bold text-gray-900 truncate">{formatCurrencyAmount(tc.totalInterestEarned, tc.currency)}</p>
+                  <p className="text-xs text-gray-500 mt-1">Interest Earned</p>
+                </div>
+                <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+                  <div className="inline-flex rounded-xl bg-violet-50 p-3"><CalendarDays className="h-5 w-5 text-violet-600" /></div>
+                  <p className="mt-4 text-xl md:text-2xl font-bold text-gray-900 truncate">{formatCurrencyAmount(tc.totalExpectedMonthlyRepayment, tc.currency)}</p>
+                  <p className="text-xs text-gray-500 mt-1">Monthly Repayment</p>
+                </div>
               </div>
-              <p className="mt-4 text-xl md:text-2xl font-bold text-gray-900 truncate">
-                {val}
-              </p>
-              <p className="text-xs text-gray-500 mt-1">{s.label}</p>
             </div>
-          );
-        })}
+          ))
+        ) : (
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+              <div className="inline-flex rounded-xl bg-blue-50 p-3"><TrendingUp className="h-5 w-5 text-blue-600" /></div>
+              <p className="mt-4 text-xl md:text-2xl font-bold text-gray-900">{activeCount}</p>
+              <p className="text-xs text-gray-500 mt-1">Active Investments</p>
+            </div>
+            <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+              <div className="inline-flex rounded-xl bg-emerald-50 p-3"><DollarSign className="h-5 w-5 text-emerald-600" /></div>
+              <p className="mt-4 text-xl md:text-2xl font-bold text-gray-900 truncate">{formatCurrencyAmount(investments.reduce((s, i) => s + num(i.amount), 0))}</p>
+              <p className="text-xs text-gray-500 mt-1">Total Invested</p>
+            </div>
+            <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+              <div className="inline-flex rounded-xl bg-amber-50 p-3"><Activity className="h-5 w-5 text-amber-600" /></div>
+              <p className="mt-4 text-xl md:text-2xl font-bold text-gray-900 truncate">{formatCurrencyAmount(investments.reduce((s, i) => s + num(i.interestEarned), 0))}</p>
+              <p className="text-xs text-gray-500 mt-1">Interest Earned</p>
+            </div>
+            <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+              <div className="inline-flex rounded-xl bg-violet-50 p-3"><CalendarDays className="h-5 w-5 text-violet-600" /></div>
+              <p className="mt-4 text-xl md:text-2xl font-bold text-gray-900 truncate">{formatCurrencyAmount(num(user?.totalPaymentAmountRecorded))}</p>
+              <p className="text-xs text-gray-500 mt-1">Payments Recorded</p>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* Details Grid */}
@@ -435,13 +418,13 @@ export default function AdminUserDetail() {
             <DetailsRow
               icon={Wallet}
               label="Balance Left"
-              value={formatCurrency(num(user.balanceLeft), primaryCurrency)}
+              value={formatCurrencyAmount(num(user.balanceLeft))}
               color="bg-emerald-100"
             />
             <DetailsRow
               icon={DollarSign}
               label="Total Due"
-              value={formatCurrency(num(user.totalDue), primaryCurrency)}
+              value={formatCurrencyAmount(num(user.totalDue))}
               color="bg-amber-100"
             />
             <DetailsRow
@@ -490,6 +473,9 @@ export default function AdminUserDetail() {
                     Amount
                   </th>
                   <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    Curr
+                  </th>
+                  <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                     Status
                   </th>
                   <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -514,8 +500,11 @@ export default function AdminUserDetail() {
                     </td>
                     <td className="px-6 py-4">
                       <span className="font-semibold text-gray-900">
-                        {formatCurrency(num(inv.amount), inv.currency || "NGN")}
+                        {formatCurrencyAmount(num(inv.amount), inv.currency)}
                       </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${(inv.currency || "NGN") === "USD" ? "bg-emerald-100 text-emerald-700" : "bg-blue-100 text-blue-700"}`}>{inv.currency || "NGN"}</span>
                     </td>
                     <td className="px-6 py-4">
                       <Badge
