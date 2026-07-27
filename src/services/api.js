@@ -264,6 +264,12 @@ updateAmount: (id, data) =>
       })
       .then((r) => r.data),
   getReports: () => api.get("/admin/reports").then((r) => r.data),
+  verifyUserEmail: (email) =>
+    api.post("/admin/users/verify-email", { email }).then((r) => r.data),
+  unverifyUserEmail: (email) =>
+    api.post("/admin/users/unverify-email", { email }).then((r) => r.data),
+  verifyAllUserEmails: () =>
+    api.post("/admin/users/verify-all-emails").then((r) => r.data),
 };
 
 // --- Dashboard ---

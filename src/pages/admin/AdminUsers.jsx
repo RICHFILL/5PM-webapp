@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Mail, Phone, Shield, AlertCircle, Plus, Upload, Download } from "lucide-react";
+import { Search, Mail, Phone, Shield, AlertCircle, Plus, Upload, Download, CheckCircle2 } from "lucide-react";
 import { adminApi } from "../../services/api";
 import { Card, Skeleton, Badge, Pagination, Button, Modal } from "../../components/common";
 import toast from "react-hot-toast";
@@ -23,6 +23,19 @@ export default function AdminUsers() {
 
   const [form, setForm] = useState({ firstName: "", lastName: "", email: "", phone: "", role: "investor", status: "active" });
   const [submitting, setSubmitting] = useState(false);
+  const [verifyingAll, setVerifyingAll] = useState(false);
+
+  const handleVerifyAll = async () => {
+    if (!window.confirm("Verify email for ALL users in the system? This cannot be undone.")) return;
+    setVerifyingAll(true);
+    try {
+      const res = await adminApi.verifyAllUserEmails();
+      toast.success(res.message || "All user emails verified");
+      fetch();
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to verify all emails");
+    } finally { setVerifyingAll(false); }
+  };
 
   const filtered = search
     ? users.filter((u) => {
@@ -99,6 +112,9 @@ export default function AdminUsers() {
           </Button>
           <Button variant="outline" size="sm" onClick={() => setImportModal(true)}>
             <Upload size={16} /> Import CSV
+          </Button>
+          <Button variant="outline" size="sm" onClick={handleVerifyAll} disabled={verifyingAll}>
+            <CheckCircle2 size={16} /> {verifyingAll ? "Verifying..." : "Verify All Emails"}
           </Button>
           <Button size="sm" onClick={() => setAddModal(true)}>
             <Plus size={16} /> Add User

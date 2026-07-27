@@ -152,6 +152,26 @@ export default function AdminUserDetail() {
     }
   };
 
+  const [verifying, setVerifying] = useState(false);
+
+  const handleVerifyEmail = async (verify) => {
+    setVerifying(true);
+    try {
+      if (verify) {
+        await adminApi.verifyUserEmail(user.email);
+        toast.success("Email verified");
+      } else {
+        await adminApi.unverifyUserEmail(user.email);
+        toast.success("Email unverified");
+      }
+      fetchUser();
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to update email verification");
+    } finally {
+      setVerifying(false);
+    }
+  };
+
   const activeCount = investments.filter((i) => i.status === "active").length;
 
   if (loading) {
@@ -374,7 +394,20 @@ export default function AdminUserDetail() {
             <DetailsRow
               icon={CheckCircle}
               label="Email Verified"
-              value={user.isVerified ? "Yes" : "No"}
+              value={
+                <button
+                  onClick={() => handleVerifyEmail(!user.isVerified)}
+                  disabled={verifying}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border transition-colors ${
+                    user.isVerified
+                      ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
+                      : "bg-red-50 text-red-700 border-red-200 hover:bg-red-100"
+                  } disabled:opacity-50`}
+                >
+                  {user.isVerified ? "Verified" : "Unverified"}
+                  <span className="text-[10px] opacity-70">({user.isVerified ? "click to unverify" : "click to verify"})</span>
+                </button>
+              }
               color={user.isVerified ? "bg-emerald-100" : "bg-red-100"}
             />
             <DetailsRow
