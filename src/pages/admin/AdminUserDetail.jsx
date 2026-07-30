@@ -21,6 +21,8 @@ import {
   Award,
   Eye,
   Wallet,
+  KeyRound,
+  CheckCircle2,
 } from "lucide-react";
 import { adminApi, userApi } from "../../services/api";
 import {
@@ -94,6 +96,9 @@ export default function AdminUserDetail() {
     role: "",
   });
   const [saving, setSaving] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [passwordResetting, setPasswordResetting] = useState(false);
+  const [passwordResult, setPasswordResult] = useState(null);
 
   const fetchUser = useCallback(async () => {
     try {
@@ -265,6 +270,13 @@ export default function AdminUserDetail() {
                 onClick={() => setShowEdit(true)}
               >
                 <Edit3 size={16} /> Edit
+              </Button>
+              <Button
+                variant="outline"
+                className="text-amber-300 border-amber-400/30 hover:bg-amber-500/20 bg-amber-500/10 backdrop-blur-sm"
+                onClick={() => { setPasswordResult(null); setShowPasswordModal(true); }}
+              >
+                <KeyRound size={16} /> Reset Password
               </Button>
               <Button
                 variant="outline"
@@ -625,6 +637,59 @@ export default function AdminUserDetail() {
             </Button>
           </div>
         </div>
+      </Modal>
+
+      {/* Reset Password Modal */}
+      <Modal isOpen={showPasswordModal} onClose={() => setShowPasswordModal(false)} title="Reset Password" size="sm">
+        {passwordResult ? (
+          <div className="space-y-5 text-center">
+            <div className="mx-auto w-14 h-14 rounded-full bg-emerald-100 flex items-center justify-center">
+              <CheckCircle2 size={28} className="text-emerald-600" />
+            </div>
+            <div>
+              <p className="text-lg font-bold text-gray-900">Password Reset Successful</p>
+              <p className="text-sm text-gray-500 mt-1">A new password has been sent to {user.email}</p>
+            </div>
+            <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+              <p className="text-xs text-gray-500 mb-1.5 font-medium">Temporary Password</p>
+              <p className="text-lg font-mono font-bold text-gray-900 tracking-wider select-all">{passwordResult}</p>
+            </div>
+            <p className="text-xs text-gray-400">Share this password with the user. They will be prompted to change it on next login.</p>
+            <div className="flex justify-center pt-1">
+              <Button onClick={() => setShowPasswordModal(false)}>Done</Button>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-5">
+            <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+              <KeyRound size={20} className="text-amber-600 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-semibold text-amber-800">Reset password for {user.firstName} {user.lastName}?</p>
+                <p className="text-sm text-amber-700 mt-1">
+                  A new temporary password will be generated and emailed to <strong>{user.email}</strong>. They will need to change it after logging in.
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-3 justify-end">
+              <Button variant="outline" onClick={() => setShowPasswordModal(false)}>Cancel</Button>
+              <Button onClick={async () => {
+                setPasswordResetting(true);
+                try {
+                  const res = await adminApi.resetUserPassword(id);
+                  setPasswordResult(res.tempPassword);
+                  toast.success("Password reset email sent");
+                } catch (err) {
+                  toast.error(err?.response?.data?.message || "Failed to reset password");
+                  setShowPasswordModal(false);
+                } finally {
+                  setPasswordResetting(false);
+                }
+              }} disabled={passwordResetting}>
+                {passwordResetting ? "Resetting..." : "Generate & Send"}
+              </Button>
+            </div>
+          </div>
+        )}
       </Modal>
     </div>
   );

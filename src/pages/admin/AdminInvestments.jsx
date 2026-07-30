@@ -5,12 +5,17 @@ import {
   AlertCircle,
   DollarSign,
   View,
+  Plus,
+  ChevronDown,
+  Loader,
 } from "lucide-react";
-import { adminApi } from "../../services/api";
-import { Card, Skeleton, Badge, Pagination } from "../../components/common";
+import { adminApi, adminProductApi } from "../../services/api";
+import { Card, Skeleton, Badge, Pagination, Button, Modal, Input } from "../../components/common";
 import AmountUpdateModal from "../../components/common/AmountUpdateModal";
 import toast from "react-hot-toast";
 import { formatCurrencyAmount } from "../../utils/currency";
+
+const INTEREST_RATES = [3.5, 4, 5, 7];
 
 const formatDate = (date) =>
   date
@@ -38,6 +43,45 @@ const statusVariant = (status) => {
 
 const currencyVariant = (currency) => (currency === "USD" ? "info" : "default");
 
+function SearchableSelect({ label, options, value, onChange, search, onSearchChange, showDropdown, onToggle, placeholder, renderOption, getDisplayValue, loading }) {
+  return (
+    <div className="relative">
+      <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+      <button type="button" onClick={onToggle}
+        className="w-full flex items-center justify-between rounded-xl border border-gray-300 px-4 py-2.5 text-sm text-left focus:outline-none focus:ring-2 focus:ring-neon-tangerine focus:border-neon-tangerine">
+        <span className={value ? "text-gray-900" : "text-gray-400"}>
+          {value ? getDisplayValue(value) : placeholder}
+        </span>
+        <ChevronDown size={16} className="text-gray-400 shrink-0" />
+      </button>
+      {showDropdown && (
+        <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+          <div className="p-2 border-b border-gray-100">
+            <input type="text" value={search} onChange={(e) => onSearchChange(e.target.value)}
+              placeholder="Search..."
+              className="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-neon-tangerine" autoFocus />
+          </div>
+          {loading ? (
+            <div className="flex items-center justify-center py-4 text-gray-400 text-sm">
+              <Loader size={14} className="animate-spin mr-2" /> Loading...
+            </div>
+          ) : options.length === 0 ? (
+            <p className="text-center text-gray-400 py-4 text-sm">No results found.</p>
+          ) : (
+            options.map((opt) => (
+              <button key={opt.id || opt._id} type="button"
+                onClick={() => { onChange(opt); onToggle(); }}
+                className={`w-full text-left px-4 py-2.5 text-sm hover:bg-neon-tangerine/10 transition-colors ${(value?.id || value?._id) === (opt.id || opt._id) ? "bg-neon-tangerine/10 font-semibold" : ""}`}>
+                {renderOption(opt)}
+              </button>
+            ))
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function AdminInvestments() {
   const navigate = useNavigate();
   const [investments, setInvestments] = useState([]);
@@ -47,6 +91,22 @@ export default function AdminInvestments() {
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({ total: 0, pages: 0 });
   const [amountModal, setAmountModal] = useState({ open: false, investment: null });
+
+  const [showCreate, setShowCreate] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+  const [loadingProducts, setLoadingProducts] = useState(false);
+  const [userSearch, setUserSearch] = useState("");
+  const [productSearch, setProductSearch] = useState("");
+  const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [showProductDropdown, setShowProductDropdown] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [amount, setAmount] = useState("");
+  const [interestRate, setInterestRate] = useState(null);
+  const [currency, setCurrency] = useState("NGN");
 
   const fetch = async () => {
     setLoading(true);
@@ -75,6 +135,92 @@ export default function AdminInvestments() {
     fetch();
   }, [page]);
 
+  const openCreateModal = async () => {
+    setShowCreate(true);
+    setSelectedUser(null);
+    setSelectedProduct(null);
+    setAmount("");
+    setInterestRate(null);
+    setCurrency("NGN");
+    setUserSearch("");
+    setProductSearch("");
+
+    setLoadingUsers(true);
+    setLoadingProducts(true);
+    try {
+      const [usersRes, productsRes] = await Promise.all([
+        adminApi.getUsers({ limit: 100 }),
+        adminProductApi.getAll({ status: "active" }),
+      ]);
+      setUsers(Array.isArray(usersRes) ? usersRes : usersRes?.data ?? []);
+      setProducts(Array.isArray(productsRes) ? productsRes : productsRes?.data ?? []);
+    } catch {
+      toast.error("Failed to load form data");
+    } finally {
+      setLoadingUsers(false);
+      setLoadingProducts(false);
+    }
+  };
+
+  const resetCreateForm = () => {
+    setShowCreate(false);
+    setSelectedUser(null);
+    setSelectedProduct(null);
+    setAmount("");
+    setInterestRate(null);
+    setCurrency("NGN");
+    setUserSearch("");
+    setProductSearch("");
+    setShowUserDropdown(false);
+    setShowProductDropdown(false);
+  };
+
+  const handleCreate = async () => {
+    if (!selectedUser || !amount || interestRate === null) {
+      toast.error("Please fill all required fields");
+      return;
+    }
+    setSaving(true);
+    try {
+      await adminApi.createInvestment({
+        user: selectedUser.id || selectedUser._id,
+        productId: selectedProduct?.id || selectedProduct?._id || null,
+        amount: parseFloat(amount),
+        interestRatePerAnnum: interestRate,
+        currency,
+      });
+      toast.success("Investment created successfully");
+      resetCreateForm();
+      fetch();
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to create investment");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const filteredUsers = users.filter((u) => {
+    const q = userSearch.toLowerCase();
+    return (
+      (u.firstName || "").toLowerCase().includes(q) ||
+      (u.lastName || "").toLowerCase().includes(q) ||
+      (u.email || "").toLowerCase().includes(q)
+    );
+  });
+
+  const filteredProducts = products.filter((p) => {
+    const q = productSearch.toLowerCase();
+    return (p.name || "").toLowerCase().includes(q);
+  });
+
+  const handleProductSelect = (product) => {
+    setSelectedProduct(product);
+    const rate = parseFloat(product.expectedROI);
+    if (INTEREST_RATES.includes(rate)) {
+      setInterestRate(rate);
+    }
+  };
+
   const filtered = investments.filter((inv) => {
     const q = search.toLowerCase();
     return (
@@ -96,10 +242,13 @@ export default function AdminInvestments() {
 
   return (
     <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-4 md:space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-4 flex-wrap">
         <h1 className="text-xl md:text-2xl font-bold text-gray-900">
           All Investments ({investments.length})
         </h1>
+        <Button onClick={openCreateModal} size="sm">
+          <Plus size={16} /> Create Investment
+        </Button>
       </div>
       <div className="relative max-w-md">
         <Search
@@ -203,7 +352,7 @@ export default function AdminInvestments() {
                       onClick={() => {
                         setAmountModal({ open: true, investment: inv });
                       }}
-                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-neon-tangerine hover:text-neon-tangerine/80 transition-colors"
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-neon-tangerine hover:text-neon-tangerine/80 transition-colors ml-3"
                     >
                       <DollarSign size={14} />
                       Edit Amount
@@ -233,6 +382,115 @@ export default function AdminInvestments() {
         investment={amountModal.investment}
         onSuccess={fetch}
       />
+
+      <Modal isOpen={showCreate} onClose={resetCreateForm} title="Create Investment" size="lg">
+        <div className="space-y-5 max-h-[70vh] overflow-y-auto pr-1">
+
+          <SearchableSelect
+            label="User *"
+            placeholder="Select a user..."
+            value={selectedUser}
+            options={filteredUsers}
+            search={userSearch}
+            onSearchChange={setUserSearch}
+            showDropdown={showUserDropdown}
+            onToggle={() => { setShowUserDropdown(!showUserDropdown); setUserSearch(""); }}
+            loading={loadingUsers}
+            onChange={(u) => setSelectedUser(u)}
+            getDisplayValue={(u) => `${u.firstName} ${u.lastName} (${u.email})`}
+            renderOption={(u) => (
+              <div>
+                <span className="text-gray-900 font-medium">{u.firstName} {u.lastName}</span>
+                <span className="text-gray-500 ml-2 text-xs">{u.email}</span>
+              </div>
+            )}
+          />
+
+          <SearchableSelect
+            label="Investment Product"
+            placeholder="Select a product..."
+            value={selectedProduct}
+            options={filteredProducts}
+            search={productSearch}
+            onSearchChange={setProductSearch}
+            showDropdown={showProductDropdown}
+            onToggle={() => { setShowProductDropdown(!showProductDropdown); setProductSearch(""); }}
+            loading={loadingProducts}
+            getDisplayValue={(p) => `${p.name} (${p.roiDisplay || p.expectedROI + '%'}, ${p.duration}mo)`}
+            renderOption={(p) => (
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-gray-900 font-medium">{p.name}</span>
+                  <span className="text-gray-500 ml-2 text-xs">{p.duration} months</span>
+                </div>
+                <span className="text-neon-tangerine font-semibold text-xs">{p.roiDisplay || `${p.expectedROI}%`}</span>
+              </div>
+            )}
+            onChange={handleProductSelect}
+          />
+
+          <Input
+            label="Amount *"
+            type="number"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            placeholder={currency === "NGN" ? "e.g. 1000000" : "e.g. 10000"}
+          />
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Interest Rate *</label>
+            <div className="flex gap-2">
+              {INTEREST_RATES.map((rate) => (
+                <button
+                  key={rate}
+                  type="button"
+                  onClick={() => setInterestRate(rate)}
+                  className={`flex-1 py-2.5 px-3 rounded-xl text-sm font-semibold transition-all duration-200 border-2 ${
+                    interestRate === rate
+                      ? "bg-neon-tangerine text-white border-neon-tangerine"
+                      : "bg-white text-gray-700 border-gray-200 hover:border-neon-tangerine/40"
+                  }`}
+                >
+                  {rate}%
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Currency</label>
+            <div className="flex gap-2">
+              {["NGN", "USD"].map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => setCurrency(c)}
+                  className={`flex-1 py-2.5 px-3 rounded-xl text-sm font-semibold transition-all duration-200 border-2 ${
+                    currency === c
+                      ? "bg-dark-lavender text-white border-dark-lavender"
+                      : "bg-white text-gray-700 border-gray-200 hover:border-dark-lavender/40"
+                  }`}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex gap-3 justify-end pt-2 border-t border-gray-100">
+            <Button variant="outline" onClick={resetCreateForm}>
+              Cancel
+            </Button>
+            <Button onClick={handleCreate} disabled={saving || !selectedUser || !amount || interestRate === null}>
+              {saving ? (
+                <><Loader size={16} className="animate-spin mr-1" /> Creating...</>
+              ) : (
+                "Create Investment"
+              )}
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

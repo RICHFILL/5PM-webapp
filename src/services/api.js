@@ -270,6 +270,10 @@ updateAmount: (id, data) =>
     api.post("/admin/users/unverify-email", { email }).then((r) => r.data),
   verifyAllUserEmails: () =>
     api.post("/admin/users/verify-all-emails").then((r) => r.data),
+  createInvestment: (data) =>
+    api.post("/admin/investments", data).then((r) => r.data),
+  resetUserPassword: (id) =>
+    api.post(`/admin/users/${id}/reset-password`).then((r) => r.data),
 };
 
 // --- Dashboard ---
