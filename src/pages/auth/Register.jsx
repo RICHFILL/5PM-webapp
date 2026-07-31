@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { Eye, EyeOff, Check } from "lucide-react";
 import useAuth from "../../hooks/useAuth";
 import { authApi } from "../../services/api";
+import toast from "react-hot-toast";
 
 function Register() {
   const navigate = useNavigate();
@@ -44,7 +45,8 @@ function Register() {
       localStorage.setItem("authToken", token);
       if (response.user) login(token, response.user);
       else login(token, { firstName: formData.firstName, lastName: formData.lastName, email: formData.email });
-      navigate("/verify-email", { state: { email: formData.email } });
+      toast.success("Welcome to 5PM Nexus Invest!");
+      navigate("/dashboard");
     } catch (err) {
       setError(err.response?.data?.message || err.message || "Registration failed. Please try again.");
     } finally {

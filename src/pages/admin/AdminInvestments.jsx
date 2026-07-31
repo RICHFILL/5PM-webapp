@@ -176,7 +176,7 @@ export default function AdminInvestments() {
   };
 
   const handleCreate = async () => {
-    if (!selectedUser || !amount || interestRate === null) {
+    if (!selectedUser || !selectedProduct || !amount || interestRate === null) {
       toast.error("Please fill all required fields");
       return;
     }
@@ -407,7 +407,7 @@ export default function AdminInvestments() {
           />
 
           <SearchableSelect
-            label="Investment Product"
+            label="Investment Product *"
             placeholder="Select a product..."
             value={selectedProduct}
             options={filteredProducts}
@@ -481,7 +481,7 @@ export default function AdminInvestments() {
             <Button variant="outline" onClick={resetCreateForm}>
               Cancel
             </Button>
-            <Button onClick={handleCreate} disabled={saving || !selectedUser || !amount || interestRate === null}>
+            <Button onClick={handleCreate} disabled={saving || !selectedUser || !selectedProduct || !amount || interestRate === null}>
               {saving ? (
                 <><Loader size={16} className="animate-spin mr-1" /> Creating...</>
               ) : (
