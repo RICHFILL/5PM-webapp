@@ -173,6 +173,7 @@ export default function InvestmentMandateForm() {
   const [photo, setPhoto] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [accountCreated, setAccountCreated] = useState(false);
   const [errors, setErrors] = useState({});
   const [stepIndex, setStepIndex] = useState(0);
 
@@ -272,6 +273,7 @@ export default function InvestmentMandateForm() {
         throw new Error(data.message || "Submission failed");
 
       setSubmitted(true);
+      setAccountCreated(Boolean(data.accountCreated));
       toast.success("Mandate form submitted successfully");
 
       const name = `${form.surname} ${form.givenName}`.trim();
@@ -302,6 +304,11 @@ export default function InvestmentMandateForm() {
           Your Investment Mandate Form has been submitted. Our team has been
           notified and will be in touch shortly.
         </p>
+        {accountCreated && (
+          <p className="text-gray-600 mt-4">
+            Your login credentials have been sent to your email.
+          </p>
+        )}
       </div>
     );
   }
