@@ -260,8 +260,8 @@ export default function InvestDetail() {
   const metrics = [
     { label: "Investment Amount", value: fmt(inv.amount), icon: DollarSign, color: "text-emerald-600", bg: "bg-emerald-50" },
     { label: "Interest Rate", value: `${inv.interestRatePerAnnum || 0}%`, icon: Percent, color: "text-blue-600", bg: "bg-blue-50" },
-    { label: "Interest Earned", value: fmt(inv.interestEarned), icon: TrendingUp, color: "text-violet-600", bg: "bg-violet-50" },
-    { label: "Monthly Repayment", value: fmt(inv.expectedMonthlyRepayment), icon: Banknote, color: "text-amber-600", bg: "bg-amber-50" },
+    { label: "Interest Earned in 12months", value: fmt(inv.interestEarned), icon: TrendingUp, color: "text-violet-600", bg: "bg-violet-50" },
+    { label: "Monthly payment", value: fmt(inv.expectedMonthlyRepayment), icon: Banknote, color: "text-amber-600", bg: "bg-amber-50" },
     { label: "Payout at Expiry", value: fmt(inv.payoutUponExpiration), icon: Receipt, color: "text-rose-600", bg: "bg-rose-50" },
     {
       label: inv.expectedMonthlyRepaymentDate ? "Next Payment" : "Expected Returns",
