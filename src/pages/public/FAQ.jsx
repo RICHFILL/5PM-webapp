@@ -48,6 +48,51 @@ const faqs = [
     ],
   },
   {
+    category: "Neo Vista Participation Structures",
+    items: [
+      {
+        q: "What are the different ways I can participate in Neo Vista?",
+        a: "There are four routes: outright purchase, a standard payment plan, co-investment/joint venture, or a secured note. These are alternative options, not sequential steps — you choose the one that fits your goals.",
+      },
+      {
+        q: "How much does a Neo Vista villa cost?",
+        a: "₦3.5bn per villa, or ₦3.8bn for the corner unit, fixed at the point of contract.",
+      },
+      {
+        q: "Can I customize the interior?",
+        a: "Yes — interior specification can be tailored during the build for outright purchases.",
+      },
+      {
+        q: "When is handover expected?",
+        a: "Handover is targeted for June 2027 across all participation options.",
+      },
+      {
+        q: "Is there a discount for paying in full?",
+        a: "Buyers settling the full amount at execution should ask directly for a discount against the published payment schedule.",
+      },
+      {
+        q: "What is the standard payment plan structure?",
+        a: "50% down (₦1.75bn) at contract execution, followed by four quarterly instalments of ₦437.5m (₦475m for the corner unit), with the final instalment aligned to June 2027 handover.",
+      },
+      {
+        q: "How does title work for Neo Vista?",
+        a: "Title is held on Governor's Consent.",
+      },
+      {
+        q: "Can I invest in the development itself rather than buy a unit?",
+        a: "Yes. You can co-invest as a joint venture partner with Viagem, earning from sale proceeds rather than paying a fixed price. The scheme has a ₦14.3bn GDV and is already 90% through piling, with remaining spend on superstructure and finishes. Profit share or preferred-return terms are set out in a joint venture agreement.",
+      },
+      {
+        q: "Can I get a fixed return instead of owning property?",
+        a: "Yes. Viagem issues a fixed-rate, fixed-tenor secured note backed by defined assets. Returns are contractual rather than performance-linked, and Viagem has a track record of issuing this instrument type. Rate and tenor are agreed case by case.",
+      },
+      {
+        q: "Where can I find the full legal terms for Neo Vista?",
+        a: "The contract is the governing document and prevails over any marketing material. We recommend independent legal advice before committing to any option.",
+      },
+    ],
+  },
+  {
     category: "Payments",
     items: [
       {

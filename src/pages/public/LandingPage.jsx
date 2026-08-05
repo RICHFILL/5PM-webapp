@@ -4,6 +4,7 @@ import {
   TrendingUp, Shield, Star, ArrowRight, ChevronDown,
   Home, Wallet, CheckCircle, Globe, BarChart3, Users, ChevronRight,
   Play, Volume2, VolumeX,
+  KeyRound, CalendarDays, Handshake, ShieldCheck,
 } from "lucide-react";
 import { Button } from "../../components/common";
 import { ROUTES } from "../../constants";
@@ -41,6 +42,29 @@ const products = [
     tag: "Structured",
     tagClass: "bg-purple-100 text-purple-700",
     image: "/assets/products/wealth.png",
+  },
+];
+
+const participationOptions = [
+  {
+    icon: KeyRound,
+    title: "Outright Purchase",
+    text: "Buy in fully at a fixed price agreed upfront, with no further payments due.",
+  },
+  {
+    icon: CalendarDays,
+    title: "Structured Payment Plan",
+    text: "Commit with an initial deposit, then spread the balance across scheduled instalments.",
+  },
+  {
+    icon: Handshake,
+    title: "Joint Venture",
+    text: "Co-invest directly in a development and earn a share of the profit from sale proceeds.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Secured Note",
+    text: "Hold a fixed-rate, fixed-tenor note backed by the underlying asset, for a contractual return.",
   },
 ];
 
@@ -523,7 +547,6 @@ function LandingPage() {
                       <div className="text-right">
                         <p className="text-gray-900 text-base font-black">{product.min}</p>
                         <p className="text-gray-400 text-xs">Min. Invest (NGN)</p>
-                        <p className="text-gray-400 text-xs">$7,000 (USD)</p>
                       </div>
                     </div>
                     <Link to={ROUTES.REGISTER}>
@@ -532,6 +555,31 @@ function LandingPage() {
                       </Button>
                     </Link>
                   </div>
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Participation Options */}
+      <section className="py-24 bg-dark-lavender">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <ScrollReveal className="text-center mb-16">
+            <span className="text-neon-tangerine text-xs font-bold uppercase tracking-[0.2em]">Ways to Participate</span>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mt-3 mb-4">Structures Built<br />Around You</h2>
+            <p className="text-gray-300 max-w-xl mx-auto">Not every investor wants the same thing. Depending on the deal, you can choose the structure that fits your goals.</p>
+          </ScrollReveal>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {participationOptions.map((option, i) => (
+              <ScrollReveal key={option.title}>
+                <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 h-full hover:border-neon-tangerine/40 transition-colors duration-300">
+                  <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center mb-5">
+                    <option.icon size={22} className="text-neon-tangerine" />
+                  </div>
+                  <h3 className="text-white font-bold text-lg mb-2">{option.title}</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">{option.text}</p>
                 </div>
               </ScrollReveal>
             ))}
