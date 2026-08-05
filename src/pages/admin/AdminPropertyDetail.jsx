@@ -170,6 +170,19 @@ export default function AdminPropertyDetail() {
     } finally { setUploadingFiles(false); }
   };
 
+  const handleRemoveMedia = async (type, value) => {
+    if (!window.confirm(`Delete this ${type === "images" ? "image" : "document"}? This cannot be undone.`)) return;
+    try {
+      const formData = new FormData();
+      formData.append(type === "images" ? "removeImages" : "removeDocuments", value);
+      await adminApi.updateProperty(id, formData);
+      toast.success(type === "images" ? "Image deleted" : "Document deleted");
+      fetch();
+    } catch {
+      toast.error("Failed to delete file");
+    }
+  };
+
   const handleSave = async () => {
     if (!form.title) return;
     setSaving(true);
@@ -274,10 +287,16 @@ export default function AdminPropertyDetail() {
             <p className="text-sm font-medium text-gray-700 mb-2">Images ({property.images.length})</p>
             <div className="flex flex-wrap gap-3">
               {property.images.map((url, i) => (
-                <a key={i} href={url} target="_blank" rel="noopener noreferrer"
-                  className="w-24 h-24 rounded-xl overflow-hidden border border-gray-200 hover:border-neon-tangerine transition-colors">
-                  <img src={url} alt="" className="w-full h-full object-cover" />
-                </a>
+                <div key={i} className="relative group w-24 h-24">
+                  <a href={url} target="_blank" rel="noopener noreferrer"
+                    className="block w-24 h-24 rounded-xl overflow-hidden border border-gray-200 hover:border-neon-tangerine transition-colors">
+                    <img src={url} alt="" className="w-full h-full object-cover" />
+                  </a>
+                  <button onClick={() => handleRemoveMedia("images", url)}
+                    className="absolute top-1 right-1 p-1 rounded-md bg-red-500 text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600" title="Delete image">
+                    <Trash2 size={12} />
+                  </button>
+                </div>
               ))}
             </div>
           </div>
@@ -288,12 +307,18 @@ export default function AdminPropertyDetail() {
             <p className="text-sm font-medium text-gray-700 mb-2">Documents ({property.documents.length})</p>
             <div className="space-y-2">
               {property.documents.map((doc, i) => (
-                <a key={i} href={doc.url} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:border-neon-tangerine transition-colors group">
-                  <FileText size={18} className="text-neon-tangerine shrink-0" />
-                  <span className="text-sm text-gray-700 flex-1 truncate">{doc.name || `Document ${i + 1}`}</span>
-                  <ExternalLink size={14} className="text-gray-400 group-hover:text-neon-tangerine" />
-                </a>
+                <div key={i} className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:border-neon-tangerine transition-colors group">
+                  <a href={doc.url} target="_blank" rel="noopener noreferrer"
+                    className="flex items-center gap-3 flex-1 min-w-0">
+                    <FileText size={18} className="text-neon-tangerine shrink-0" />
+                    <span className="text-sm text-gray-700 flex-1 truncate">{doc.name || `Document ${i + 1}`}</span>
+                    <ExternalLink size={14} className="text-gray-400 group-hover:text-neon-tangerine" />
+                  </a>
+                  <button onClick={() => handleRemoveMedia("documents", doc.url)}
+                    className="p-1.5 rounded-md text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors" title="Delete document">
+                    <Trash2 size={14} />
+                  </button>
+                </div>
               ))}
             </div>
           </div>
@@ -368,7 +393,7 @@ export default function AdminPropertyDetail() {
                   <div className="flex items-start justify-between mb-2">
                     <div>
                       <p className="font-semibold text-gray-900 text-sm">{r.user?.firstName} {r.user?.lastName}</p>
-                      <p className="text-xs text-gray-500">{r.user?.email} {r.user?.phone ? `Ã¢â‚¬Â¢ ${r.user.phone}` : ""}</p>
+                      <p className="text-xs text-gray-500">{r.user?.email} {r.user?.phone ? `${r.user.phone}` : ""}</p>
                     </div>
                     <Badge variant={r.status === "pending" ? "warning" : r.status === "approved" ? "success" : "danger"} size="sm">{r.status}</Badge>
                   </div>
