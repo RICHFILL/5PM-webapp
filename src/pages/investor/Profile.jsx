@@ -1,8 +1,25 @@
 import { useState, useEffect } from "react";
-import { Mail, Phone, MapPin, Building, Calendar, Lock, Bell, LogOut, Edit2, Shield, CheckCircle, AlertTriangle } from "lucide-react";
+import { Mail, Phone, MapPin, Building, Calendar, Lock, Bell, LogOut, Edit2, Shield, CheckCircle, AlertTriangle, CreditCard, Globe, Landmark, Home, FileText } from "lucide-react";
 import { userApi, kycApi } from "../../services/api";
 import useAuthStore from "../../store/authStore";
 import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
+
+const parseDoc = (val) => {
+  if (!val) return null;
+  if (typeof val === "string") {
+    try { return JSON.parse(val); } catch { return null; }
+  }
+  return val;
+};
+
+function InfoRow({ icon: Icon, label, value }) {
+  return (
+    <div className="flex items-start gap-3">
+      <Icon className="text-neon-tangerine mt-1 shrink-0" size={20} />
+      <div><p className="text-gray-600 text-sm">{label}</p><p className="font-medium text-gray-900">{value}</p></div>
+    </div>
+  );
+}
 
 function Profile() {
   const { user: localUser, logout, setUser } = useAuthStore();
@@ -10,12 +27,17 @@ function Profile() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [kycStatus, setKycStatus] = useState(null);
+  const [kycData, setKycData] = useState(null);
+  const [wallet, setWallet] = useState(null);
 
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordData, setPasswordData] = useState({ current: "", new: "", confirm: "" });
 
   const [showEditModal, setShowEditModal] = useState(false);
-  const [editForm, setEditForm] = useState({ firstName: "", lastName: "", phone: "", location: "" });
+  const [editForm, setEditForm] = useState({
+    firstName: "", lastName: "", phone: "", location: "",
+    dateOfBirth: "", gender: "", country: "", state: "", city: "", streetAddress: "", postalCode: "",
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,8 +49,14 @@ function Profile() {
         if (profile) {
           setUserData(profile);
           setUser(profile);
+          if (profile.kyc) setKycData(profile.kyc);
+          if (profile.wallet) setWallet(profile.wallet);
         }
-        if (kyc) setKycStatus(kyc?.kyc?.status || kyc?.status || null);
+        if (kyc) {
+          const k = kyc?.kyc || kyc;
+          setKycStatus(k?.status || null);
+          if (k) setKycData(k);
+        }
       } catch (err) {
         if (err.message?.includes("401")) logout();
       } finally { setLoading(false); }
@@ -55,7 +83,7 @@ function Profile() {
     try {
       setError("");
       const updated = await userApi.updateProfile(editForm);
-      const data = updated?.data || updated;
+      const data = updated?.user || updated?.data || updated || editForm;
       setUserData(data);
       setUser(data);
       setShowEditModal(false);
@@ -70,6 +98,13 @@ function Profile() {
       lastName: user?.lastName || "",
       phone: user?.phone || "",
       location: user?.location || "",
+      dateOfBirth: user?.dateOfBirth || "",
+      gender: user?.gender || "",
+      country: user?.country || "",
+      state: user?.state || "",
+      city: user?.city || "",
+      streetAddress: user?.streetAddress || "",
+      postalCode: user?.postalCode || "",
     });
     setShowEditModal(true);
   };
@@ -81,11 +116,26 @@ function Profile() {
   const kycBadgeVariant = (status) => {
     switch (status) {
       case "approved": return "success";
-      case "under-review": return "warning";
+      case "under-review": case "under_review": return "warning";
       case "rejected": return "danger";
       default: return "default";
     }
   };
+
+  const addressProof = parseDoc(kycData?.addressProof);
+  const structuredAddress = addressProof && !addressProof.url
+    ? addressProof
+    : null;
+
+  const kycDocs = [
+    { key: "passportPhoto", label: "Passport Photo" },
+    { key: "idDocument", label: "ID Document" },
+    { key: "selfie", label: "Selfie" },
+    { key: "addressProof", label: "Utility Bill" },
+  ].filter(({ key }) => {
+    const doc = parseDoc(kycData?.[key]);
+    return doc?.url;
+  });
 
   if (loading) {
     return (
@@ -126,29 +176,29 @@ function Profile() {
         <Card>
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Personal Details</h3>
           <div className="space-y-4">
-            <div className="flex items-start gap-3">
-              <Mail className="text-neon-tangerine mt-1 shrink-0" size={20} />
-              <div><p className="text-gray-600 text-sm">Email</p><p className="font-medium text-gray-900">{user?.email}</p></div>
-            </div>
-            <div className="flex items-start gap-3">
-              <Phone className="text-neon-tangerine mt-1 shrink-0" size={20} />
-              <div><p className="text-gray-600 text-sm">Phone</p><p className="font-medium text-gray-900">{user?.phone || "Not provided"}</p></div>
-            </div>
-            <div className="flex items-start gap-3">
-              <MapPin className="text-neon-tangerine mt-1 shrink-0" size={20} />
-              <div><p className="text-gray-600 text-sm">Location</p><p className="font-medium text-gray-900">{user?.location || "Not provided"}</p></div>
-            </div>
-            <div className="flex items-start gap-3">
-              <Building className="text-neon-tangerine mt-1 shrink-0" size={20} />
-              <div><p className="text-gray-600 text-sm">Investor Type</p><p className="font-medium text-gray-900">Individual Investor</p></div>
-            </div>
-            <div className="flex items-start gap-3">
-              <Calendar className="text-neon-tangerine mt-1 shrink-0" size={20} />
-              <div><p className="text-gray-600 text-sm">Joined</p><p className="font-medium text-gray-900">{user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : "N/A"}</p></div>
-            </div>
+            <InfoRow icon={Mail} label="Email" value={user?.email} />
+            <InfoRow icon={Phone} label="Phone" value={user?.phone || "Not provided"} />
+            <InfoRow icon={Calendar} label="Date of Birth" value={user?.dateOfBirth || "Not provided"} />
+            <InfoRow icon={Shield} label="Gender" value={user?.gender ? user.gender.charAt(0).toUpperCase() + user.gender.slice(1) : "Not provided"} />
+            <InfoRow icon={Building} label="Investor Type" value="Individual Investor" />
+            <InfoRow icon={Calendar} label="Joined" value={user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : "N/A"} />
           </div>
         </Card>
 
+        <Card>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Address Details</h3>
+          <div className="space-y-4">
+            <InfoRow icon={Globe} label="Country" value={user?.country || "Not provided"} />
+            <InfoRow icon={MapPin} label="State" value={user?.state || "Not provided"} />
+            <InfoRow icon={Landmark} label="City" value={user?.city || "Not provided"} />
+            <InfoRow icon={Home} label="Street Address" value={user?.streetAddress || "Not provided"} />
+            <InfoRow icon={MapPin} label="Postal Code" value={user?.postalCode || "Not provided"} />
+            <InfoRow icon={MapPin} label="Location" value={user?.location || "Not provided"} />
+          </div>
+        </Card>
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-6">
           <div className="bg-white p-4 rounded-lg">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Account Security</h3>
@@ -168,12 +218,12 @@ function Profile() {
             </div>
           </div>
 
-          <div className="space-y-3 h-auto bg-white p-4 rounded-lg">
+          <Card>
             <h3 className="text-lg font-semibold text-gray-900 mb-4">KYC Status</h3>
             <div className="flex items-center gap-3">
               {kycStatus === "approved" ? (
                 <CheckCircle size={24} className="text-green-500" />
-              ) : kycStatus === "under-review" ? (
+              ) : kycStatus === "under_review" || kycStatus === "under-review" ? (
                 <AlertTriangle size={24} className="text-yellow-500" />
               ) : (
                 <Shield size={24} className="text-gray-400" />
@@ -184,22 +234,77 @@ function Profile() {
                 </p>
                 <p className="text-xs text-gray-500">
                   {kycStatus === "approved" ? "Your identity has been verified" :
-                   kycStatus === "under-review" ? "Your documents are being reviewed" :
+                   kycStatus === "under_review" || kycStatus === "under-review" ? "Your documents are being reviewed" :
                    kycStatus === "rejected" ? "Your verification was rejected. Please re-submit" :
                    "Complete KYC to unlock full access"}
                 </p>
               </div>
             </div>
+            {kycData && (
+              <div className="mt-4 space-y-2 text-sm">
+                {kycData.bvn && (
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <CreditCard size={16} className="text-gray-400" />
+                    <span>BVN: <span className="font-mono font-medium text-gray-900">****{String(kycData.bvn).slice(-4)}</span></span>
+                  </div>
+                )}
+                {kycData.nin && (
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <CreditCard size={16} className="text-gray-400" />
+                    <span>NIN: <span className="font-mono font-medium text-gray-900">****{String(kycData.nin).slice(-4)}</span></span>
+                  </div>
+                )}
+                {structuredAddress && (
+                  <div className="flex items-start gap-2 text-gray-600">
+                    <MapPin size={16} className="text-gray-400 mt-0.5 shrink-0" />
+                    <span>{[structuredAddress.address, structuredAddress.city, structuredAddress.state, structuredAddress.country].filter(Boolean).join(", ")}</span>
+                  </div>
+                )}
+                {kycDocs.map(({ key, label }) => {
+                  const doc = parseDoc(kycData[key]);
+                  return (
+                    <a key={key} href={doc.url} target="_blank" rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-neon-tangerine hover:underline">
+                      <FileText size={16} /> {label}
+                    </a>
+                  );
+                })}
+              </div>
+            )}
             {kycStatus !== "approved" && (
               <Button variant="secondary" size="sm" className="mt-3" onClick={() => window.location.href = "/kyc"}>
                 Complete KYC
               </Button>
             )}
-          </div>
+          </Card>
         </div>
+
+        <Card>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Wallet</h3>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-xl bg-gray-50 p-4">
+                <p className="text-xs text-gray-500">NGN Balance</p>
+                <p className="text-lg font-bold text-gray-900">₦{Number(wallet?.balance ?? 0).toLocaleString()}</p>
+              </div>
+              <div className="rounded-xl bg-gray-50 p-4">
+                <p className="text-xs text-gray-500">USD Balance</p>
+                <p className="text-lg font-bold text-gray-900">${Number(wallet?.usdBalance ?? 0).toLocaleString()}</p>
+              </div>
+              <div className="rounded-xl bg-gray-50 p-4">
+                <p className="text-xs text-gray-500">USDT Balance</p>
+                <p className="text-lg font-bold text-gray-900">{Number(wallet?.usdtBalance ?? 0).toLocaleString()}</p>
+              </div>
+              <div className="rounded-xl bg-gray-50 p-4">
+                <p className="text-xs text-gray-500">Total Invested</p>
+                <p className="text-lg font-bold text-gray-900">₦{Number(wallet?.totalInvested ?? 0).toLocaleString()}</p>
+              </div>
+            </div>
+          </div>
+        </Card>
       </div>
 
-      <Modal isOpen={showPasswordModal} onClose={() => { setShowPasswordModal(false); setError(""); }} title="Change Password"  size="lg">
+      <Modal isOpen={showPasswordModal} onClose={() => { setShowPasswordModal(false); setError(""); }} title="Change Password" size="lg">
         {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4 text-sm">{error}</div>}
         <div className="space-y-4">
           <Input label="Current Password" type="password" value={passwordData.current} onChange={(e) => setPasswordData({...passwordData, current: e.target.value})} />
@@ -212,13 +317,46 @@ function Profile() {
         </div>
       </Modal>
 
-      <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)} title="Edit Profile"  size="lg">
+      <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)} title="Edit Profile" size="lg">
         {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4 text-sm">{error}</div>}
         <form onSubmit={handleEditProfile} className="space-y-4">
-          <Input label="First Name" value={editForm.firstName} onChange={(e) => setEditForm({...editForm, firstName: e.target.value})} required />
-          <Input label="Last Name" value={editForm.lastName} onChange={(e) => setEditForm({...editForm, lastName: e.target.value})} required />
-          <Input label="Phone" type="tel" value={editForm.phone} onChange={(e) => setEditForm({...editForm, phone: e.target.value})} />
-          <Input label="Location" value={editForm.location} onChange={(e) => setEditForm({...editForm, location: e.target.value})} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Input label="First Name" value={editForm.firstName} onChange={(e) => setEditForm({...editForm, firstName: e.target.value})} required />
+            <Input label="Last Name" value={editForm.lastName} onChange={(e) => setEditForm({...editForm, lastName: e.target.value})} required />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Input label="Phone" type="tel" value={editForm.phone} onChange={(e) => setEditForm({...editForm, phone: e.target.value})} />
+            <Input label="Location" value={editForm.location} onChange={(e) => setEditForm({...editForm, location: e.target.value})} />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Date of Birth</label>
+              <input type="date" value={editForm.dateOfBirth} onChange={(e) => setEditForm({...editForm, dateOfBirth: e.target.value})}
+                className="w-full rounded-xl border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-neon-tangerine focus:border-neon-tangerine" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Gender</label>
+              <select value={editForm.gender} onChange={(e) => setEditForm({...editForm, gender: e.target.value})}
+                className="w-full rounded-xl border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-neon-tangerine">
+                <option value="">Select gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Input label="Country" value={editForm.country} onChange={(e) => setEditForm({...editForm, country: e.target.value})} placeholder="Nigeria" />
+            <Input label="State" value={editForm.state} onChange={(e) => setEditForm({...editForm, state: e.target.value})} />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Input label="City" value={editForm.city} onChange={(e) => setEditForm({...editForm, city: e.target.value})} />
+            <Input label="Postal Code" value={editForm.postalCode} onChange={(e) => setEditForm({...editForm, postalCode: e.target.value})} />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Street Address</label>
+            <textarea rows={2} value={editForm.streetAddress} onChange={(e) => setEditForm({...editForm, streetAddress: e.target.value})}
+              className="w-full rounded-xl border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-neon-tangerine focus:border-neon-tangerine" />
+          </div>
           <div className="flex gap-4">
             <Button type="button" variant="ghost" onClick={() => setShowEditModal(false)} className="flex-1">Cancel</Button>
             <Button type="submit" className="flex-1">Save Changes</Button>

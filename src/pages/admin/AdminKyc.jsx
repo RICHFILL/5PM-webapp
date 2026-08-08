@@ -226,6 +226,20 @@ export default function AdminKyc() {
               </div>
             </div>
 
+            {/* Address Information */}
+            {selected.addressProof && !selected.addressProof.url && (
+              <div>
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1.5"><MapPin size={14} /> Address Information</p>
+                <div className="bg-gray-50 rounded-xl p-4 space-y-2">
+                  {selected.addressProof.country && <div className="flex justify-between text-sm"><span className="text-gray-600">Country</span><span className="font-semibold">{selected.addressProof.country}</span></div>}
+                  {selected.addressProof.state && <div className="flex justify-between text-sm"><span className="text-gray-600">State</span><span className="font-semibold">{selected.addressProof.state}</span></div>}
+                  {selected.addressProof.city && <div className="flex justify-between text-sm"><span className="text-gray-600">City</span><span className="font-semibold">{selected.addressProof.city}</span></div>}
+                  {selected.addressProof.address && <div className="flex justify-between text-sm"><span className="text-gray-600">Address</span><span className="font-semibold">{selected.addressProof.address}</span></div>}
+                  {selected.addressProof.postalCode && <div className="flex justify-between text-sm"><span className="text-gray-600">Postal Code</span><span className="font-semibold">{selected.addressProof.postalCode}</span></div>}
+                </div>
+              </div>
+            )}
+
             {/* Uploaded Documents */}
             <div>
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1.5"><FileText size={14} /> Uploaded Documents</p>
