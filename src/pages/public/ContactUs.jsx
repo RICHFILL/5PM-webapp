@@ -7,7 +7,7 @@ import { contactApi, callbackApi } from "../../services/api";
 
 const contactInfo = [
   { icon: Mail, label: "Email", value: "support@5pmnexus.com", detail: "We respond within 24 hours" },
-  { icon: Phone, label: "Phone", value: "+2347033417802, +2347080897994", detail: "Mon–Fri, 8am–6pm (WAT)" },
+  { icon: Phone, label: "Phone", value: "+2347033417802", detail: "Mon–Fri, 8am–6pm (WAT)" },
   { icon: MapPin, label: "Office Address", value: "No. 52, Raymond Njoku St, Ikoyi, Lagos State, Nigeria.", detail: "By appointment only" },
   { icon: Clock, label: "Operating Hours", value: "Monday – Friday", detail: "8:00 AM – 6:00 PM (WAT)" },
 ];

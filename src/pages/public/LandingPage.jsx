@@ -583,6 +583,7 @@ function LandingPage() {
                 </div>
               </ScrollReveal>
             ))}
+            
           </div>
         </div>
       </section>
