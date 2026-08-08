@@ -18,6 +18,14 @@ const statusVariant = (s) => {
   }
 };
 
+const formatBankSnapshot = (bd) => {
+  if (!bd) return "--";
+  if (bd.bankName) {
+    return [bd.bankName, bd.accountNumber, bd.accountName].filter(Boolean).join(" · ");
+  }
+  return bd.walletAddress || "--";
+};
+
 export default function AdminWithdrawals() {
   const [withdrawals, setWithdrawals] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -109,6 +117,7 @@ export default function AdminWithdrawals() {
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">User</th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Email</th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Amount</th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Payment Details</th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Requested</th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Status</th>
               <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Actions</th>
@@ -120,6 +129,9 @@ export default function AdminWithdrawals() {
                 <td className="px-6 py-4 font-medium text-gray-900">{w.withdrawalUser?.firstName} {w.withdrawalUser?.lastName}</td>
                 <td className="px-6 py-4 text-gray-600">{w.withdrawalUser?.email}</td>
                 <td className="px-6 py-4 font-semibold text-gray-900">{formatNaira(w.amount)}</td>
+                <td className="px-6 py-4 text-gray-600 max-w-[220px]">
+                  <span title={JSON.stringify(w.bankDetails || {})}>{formatBankSnapshot(w.bankDetails)}</span>
+                </td>
                 <td className="px-6 py-4 text-gray-500">{formatDate(w.requestDate || w.createdAt)}</td>
                 <td className="px-6 py-4"><Badge variant={statusVariant(w.status)}>{w.status}</Badge></td>
                 <td className="px-6 py-4 text-right">

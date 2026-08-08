@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { ArrowUpRight, Mail, Wallet } from "lucide-react";
 
 function WithdrawalRequestModal({
@@ -8,10 +9,33 @@ function WithdrawalRequestModal({
   formatCurrency,
   isSubmitting,
   error,
+  bankAccounts = [],
 }) {
+  const [useSaved, setUseSaved] = useState(true);
+  const [accountId, setAccountId] = useState("");
+  const [bankName, setBankName] = useState("");
+  const [accountNumber, setAccountNumber] = useState("");
+  const [accountName, setAccountName] = useState("");
+  const [walletAddress, setWalletAddress] = useState("");
+
+  useEffect(() => {
+    if (isOpen && bankAccounts.length > 0 && !accountId) {
+      const preferred = bankAccounts.find((a) => a.isDefault) || bankAccounts[0];
+      setAccountId(preferred.id);
+    }
+  }, [isOpen, bankAccounts, accountId]);
+
   if (!isOpen) {
     return null;
   }
+
+  const handleConfirm = () => {
+    if (useSaved && accountId) {
+      onConfirm({ bankAccountId: accountId });
+    } else {
+      onConfirm({ bankAccount: { bankName, accountNumber, accountName, walletAddress } });
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm">
@@ -52,6 +76,86 @@ function WithdrawalRequestModal({
             </div>
           </div>
 
+          <div className="mt-4 rounded-2xl border border-slate-200">
+            <div className="flex items-center justify-between rounded-t-2xl bg-slate-50 px-4 py-3">
+              <p className="text-sm font-semibold text-slate-700">
+                Payment Details
+              </p>
+              {bankAccounts.length > 0 && (
+                <div className="flex gap-1 bg-slate-200/70 rounded-lg p-0.5">
+                  <button
+                    type="button"
+                    onClick={() => setUseSaved(true)}
+                    className={`rounded-md px-2.5 py-1 text-xs font-semibold transition-colors ${useSaved ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+                  >
+                    Saved
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setUseSaved(false)}
+                    className={`rounded-md px-2.5 py-1 text-xs font-semibold transition-colors ${!useSaved ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+                  >
+                    New
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <div className="p-4 space-y-3">
+              {bankAccounts.length > 0 && useSaved ? (
+                <div>
+                  <label className="block text-xs font-medium text-slate-500 mb-1.5">
+                    Choose a saved bank account / wallet
+                  </label>
+                  <select
+                    value={accountId}
+                    onChange={(e) => setAccountId(e.target.value)}
+                    className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-dark-lavender/30"
+                  >
+                    {bankAccounts.map((a) => (
+                      <option key={a.id} value={a.id}>
+                        {a.bankName
+                          ? `${a.bankName}${a.accountNumber ? ` ****${String(a.accountNumber).slice(-4)}` : ""}${a.accountName ? ` (${a.accountName})` : ""}${a.isDefault ? " — Default" : ""}`
+                          : `USDT ${a.walletAddress ? `${String(a.walletAddress).slice(0, 12)}...` : ""}${a.isDefault ? " — Default" : ""}`}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : (
+                <>
+                  <input
+                    type="text"
+                    placeholder="Bank name (e.g., GTBank)"
+                    value={bankName}
+                    onChange={(e) => setBankName(e.target.value)}
+                    className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-dark-lavender/30"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Account number"
+                    value={accountNumber}
+                    onChange={(e) => setAccountNumber(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                    className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-dark-lavender/30"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Account name"
+                    value={accountName}
+                    onChange={(e) => setAccountName(e.target.value)}
+                    className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-dark-lavender/30"
+                  />
+                  <input
+                    type="text"
+                    placeholder="USDT wallet address (optional)"
+                    value={walletAddress}
+                    onChange={(e) => setWalletAddress(e.target.value)}
+                    className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-dark-lavender/30"
+                  />
+                </>
+              )}
+            </div>
+          </div>
+
           <div className="mt-4 rounded-2xl border border-[#00B8DB]/15 bg-[#00B8DB]/5 p-3.5 text-sm text-slate-600">
             <div className="flex items-start gap-3">
               <Mail className="mt-0.5 text-[#00B8DB]" size={16} />
@@ -77,8 +181,12 @@ function WithdrawalRequestModal({
               Cancel
             </button>
             <button
-              onClick={onConfirm}
-              disabled={isSubmitting || expectedReturns <= 0}
+              onClick={handleConfirm}
+              disabled={
+                isSubmitting ||
+                expectedReturns <= 0 ||
+                (!useSaved && !bankName && !walletAddress)
+              }
               className="flex-1 rounded-2xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-300"
             >
               {isSubmitting ? "Sending Request..." : "Send Withdrawal Request"}

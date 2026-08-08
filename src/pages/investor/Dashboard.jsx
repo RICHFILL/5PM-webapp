@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { TrendingUp, Globe, Wallet, ChevronRight, CheckCircle2, BarChart3, Activity } from "lucide-react";
-import { dashboardApi, userApi, investmentApi } from "../../services/api";
+import { dashboardApi, userApi, investmentApi, bankApi } from "../../services/api";
 import useAuthStore from "../../store/authStore";
 import { Card, Skeleton } from "../../components/common";
 import WithdrawalRequestModal from "../../components/WithdrawalRequestModal";
@@ -22,6 +22,7 @@ function Dashboard() {
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [isSubmittingWithdrawal, setIsSubmittingWithdrawal] = useState(false);
   const [withdrawalConfirmation, setWithdrawalConfirmation] = useState("");
+  const [bankAccounts, setBankAccounts] = useState([]);
 
   const fetchUserPayments = useCallback(async (userId) => {
     if (!userId) { setPayments([]); setPaymentsLoading(false); return; }
@@ -51,6 +52,10 @@ function Dashboard() {
         setDashboardData(dashboard);
         setInvestments(Array.isArray(invData) ? invData : invData?.data ?? []);
         await fetchUserPayments(user?.id || user?._id);
+        try {
+          const bankRes = await bankApi.getBankAccounts();
+          setBankAccounts(bankRes?.data ?? (Array.isArray(bankRes) ? bankRes : []));
+        } catch { setBankAccounts([]); }
       } catch (err) {
         setError(err.message);
         if (err.message?.includes("401")) navigate("/login");
@@ -125,11 +130,11 @@ function Dashboard() {
     return <div className="p-6"><div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-lg">{error}</div></div>;
   }
 
-  const handleWithdrawalRequest = async () => {
+  const handleWithdrawalRequest = async (payload = {}) => {
     try {
       setError(""); setIsSubmittingWithdrawal(true);
       const { walletApi } = await import("../../services/api");
-      const response = await walletApi.requestWithdrawal();
+      const response = await walletApi.requestWithdrawal(payload);
       setShowWithdrawModal(false);
       setWithdrawalConfirmation(response.message || "Withdrawal request sent successfully");
     } catch (err) {
@@ -336,6 +341,7 @@ function Dashboard() {
         formatCurrency={formatCurrencyAmount}
         isSubmitting={isSubmittingWithdrawal}
         error={error}
+        bankAccounts={bankAccounts}
       />
     </div>
   );

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { ArrowUpRight, ArrowDownLeft, Filter, CheckCircle2, Copy, History } from "lucide-react";
-import { dashboardApi, userApi, walletApi, depositApi } from "../../services/api";
+import { dashboardApi, userApi, walletApi, depositApi, bankApi } from "../../services/api";
 import useAuthStore from "../../store/authStore";
 import useWalletStore from "../../store/walletStore";
 import { Card, Skeleton, Badge, Button, Modal, Input } from "../../components/common";
@@ -176,13 +176,15 @@ function DepositModal({ isOpen, onClose, onDepositComplete }) {
   );
 }
 
-function WithdrawalModal({ isOpen, onClose, balances, onWithdrawComplete }) {
+function WithdrawalModal({ isOpen, onClose, balances, onWithdrawComplete, bankAccounts = [] }) {
   const [amount, setAmount] = useState("");
   const [currency, setCurrency] = useState("NGN");
   const [bankName, setBankName] = useState("");
   const [accountNumber, setAccountNumber] = useState("");
   const [accountName, setAccountName] = useState("");
   const [walletAddress, setWalletAddress] = useState("");
+  const [useSaved, setUseSaved] = useState(false);
+  const [accountId, setAccountId] = useState("");
   const [step, setStep] = useState("form");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -190,11 +192,42 @@ function WithdrawalModal({ isOpen, onClose, balances, onWithdrawComplete }) {
   const cur = CURRENCIES.find((c) => c.value === currency);
   const maxBalance = currency === "USD" ? balances.usd : currency === "USDT" ? balances.usdt : balances.ngn;
 
+  const savedForCurrency = currency === "USDT"
+    ? bankAccounts.filter((a) => a.walletAddress)
+    : bankAccounts.filter((a) => a.bankName);
+
+  useEffect(() => {
+    setUseSaved(savedForCurrency.length > 0);
+    if (savedForCurrency.length > 0) {
+      const preferred = savedForCurrency.find((a) => a.isDefault) || savedForCurrency[0];
+      setAccountId(preferred.id);
+      setBankName(preferred.bankName || "");
+      setAccountNumber(preferred.accountNumber || "");
+      setAccountName(preferred.accountName || "");
+      setWalletAddress(preferred.walletAddress || "");
+    }
+  }, [currency, isOpen]);
+
+  const handleSelectSaved = (id) => {
+    setAccountId(id);
+    const account = bankAccounts.find((a) => a.id === id);
+    if (account) {
+      setBankName(account.bankName || "");
+      setAccountNumber(account.accountNumber || "");
+      setAccountName(account.accountName || "");
+      setWalletAddress(account.walletAddress || "");
+    }
+  };
+
   const handleWithdraw = async (e) => {
     e.preventDefault();
     setLoading(true); setError("");
     try {
-      await walletApi.withdrawFunds(Number(amount), { bankName, accountNumber, accountName, walletAddress }, currency);
+      if (useSaved && accountId) {
+        await walletApi.withdrawFunds(Number(amount), {}, currency, accountId);
+      } else {
+        await walletApi.withdrawFunds(Number(amount), { bankName, accountNumber, accountName, walletAddress }, currency);
+      }
       setStep("confirmation");
     } catch (err) {
       setError(err?.response?.data?.message || err.message || "Withdrawal failed");
@@ -216,7 +249,31 @@ function WithdrawalModal({ isOpen, onClose, balances, onWithdrawComplete }) {
           </div>
           <Input label={`Amount (${currency})`} type="number" value={amount} onChange={(e) => setAmount(e.target.value)}
             placeholder="Enter amount" required min="1000" max={maxBalance} />
-          {currency !== "USDT" ? (
+
+          {savedForCurrency.length > 0 && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Payment Account</label>
+              <select
+                value={useSaved ? accountId : ""}
+                onChange={(e) => { setUseSaved(true); handleSelectSaved(e.target.value); }}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-neon-tangerine focus:border-transparent outline-none"
+              >
+                {savedForCurrency.map((a) => (
+                  <option key={a.id} value={a.id}>
+                    {currency === "USDT"
+                      ? `USDT ${a.walletAddress ? `${String(a.walletAddress).slice(0, 16)}...` : ""}${a.isDefault ? " (Default)" : ""}`
+                      : `${a.bankName} ****${String(a.accountNumber || "").slice(-4)}${a.accountName ? ` — ${a.accountName}` : ""}${a.isDefault ? " (Default)" : ""}`}
+                  </option>
+                ))}
+              </select>
+              <label className="flex items-center gap-2 mt-2 text-xs text-gray-500">
+                <input type="checkbox" checked={useSaved} onChange={(e) => setUseSaved(e.target.checked)} />
+                Use a saved account (you can also enter a new one below)
+              </label>
+            </div>
+          )}
+
+          {!useSaved && (currency !== "USDT" ? (
             <>
               <Input label="Bank Name" value={bankName} onChange={(e) => setBankName(e.target.value)} placeholder="e.g., GTBank" required />
               <Input label="Account Number" value={accountNumber} onChange={(e) => setAccountNumber(e.target.value.replace(/\D/g, "").slice(0, 10))} placeholder="0123456789" required maxLength={10} />
@@ -224,7 +281,7 @@ function WithdrawalModal({ isOpen, onClose, balances, onWithdrawComplete }) {
             </>
           ) : (
             <Input label="USDT Wallet Address" value={walletAddress} onChange={(e) => setWalletAddress(e.target.value)} placeholder="Enter USDT wallet address" required />
-          )}
+          ))}
           {error && <p className="text-sm text-red-600">{error}</p>}
           <Button type="submit" className="w-full" disabled={loading || !amount}>
             {loading ? "Processing..." : "Withdraw"}
@@ -294,6 +351,7 @@ export default function Wallet() {
   const [withdrawCurrency, setWithdrawCurrency] = useState("NGN");
   const [transactions, setTransactions] = useState([]);
   const [txnLoading, setTxnLoading] = useState(false);
+  const [bankAccounts, setBankAccounts] = useState([]);
 
   const fetchTransactions = useCallback(async () => {
     setTxnLoading(true);
@@ -336,6 +394,10 @@ export default function Wallet() {
         fetchUserPayments(user?.id || user?._id),
         fetchTransactions(),
       ]);
+      try {
+        const bankRes = await bankApi.getBankAccounts();
+        setBankAccounts(bankRes?.data ?? (Array.isArray(bankRes) ? bankRes : []));
+      } catch { setBankAccounts([]); }
     } catch {
     } finally { setLoading(false); }
   }, [user, setBalances, fetchUserPayments, fetchTransactions]);
@@ -489,7 +551,7 @@ export default function Wallet() {
 
       <DepositModal isOpen={showDeposit} onClose={() => setShowDeposit(false)} onDepositComplete={fetchData} />
       <WithdrawalModal isOpen={showWithdraw} onClose={() => setShowWithdraw(false)}
-        balances={balances} onWithdrawComplete={fetchData} />
+        balances={balances} onWithdrawComplete={fetchData} bankAccounts={bankAccounts} />
     </div>
   );
 }

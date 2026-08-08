@@ -100,6 +100,14 @@ const parseDoc = (val) => {
   return val;
 };
 
+const formatBankSnapshot = (bd) => {
+  if (!bd) return "--";
+  if (bd.bankName) {
+    return [bd.bankName, bd.accountNumber, bd.accountName].filter(Boolean).join(" · ");
+  }
+  return bd.walletAddress || "--";
+};
+
 function DetailsRow({ icon: Icon, label, value, color }) {
   return (
     <div className="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-gray-50 transition-colors">
@@ -146,6 +154,7 @@ export default function AdminUserDetail() {
   const [transactions, setTransactions] = useState([]);
   const [withdrawals, setWithdrawals] = useState([]);
   const [distributions, setDistributions] = useState([]);
+  const [bankAccounts, setBankAccounts] = useState([]);
   const [totalsByCurrency, setTotalsByCurrency] = useState(null);
   const [stats, setStats] = useState(null);
   const [activeTab, setActiveTab] = useState("overview");
@@ -184,6 +193,7 @@ export default function AdminUserDetail() {
       setTransactions(Array.isArray(data?.data?.transactions) ? data.data.transactions : []);
       setWithdrawals(Array.isArray(data?.data?.withdrawals) ? data.data.withdrawals : []);
       setDistributions(Array.isArray(data?.data?.distributions) ? data.data.distributions : []);
+      setBankAccounts(Array.isArray(data?.data?.bankAccounts) ? data.data.bankAccounts : []);
       setEditForm({
         firstName: u.firstName || "",
         lastName: u.lastName || "",
@@ -533,6 +543,47 @@ export default function AdminUserDetail() {
         </Card>
       </div>
 
+      {/* Bank Accounts */}
+      <Card className="p-0 overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
+          <div className="flex items-center gap-2">
+            <CreditCard size={16} className="text-gray-500" />
+            <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">
+              Bank Accounts ({bankAccounts.length})
+            </h3>
+          </div>
+        </div>
+        <div className="p-4">
+          {bankAccounts.length === 0 ? (
+            <p className="text-sm text-gray-500">No saved bank accounts for this user.</p>
+          ) : (
+            <div className="grid sm:grid-cols-2 gap-4">
+              {bankAccounts.map((account) => (
+                <div key={account.id} className="rounded-xl border border-gray-200 p-4">
+                  <div className="flex items-center gap-2">
+                    <p className="font-medium text-gray-900">
+                      {account.bankName || "USDT Wallet"}
+                    </p>
+                    {account.isDefault && (
+                      <span className="text-[10px] font-semibold text-amber-700 bg-amber-100 rounded-full px-2 py-0.5">Default</span>
+                    )}
+                  </div>
+                  {account.bankName ? (
+                    <p className="text-sm text-gray-600 mt-1">
+                      {account.accountNumber} · {account.accountName || "--"}
+                    </p>
+                  ) : (
+                    <p className="text-sm text-gray-600 mt-1 font-mono break-all">
+                      {account.walletAddress || "--"}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </Card>
+
       {/* Investments Table */}
       {investments.length > 0 && (
         <Card className="p-0 overflow-hidden">
@@ -786,6 +837,7 @@ export default function AdminUserDetail() {
                   <tr className="border-b border-gray-100">
                     <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Amount</th>
                     <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                    <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Payment Details</th>
                     <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Requested</th>
                     <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Processed</th>
                     <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Notes</th>
@@ -799,6 +851,9 @@ export default function AdminUserDetail() {
                       </td>
                       <td className="px-6 py-4">
                         <Badge variant={statusVariant(w.status)}>{w.status}</Badge>
+                      </td>
+                      <td className="px-6 py-4 text-gray-600 max-w-[220px]">
+                        <span title={JSON.stringify(w.bankDetails || {})}>{formatBankSnapshot(w.bankDetails)}</span>
                       </td>
                       <td className="px-6 py-4 text-gray-500 whitespace-nowrap">{formatDate(w.requestDate || w.createdAt)}</td>
                       <td className="px-6 py-4 text-gray-500 whitespace-nowrap">{w.processedDate ? formatDate(w.processedDate) : "--"}</td>

@@ -104,12 +104,23 @@ export const walletApi = {
       .then((r) => r.data),
   fundWallet: (amount, currency = "NGN") =>
     api.post("/wallet/fund", { amount, currency }).then((r) => r.data),
-  requestWithdrawal: () =>
-    api.post("/wallet/withdraw-request").then((r) => r.data),
-  withdrawFunds: (amount, bankAccount, currency = "NGN") =>
+  requestWithdrawal: (payload = {}) =>
+    api.post("/wallet/withdraw-request", payload).then((r) => r.data),
+  withdrawFunds: (amount, bankAccount, currency = "NGN", bankAccountId) =>
     api
-      .post("/wallet/withdraw", { amount, bankAccount, currency })
+      .post("/wallet/withdraw", { amount, bankAccount, currency, bankAccountId })
       .then((r) => r.data),
+};
+
+// --- Bank Accounts ---
+export const bankApi = {
+  getBankAccounts: () => api.get("/users/bank-accounts").then((r) => r.data),
+  createBankAccount: (data) =>
+    api.post("/users/bank-accounts", data).then((r) => r.data),
+  updateBankAccount: (id, data) =>
+    api.put(`/users/bank-accounts/${id}`, data).then((r) => r.data),
+  deleteBankAccount: (id) =>
+    api.delete(`/users/bank-accounts/${id}`).then((r) => r.data),
 };
 
 // --- KYC ---
