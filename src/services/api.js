@@ -285,6 +285,12 @@ updateAmount: (id, data) =>
     api.post("/admin/investments", data).then((r) => r.data),
   resetUserPassword: (id) =>
     api.post(`/admin/users/${id}/reset-password`).then((r) => r.data),
+  addUserBankAccount: (id, data) =>
+    api.post(`/admin/users/${id}/bank-accounts`, data).then((r) => r.data),
+  updateUserBankAccount: (id, accountId, data) =>
+    api.put(`/admin/users/${id}/bank-accounts/${accountId}`, data).then((r) => r.data),
+  deleteUserBankAccount: (id, accountId) =>
+    api.delete(`/admin/users/${id}/bank-accounts/${accountId}`).then((r) => r.data),
 };
 
 // --- Dashboard ---

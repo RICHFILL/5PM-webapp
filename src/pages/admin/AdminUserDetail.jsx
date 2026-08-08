@@ -32,6 +32,8 @@ import {
   Layers,
   Banknote,
   Receipt,
+  Plus,
+  Star,
 } from "lucide-react";
 import { adminApi, userApi } from "../../services/api";
 import {
@@ -177,6 +179,11 @@ export default function AdminUserDetail() {
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordResetting, setPasswordResetting] = useState(false);
   const [passwordResult, setPasswordResult] = useState(null);
+  const [showBankModal, setShowBankModal] = useState(false);
+  const [bankForm, setBankForm] = useState({
+    id: "", bankName: "", accountNumber: "", accountName: "", walletAddress: "", isDefault: false,
+  });
+  const [savingBank, setSavingBank] = useState(false);
 
   const fetchUser = useCallback(async () => {
     try {
@@ -270,6 +277,47 @@ export default function AdminUserDetail() {
   };
 
   const activeCount = investments.filter((i) => i.status === "active").length;
+
+  const openBankModal = (account) => {
+    setBankForm(account
+      ? { id: account.id, bankName: account.bankName || "", accountNumber: account.accountNumber || "", accountName: account.accountName || "", walletAddress: account.walletAddress || "", isDefault: !!account.isDefault }
+      : { id: "", bankName: "", accountNumber: "", accountName: "", walletAddress: "", isDefault: false });
+    setShowBankModal(true);
+  };
+
+  const handleSaveBank = async (e) => {
+    e.preventDefault();
+    setSavingBank(true);
+    try {
+      const payload = {
+        bankName: bankForm.bankName,
+        accountNumber: bankForm.accountNumber,
+        accountName: bankForm.accountName,
+        walletAddress: bankForm.walletAddress,
+        isDefault: bankForm.isDefault,
+      };
+      if (bankForm.id) await adminApi.updateUserBankAccount(id, bankForm.id, payload);
+      else await adminApi.addUserBankAccount(id, payload);
+      setShowBankModal(false);
+      toast.success(bankForm.id ? "Bank account updated" : "Bank account added");
+      fetchUser();
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to save bank account");
+    } finally {
+      setSavingBank(false);
+    }
+  };
+
+  const handleDeleteBank = async (account) => {
+    if (!window.confirm(`Delete this ${account.bankName || "USDT wallet"} for ${user.firstName} ${user.lastName}?`)) return;
+    try {
+      await adminApi.deleteUserBankAccount(id, account.id);
+      toast.success("Bank account deleted");
+      fetchUser();
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to delete bank account");
+    }
+  };
 
   if (loading) {
     return (
@@ -546,11 +594,16 @@ export default function AdminUserDetail() {
       {/* Bank Accounts */}
       <Card className="p-0 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
-          <div className="flex items-center gap-2">
-            <CreditCard size={16} className="text-gray-500" />
-            <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">
-              Bank Accounts ({bankAccounts.length})
-            </h3>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <CreditCard size={16} className="text-gray-500" />
+              <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                Bank Accounts ({bankAccounts.length})
+              </h3>
+            </div>
+            <Button size="sm" onClick={() => openBankModal(null)}>
+              <Plus size={14} className="mr-1" /> Add Account
+            </Button>
           </div>
         </div>
         <div className="p-4">
@@ -559,24 +612,44 @@ export default function AdminUserDetail() {
           ) : (
             <div className="grid sm:grid-cols-2 gap-4">
               {bankAccounts.map((account) => (
-                <div key={account.id} className="rounded-xl border border-gray-200 p-4">
-                  <div className="flex items-center gap-2">
-                    <p className="font-medium text-gray-900">
-                      {account.bankName || "USDT Wallet"}
-                    </p>
-                    {account.isDefault && (
-                      <span className="text-[10px] font-semibold text-amber-700 bg-amber-100 rounded-full px-2 py-0.5">Default</span>
+                <div key={account.id} className="rounded-xl border border-gray-200 p-4 flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <p className="font-medium text-gray-900">
+                        {account.bankName || "USDT Wallet"}
+                      </p>
+                      {account.isDefault && (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-700 bg-amber-100 rounded-full px-2 py-0.5">
+                          <Star size={10} /> Default
+                        </span>
+                      )}
+                    </div>
+                    {account.bankName ? (
+                      <p className="text-sm text-gray-600 mt-1">
+                        {account.accountNumber} · {account.accountName || "--"}
+                      </p>
+                    ) : (
+                      <p className="text-sm text-gray-600 mt-1 font-mono break-all">
+                        {account.walletAddress || "--"}
+                      </p>
                     )}
                   </div>
-                  {account.bankName ? (
-                    <p className="text-sm text-gray-600 mt-1">
-                      {account.accountNumber} · {account.accountName || "--"}
-                    </p>
-                  ) : (
-                    <p className="text-sm text-gray-600 mt-1 font-mono break-all">
-                      {account.walletAddress || "--"}
-                    </p>
-                  )}
+                  <div className="flex items-center gap-1 shrink-0">
+                    <button
+                      onClick={() => openBankModal(account)}
+                      className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
+                      title="Edit"
+                    >
+                      <Edit3 size={16} />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteBank(account)}
+                      className="p-2 rounded-lg text-red-500 hover:bg-red-50 transition-colors"
+                      title="Delete"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -1236,6 +1309,53 @@ export default function AdminUserDetail() {
             </div>
           </div>
         )}
+      </Modal>
+
+      {/* Bank Account Modal */}
+      <Modal isOpen={showBankModal} onClose={() => setShowBankModal(false)} title={bankForm.id ? "Edit Bank Account" : "Add Bank Account"} size="md">
+        <form onSubmit={handleSaveBank} className="space-y-4">
+          <Input
+            label="Bank Name"
+            value={bankForm.bankName}
+            onChange={(e) => setBankForm({ ...bankForm, bankName: e.target.value })}
+            placeholder="e.g., GTBank"
+          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Input
+              label="Account Number"
+              value={bankForm.accountNumber}
+              onChange={(e) => setBankForm({ ...bankForm, accountNumber: e.target.value.replace(/\D/g, "").slice(0, 10) })}
+              placeholder="0123456789"
+              maxLength={10}
+            />
+            <Input
+              label="Account Name"
+              value={bankForm.accountName}
+              onChange={(e) => setBankForm({ ...bankForm, accountName: e.target.value })}
+              placeholder="Enter account name"
+            />
+          </div>
+          <Input
+            label="USDT Wallet Address (optional)"
+            value={bankForm.walletAddress}
+            onChange={(e) => setBankForm({ ...bankForm, walletAddress: e.target.value })}
+            placeholder="TRC20 wallet address for USDT payouts"
+          />
+          <label className="flex items-center gap-2 text-sm text-gray-700">
+            <input
+              type="checkbox"
+              checked={bankForm.isDefault}
+              onChange={(e) => setBankForm({ ...bankForm, isDefault: e.target.checked })}
+            />
+            Set as default account
+          </label>
+          <div className="flex gap-3 justify-end pt-2">
+            <Button variant="outline" onClick={() => setShowBankModal(false)}>Cancel</Button>
+            <Button type="submit" disabled={savingBank}>
+              {savingBank ? "Saving..." : bankForm.id ? "Save Changes" : "Add Account"}
+            </Button>
+          </div>
+        </form>
       </Modal>
     </div>
   );
